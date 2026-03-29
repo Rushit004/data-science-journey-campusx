@@ -1,4 +1,4 @@
-![banner](./images/banner.png)
+![banner](./images/README banner.png)
 # Data Science — Structured Learning Log
 
 > **Who:** Rushit Tholiya · 2nd year B.Tech (CS) at Nirma University, Ahmedabad
