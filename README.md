@@ -28,7 +28,7 @@ Most learning repos are just downloaded notebooks. In this one:
 | Module | Lectures | Tasks Solved | Status |
 |---|---|---|---|
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
-| NumPy | 8 / 8 | 8 / 8 | ✅ Complete |
+| NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
 | Pandas | 3 / 11 | 3 / 11 | 🔄 In progress |
 | Data Visualization | 0 / 9 | — | ⏳ Upcoming |
 | Statistics | 0 / 14 | — | ⏳ Upcoming |
