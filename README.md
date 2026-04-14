@@ -56,7 +56,7 @@
 
 ## A few things I found genuinely interesting so far
 
-- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](./02-numpy/notes/S14_Advanced_Numpy.ipynb)
+- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
 
 - Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
 
