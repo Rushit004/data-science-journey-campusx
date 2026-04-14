@@ -84,7 +84,9 @@ pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab jupyter lab
 
 2nd year B.Tech (Computer Science) at Nirma University, Ahmedabad. Building toward a career in data science and machine learning — specifically interested in models that ship to real users, not just notebooks.
 
-📎 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) · [GitHub](https://github.com/Rushit004)
+🔗 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) 
+
+🔗 [Redirect to my GitHub profile](https://github.com/Rushit004)
 
 ---
 
