@@ -69,14 +69,38 @@ Python 3.11  ·  Jupyter Notebook / JupyterLab / Google Colab
 NumPy  ·  Pandas  ·  Matplotlib  ·  Seaborn  ·  Scikit-learn
 ```
 
-Clone and run locally:
 
 
-### Create New folder and open it in terminal then run below command 
-```bash
-git clone https://github.com/Rushit004/data-science-journey-campusx.git
-pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab jupyter lab
+## Clone and run locally:
+
+1. Create a new folder on your system and open it in the terminal.
+
+2. Clone the repository:
+
 ```
+git clone https://github.com/Rushit004/data-science-journey-campusx.git
+```
+
+3. Move into the project folder:
+
+```
+cd data-science-journey-campusx
+```
+
+4. Install the required libraries:
+
+```
+pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab
+```
+
+5. Launch Jupyter Lab:
+
+```
+jupyter lab
+```
+
+After running the above commands, Jupyter Lab will open in your browser, where you can explore all the notebooks and work.
+
 
 ---
 
