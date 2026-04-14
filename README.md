@@ -71,11 +71,11 @@ NumPy  ·  Pandas  ·  Matplotlib  ·  Seaborn  ·  Scikit-learn
 
 Clone and run locally:
 
+
+### Create New folder and open it in terminal then run below command 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
-cd YOUR-REPO-NAME
-pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab
-jupyter lab
+git clone https://github.com/Rushit004/data-science-journey-campusx.git
+pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab jupyter lab
 ```
 
 ---
