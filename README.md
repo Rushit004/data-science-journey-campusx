@@ -9,9 +9,8 @@
 
 ---
 
-## What makes this repo different
+## How this repository reflects my learning
 
-Most learning repos are just downloaded notebooks. In this one:
 
 - I write notes **in my own words** before watching the solution video
 
