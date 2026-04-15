@@ -110,7 +110,7 @@ After running the above commands, Jupyter Lab will open in your browser, where y
 
 🔗 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) 
 
-🔗 [Redirect to my GitHub profile](https://github.com/Rushit004)
+🔗 [GitHub profile](https://github.com/Rushit004)
 
 ---
 
