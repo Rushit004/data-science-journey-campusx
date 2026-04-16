@@ -42,8 +42,8 @@
 ```
 /
 ├── 01-python-basics/
-│   ├── notes/        ← My concept notes (.ipynb)
-│   └── tasks/        ← Task solutions with my reasoning comments
+│   ├── notes/       
+│   └── tasks/        
 ├── 02-numpy/
 ├── 03-pandas/
 ├── 04-data-visualization/
