@@ -9,9 +9,8 @@
 
 ---
 
-## What makes this repo different
+## How this repository reflects my learning
 
-Most learning repos are just downloaded notebooks. In this one:
 
 - I write notes **in my own words** before watching the solution video
 
@@ -28,7 +27,7 @@ Most learning repos are just downloaded notebooks. In this one:
 | Module | Lectures | Tasks Solved | Status |
 |---|---|---|---|
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
-| NumPy | 8 / 8 | 8 / 8 | ✅ Complete |
+| NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
 | Pandas | 3 / 11 | 3 / 11 | 🔄 In progress |
 | Data Visualization | 0 / 9 | — | ⏳ Upcoming |
 | Statistics | 0 / 14 | — | ⏳ Upcoming |
@@ -43,8 +42,8 @@ Most learning repos are just downloaded notebooks. In this one:
 ```
 /
 ├── 01-python-basics/
-│   ├── notes/        ← My concept notes (.ipynb)
-│   └── tasks/        ← Task solutions with my reasoning comments
+│   ├── notes/       
+│   └── tasks/        
 ├── 02-numpy/
 ├── 03-pandas/
 ├── 04-data-visualization/
@@ -57,7 +56,7 @@ Most learning repos are just downloaded notebooks. In this one:
 
 ## A few things I found genuinely interesting so far
 
-- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](./02-numpy/notes/S14_Advanced_Numpy.ipynb)
+- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
 
 - Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
 
@@ -70,14 +69,38 @@ Python 3.11  ·  Jupyter Notebook / JupyterLab / Google Colab
 NumPy  ·  Pandas  ·  Matplotlib  ·  Seaborn  ·  Scikit-learn
 ```
 
-Clone and run locally:
 
-```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
-cd YOUR-REPO-NAME
+
+## Clone and run locally:
+
+1. Create a new folder on your system and open it in the terminal.
+
+2. Clone the repository:
+
+```
+git clone https://github.com/Rushit004/data-science-journey-campusx.git
+```
+
+3. Move into the project folder:
+
+```
+cd data-science-journey-campusx
+```
+
+4. Install the required libraries:
+
+```
 pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab
+```
+
+5. Launch Jupyter Lab:
+
+```
 jupyter lab
 ```
+
+After running the above commands, Jupyter Lab will open in your browser, where you can explore all the notebooks and work.
+
 
 ---
 
@@ -85,7 +108,9 @@ jupyter lab
 
 2nd year B.Tech (Computer Science) at Nirma University, Ahmedabad. Building toward a career in data science and machine learning — specifically interested in models that ship to real users, not just notebooks.
 
-📎 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) · [GitHub](https://github.com/Rushit004)
+🔗 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) 
+
+🔗 [GitHub profile](https://github.com/Rushit004)
 
 ---
 
