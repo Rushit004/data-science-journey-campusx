@@ -30,6 +30,7 @@
 | NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
 | Pandas | 3 / 11 | 3 / 11 | 🔄 In progress |
 | Data Visualization | 0 / 9 | — | ⏳ Upcoming |
+| SQL | 7 / 9 | 6 / 9  | 🔄 In progress |
 | Statistics | 0 / 14 | — | ⏳ Upcoming |
 | Machine Learning | 0 / 40+ | — | ⏳ Upcoming |
 
@@ -48,7 +49,8 @@
 ├── 03-pandas/
 ├── 04-data-visualization/
 ├── 05-statistics/
-├── 06-machine-learning/
+├── 06-SQL/
+├── 07-machine-learning/
 └── datasets/
 ```
 
