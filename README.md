@@ -28,7 +28,7 @@
 |---|---|---|---|
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
 | NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
-| Pandas | 3 / 11 | 3 / 11 | 🔄 In progress |
+| Pandas | 3 / 7 | 3 / 7 | 🔄 In progress |
 | matplotlib | 2 / 2 | 2 / 2 | ✅ Complete |
 | seaborn | 2 / 2 | - | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
