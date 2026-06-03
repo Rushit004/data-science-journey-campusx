@@ -29,12 +29,13 @@
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
 | NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
 | Pandas | 3 / 11 | 3 / 11 | 🔄 In progress |
-| Data Visualization | 0 / 9 | — | ⏳ Upcoming |
+| matplotlib | 2 / 2 | 2 / 2 | ✅ Complete |
+| seaborn | 2 / 2 | - | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
-| Statistics | 0 / 14 | — | ⏳ Upcoming |
+| Statistics | 1 / 14 | — | 🔄 In progress |
 | Machine Learning | 0 / 40+ | — | ⏳ Upcoming |
 
-> Last updated: March 2026
+> Last updated: May 2026
 
 ---
 
@@ -47,10 +48,11 @@
 │   └── tasks/        
 ├── 02-numpy/
 ├── 03-pandas/
-├── 04-data-visualization/
-├── 05-statistics/
+├── 04-matplotlib/
+├── 05-seaborn/
 ├── 06-SQL/
-├── 07-machine-learning/
+├── 07-statistics/
+├── 08-machine-learning/
 └── datasets/
 ```
 
