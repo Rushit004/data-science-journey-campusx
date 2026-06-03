@@ -31,6 +31,7 @@
 | Pandas | 3 / 7 | 3 / 7 | 🔄 In progress |
 | matplotlib | 2 / 2 | 2 / 2 | ✅ Complete |
 | seaborn | 2 / 2 | - | ⏳ Upcoming  |
+| Data Analysis Process | 0 / 3 | 0 / 3 | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
 | Statistics | 1 / 14 | — | 🔄 In progress |
 | Machine Learning | 0 / 40+ | — | ⏳ Upcoming |
@@ -50,9 +51,10 @@
 ├── 03-pandas/
 ├── 04-matplotlib/
 ├── 05-seaborn/
-├── 06-SQL/
-├── 07-statistics/
-├── 08-machine-learning/
+├── 06-data-analysis-process/
+├── 07-SQL/
+├── 08-statistics/
+├── 09-machine-learning/
 └── datasets/
 ```
 
