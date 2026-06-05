@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matplotlib & Seaborn — Complete Graph Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --border2: #252d3d;
+    --mpl-primary: #ff6b35;
+    --mpl-glow: rgba(255,107,53,0.15);
+    --mpl-dim: rgba(255,107,53,0.08);
+    --sns-primary: #4fc3f7;
+    --sns-glow: rgba(79,195,247,0.15);
+    --sns-dim: rgba(79,195,247,0.08);
+    --tag-bg: #1a2035;
+    --text-primary: #e8ecf4;
+    --text-secondary: #6e7a96;
+    --text-dim: #3a4460;
+    --code-bg: #0d1117;
+    --code-border: #1e2d47;
+    --green: #56e39f;
+    --purple: #b57bee;
+    --yellow: #f9ca24;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── TOP HEADER ─────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+  .logo span:first-child { color: var(--mpl-primary); }
+  .logo span:last-child { color: var(--sns-primary); }
+  .logo em { color: var(--text-secondary); font-style: normal; margin: 0 4px; }
+
+  .search-wrap { position: relative; }
+  #search {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 7px 14px 7px 36px;
+    width: 260px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  #search::placeholder { color: var(--text-dim); }
+  #search:focus { border-color: var(--sns-primary); box-shadow: 0 0 0 3px var(--sns-glow); }
+  .search-icon {
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 0.85rem; pointer-events: none;
+  }
+
+  .stats-bar {
+    display: flex; align-items: center; gap: 1.2rem;
+    font-size: 0.75rem; color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-chip {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 3px 10px;
+  }
+  .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .mpl-dot { background: var(--mpl-primary); box-shadow: 0 0 6px var(--mpl-primary); }
+  .sns-dot { background: var(--sns-primary); box-shadow: 0 0 6px var(--sns-primary); }
+
+  /* ─── LAYOUT ──────────────────────────────────── */
+  .app-layout { display: flex; min-height: calc(100vh - 60px); }
+
+  /* ─── SIDEBAR ─────────────────────────────────── */
+  aside {
+    width: 240px; min-width: 240px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.4rem 0;
+    position: sticky; top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+
+  .nav-section-label {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--text-dim);
+    padding: 0.8rem 1.2rem 0.4rem;
+  }
+
+  .nav-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 1.2rem;
+    font-size: 0.78rem; color: var(--text-secondary);
+    cursor: pointer; border-left: 2px solid transparent;
+    transition: all .15s; text-decoration: none;
+  }
+  .nav-link:hover { color: var(--text-primary); background: var(--surface2); }
+  .nav-link.active-mpl { border-color: var(--mpl-primary); color: var(--mpl-primary); background: var(--mpl-dim); }
+  .nav-link.active-sns { border-color: var(--sns-primary); color: var(--sns-primary); background: var(--sns-dim); }
+
+  .nav-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; font-weight: 600;
+    background: var(--tag-bg);
+    padding: 1px 7px; border-radius: 20px;
+    color: var(--text-dim);
+  }
+
+  /* ─── MAIN ─────────────────────────────────────── */
+  main { flex: 1; padding: 2rem 2.5rem; overflow-x: hidden; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.6rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-pill {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; padding: 4px 12px; border-radius: 20px;
+  }
+  .pill-mpl { background: var(--mpl-dim); color: var(--mpl-primary); border: 1px solid var(--mpl-primary); }
+  .pill-sns { background: var(--sns-dim); color: var(--sns-primary); border: 1px solid var(--sns-primary); }
+
+  .section-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+  .section-count {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--text-dim);
+  }
+
+  .section-block { margin-bottom: 3.5rem; scroll-margin-top: 80px; }
+
+  /* ─── CARD GRID ────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card.mpl:hover { border-color: var(--mpl-primary); box-shadow: 0 8px 32px var(--mpl-glow); }
+  .card.sns:hover { border-color: var(--sns-primary); box-shadow: 0 8px 32px var(--sns-glow); }
+
+  .card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 1rem 1.2rem 0.6rem;
+    gap: .8rem;
+  }
+
+  .card-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.92rem; font-weight: 600;
+    color: var(--text-primary);
+  }
+  .card-name.mpl-color { color: var(--mpl-primary); }
+  .card-name.sns-color { color: var(--sns-primary); }
+
+  .card-tag {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; padding: 2px 9px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .tag-mpl { background: var(--mpl-dim); color: var(--mpl-primary); border: 1px solid rgba(255,107,53,0.3); }
+  .tag-sns { background: var(--sns-dim); color: var(--sns-primary); border: 1px solid rgba(79,195,247,0.3); }
+  .tag-3d { background: rgba(86,227,159,0.08); color: var(--green); border: 1px solid rgba(86,227,159,0.3); }
+  .tag-stat { background: rgba(181,123,238,0.08); color: var(--purple); border: 1px solid rgba(181,123,238,0.3); }
+
+  .card-desc {
+    padding: 0 1.2rem;
+    font-size: 0.8rem; line-height: 1.55;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    padding: 0.6rem 1.2rem;
+  }
+  .meta-chip {
+    font-size: 0.62rem; background: var(--tag-bg);
+    border-radius: 4px; padding: 2px 8px;
+    color: var(--text-dim); border: 1px solid var(--border2);
+  }
+  .meta-chip.use { color: var(--green); background: rgba(86,227,159,0.06); border-color: rgba(86,227,159,0.2); }
+
+  .card-code-wrap {
+    margin: 0 1.2rem 1.2rem;
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .code-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--code-border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; color: var(--text-dim);
+  }
+  .code-dots { display: flex; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; opacity: .7; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  pre.code-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; line-height: 1.7;
+    padding: 10px 14px;
+    overflow-x: auto;
+    color: #abb2bf;
+    white-space: pre;
+  }
+
+  /* Syntax highlight */
+  .kw { color: #c678dd; }
+  .fn { color: #61afef; }
+  .str { color: #98c379; }
+  .num { color: #d19a66; }
+  .cm { color: #5c6370; font-style: italic; }
+  .imp { color: #e06c75; }
+  .var { color: #e5c07b; }
+
+  /* ─── HERO ─────────────────────────────────────── */
+  .hero {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+  .hero-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 0.6rem;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .hero-title .mpl { color: var(--mpl-primary); }
+  .hero-title .sns { color: var(--sns-primary); }
+  .hero-subtitle {
+    margin-top: .8rem;
+    font-size: 0.88rem; color: var(--text-secondary);
+    max-width: 600px; line-height: 1.6;
+  }
+  .hero-links { display: flex; gap: 1rem; margin-top: 1.2rem; flex-wrap: wrap; }
+  .doc-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; font-weight: 600; padding: 7px 14px;
+    border-radius: 7px; text-decoration: none; transition: all .2s;
+    border: 1px solid;
+  }
+  .btn-mpl { color: var(--mpl-primary); border-color: rgba(255,107,53,0.4); background: var(--mpl-dim); }
+  .btn-mpl:hover { background: rgba(255,107,53,0.2); box-shadow: 0 0 16px var(--mpl-glow); }
+  .btn-sns { color: var(--sns-primary); border-color: rgba(79,195,247,0.4); background: var(--sns-dim); }
+  .btn-sns:hover { background: rgba(79,195,247,0.2); box-shadow: 0 0 16px var(--sns-glow); }
+
+  /* ─── TABS (Library Toggle) ────────────────────── */
+  .lib-tabs {
+    display: flex; gap: 0; margin-bottom: 2.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 9px; padding: 3px; width: fit-content;
+  }
+  .lib-tab {
+    font-size: 0.8rem; font-weight: 700;
+    padding: 8px 22px; border-radius: 7px;
+    cursor: pointer; transition: all .2s;
+    color: var(--text-secondary); background: transparent;
+    border: none; font-family: 'Syne', sans-serif;
+  }
+  .lib-tab.active-mpl { background: var(--mpl-dim); color: var(--mpl-primary); }
+  .lib-tab.active-sns { background: var(--sns-dim); color: var(--sns-primary); }
+  .lib-tab.active-both {
+    background: linear-gradient(135deg, var(--mpl-dim), var(--sns-dim));
+    color: var(--text-primary);
+  }
+  .lib-tab:hover:not(.active-mpl):not(.active-sns):not(.active-both) {
+    color: var(--text-primary); background: var(--surface2);
+  }
+
+  /* ─── FILTER CHIPS ─────────────────────────────── */
+  .filter-row {
+    display: flex; flex-wrap: wrap; gap: 7px;
+    margin-bottom: 1.5rem;
+  }
+  .filter-chip {
+    font-size: 0.7rem; font-weight: 600;
+    padding: 4px 13px; border-radius: 20px;
+    cursor: pointer; border: 1px solid var(--border2);
+    color: var(--text-secondary); background: var(--surface2);
+    transition: all .15s; font-family: 'Syne', sans-serif;
+  }
+  .filter-chip:hover { color: var(--text-primary); border-color: var(--text-dim); }
+  .filter-chip.active { color: var(--bg); }
+  .filter-chip.active.cat-all { background: var(--text-secondary); border-color: var(--text-secondary); }
+  .filter-chip.active.cat-basic { background: var(--mpl-primary); border-color: var(--mpl-primary); }
+  .filter-chip.active.cat-stats { background: var(--purple); border-color: var(--purple); }
+  .filter-chip.active.cat-grid { background: var(--green); border-color: var(--green); }
+  .filter-chip.active.cat-3d { background: var(--yellow); border-color: var(--yellow); }
+  .filter-chip.active.cat-rel { background: var(--sns-primary); border-color: var(--sns-primary); }
+  .filter-chip.active.cat-dist { background: #8b5cf6; border-color: #8b5cf6; }
+  .filter-chip.active.cat-cat { background: #f59e0b; border-color: #f59e0b; }
+  .filter-chip.active.cat-reg { background: #ef4444; border-color: #ef4444; }
+  .filter-chip.active.cat-mat { background: #10b981; border-color: #10b981); }
+  .filter-chip.active.cat-multi { background: #ec4899; border-color: #ec4899; }
+
+  .hidden-card { display: none !important; }
+
+  /* ─── NO RESULTS ───────────────────────────────── */
+  #no-results {
+    display: none; text-align: center;
+    padding: 4rem 2rem; color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  /* ─── SCROLLBAR ────────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ─── RESPONSIVE ───────────────────────────────── */
+  @media (max-width: 900px) {
+    aside { display: none; }
+    .card-grid { grid-template-columns: 1fr; }
+    main { padding: 1.2rem; }
+    .stats-bar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <span>matplotlib</span>
+    <em>&</em>
+    <span>seaborn</span>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="search" placeholder="Search charts…" autocomplete="off">
+  </div>
+  <div class="stats-bar">
+    <div class="stat-chip"><span class="stat-dot mpl-dot"></span> Matplotlib · 38 charts</div>
+    <div class="stat-chip"><span class="stat-dot sns-dot"></span> Seaborn · 22 charts</div>
+  </div>
+</header>
+
+<div class="app-layout">
+
+<!-- ══ SIDEBAR ════════════════════════════════════ -->
+<aside>
+  <div class="nav-section-label">Matplotlib</div>
+  <a class="nav-link" onclick="scrollTo('mpl-basic')">Pairwise / Basic <span class="nav-badge">7</span></a>
+  <a class="nav-link" onclick="scrollTo('mpl-stats')">Statistical Distributions <span class="nav-badge">9</span></a>
+  <a class="nav-link" onclick="scrollTo('mpl-grid')">Gridded Data <span class="nav-badge">7</span></a>
+  <a class="nav-link" onclick="scrollTo('mpl-irreg')">Irregular Grids <span class="nav-badge">4</span></a>
+  <a class="nav-link" onclick="scrollTo('mpl-3d')">3D &amp; Volumetric <span class="nav-badge">10</span></a>
+  <a class="nav-link" onclick="scrollTo('mpl-special')">Special / Misc <span class="nav-badge">6</span></a>
+
+  <div class="nav-section-label" style="margin-top:1rem;">Seaborn</div>
+  <a class="nav-link" onclick="scrollTo('sns-rel')">Relational Plots <span class="nav-badge">3</span></a>
+  <a class="nav-link" onclick="scrollTo('sns-dist')">Distribution Plots <span class="nav-badge">5</span></a>
+  <a class="nav-link" onclick="scrollTo('sns-cat')">Categorical Plots <span class="nav-badge">8</span></a>
+  <a class="nav-link" onclick="scrollTo('sns-reg')">Regression Plots <span class="nav-badge">3</span></a>
+  <a class="nav-link" onclick="scrollTo('sns-mat')">Matrix Plots <span class="nav-badge">2</span></a>
+  <a class="nav-link" onclick="scrollTo('sns-multi')">Multi-plot Grids <span class="nav-badge">3</span></a>
+
+  <div class="nav-section-label" style="margin-top:1rem;">References</div>
+  <a class="nav-link" href="https://matplotlib.org/stable/plot_types/index.html" target="_blank" style="color:var(--mpl-primary);">↗ Matplotlib Docs</a>
+  <a class="nav-link" href="https://seaborn.pydata.org/api.html" target="_blank" style="color:var(--sns-primary);">↗ Seaborn API</a>
+</aside>
+
+<!-- ══ MAIN ════════════════════════════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-kicker">// complete reference guide</p>
+    <h1 class="hero-title">
+      <span class="mpl">Matplotlib</span> &amp; <span class="sns">Seaborn</span><br>
+      Graph Types
+    </h1>
+    <p class="hero-subtitle">
+      Every chart type across both libraries — with use cases, syntax, and applications.
+      Sourced from official documentation and organized by category.
+    </p>
+    <div class="hero-links">
+      <a class="doc-btn btn-mpl" href="https://matplotlib.org/stable/plot_types/index.html" target="_blank">↗ matplotlib.org/stable/plot_types</a>
+      <a class="doc-btn btn-sns" href="https://seaborn.pydata.org/api.html" target="_blank">↗ seaborn.pydata.org/api</a>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="lib-tabs">
+    <button class="lib-tab active-both" onclick="filterLib('all')">All (60)</button>
+    <button class="lib-tab" onclick="filterLib('mpl')">Matplotlib (38)</button>
+    <button class="lib-tab" onclick="filterLib('sns')">Seaborn (22)</button>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="filter-row">
+    <span class="filter-chip active cat-all" data-cat="all">All Categories</span>
+    <span class="filter-chip cat-basic" data-cat="basic">Basic / Pairwise</span>
+    <span class="filter-chip cat-stats" data-cat="stats">Statistical</span>
+    <span class="filter-chip cat-grid" data-cat="grid">Gridded</span>
+    <span class="filter-chip cat-3d" data-cat="3d">3D &amp; Volumetric</span>
+    <span class="filter-chip cat-rel" data-cat="rel">Relational</span>
+    <span class="filter-chip cat-dist" data-cat="dist">Distribution</span>
+    <span class="filter-chip cat-cat" data-cat="cat">Categorical</span>
+    <span class="filter-chip cat-reg" data-cat="reg">Regression</span>
+    <span class="filter-chip cat-mat" data-cat="mat">Matrix</span>
+    <span class="filter-chip cat-multi" data-cat="multi">Multi-Grid</span>
+  </div>
+
+  <div id="no-results">No charts match your search or filter.</div>
+
+  <!-- ═══════════════════════════════════════════════
+       MATPLOTLIB
+       ═══════════════════════════════════════════════ -->
+
+  <!-- ── MPL: PAIRWISE / BASIC ─────────────────── -->
+  <div class="section-block" id="mpl-basic">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">Pairwise &amp; Basic Data</h2>
+      <span class="section-count">7 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <!-- 1. Line Plot -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="line plot plt.plot">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.plot(x, y)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Connects data points with lines. The most fundamental chart for displaying trends, time series, or functional relationships between two continuous variables.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📈 Time Series</span>
+          <span class="meta-chip use">📉 Trends</span>
+          <span class="meta-chip use">🔢 Functions</span>
+          <span class="meta-chip">Stock prices</span>
+          <span class="meta-chip">Temperature over time</span>
+          <span class="meta-chip">Signal waveforms</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="imp">import</span> matplotlib.pyplot <span class="imp">as</span> <span class="var">plt</span>
+<span class="imp">import</span> numpy <span class="imp">as</span> <span class="var">np</span>
+
+<span class="var">x</span> = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">100</span>)
+<span class="var">y</span> = np.<span class="fn">sin</span>(x)
+
+plt.<span class="fn">plot</span>(x, y, color=<span class="str">'steelblue'</span>, linewidth=<span class="num">2</span>, label=<span class="str">'sin(x)'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'X'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Y'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Line Plot'</span>); plt.<span class="fn">legend</span>(); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 2. Scatter -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="scatter plot plt.scatter">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.scatter(x, y)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Plots individual data points as markers. Ideal for revealing correlations, clusters, and outliers between two continuous variables without connecting them.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🔵 Correlation</span>
+          <span class="meta-chip use">🔍 Clustering</span>
+          <span class="meta-chip use">⚠ Outliers</span>
+          <span class="meta-chip">Height vs. Weight</span>
+          <span class="meta-chip">ML feature space</span>
+          <span class="meta-chip">Survey data</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span> = np.<span class="fn">random.randn</span>(<span class="num">100</span>)
+<span class="var">y</span> = <span class="num">2</span>*x + np.<span class="fn">random.randn</span>(<span class="num">100</span>)
+<span class="var">colors</span> = np.<span class="fn">abs</span>(x)  <span class="cm"># color by value</span>
+
+plt.<span class="fn">scatter</span>(x, y, c=colors, cmap=<span class="str">'viridis'</span>,
+           s=<span class="num">60</span>, alpha=<span class="num">0.7</span>)
+plt.<span class="fn">colorbar</span>(label=<span class="str">'Intensity'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Scatter Plot'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 3. Bar Chart -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="bar chart plt.bar">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.bar(x, height)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Rectangular bars of height proportional to values. Perfect for comparing discrete categories or groups side-by-side. Use <code style="color:var(--mpl-primary)">plt.barh()</code> for horizontal bars.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📊 Comparison</span>
+          <span class="meta-chip use">🗂 Categories</span>
+          <span class="meta-chip">Sales by region</span>
+          <span class="meta-chip">Survey results</span>
+          <span class="meta-chip">Product performance</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">categories</span> = [<span class="str">'Q1'</span>, <span class="str">'Q2'</span>, <span class="str">'Q3'</span>, <span class="str">'Q4'</span>]
+<span class="var">values</span>     = [<span class="num">42</span>, <span class="num">58</span>, <span class="num">73</span>, <span class="num">91</span>]
+
+plt.<span class="fn">bar</span>(categories, values, color=<span class="str">'#ff6b35'</span>,
+       edgecolor=<span class="str">'white'</span>, linewidth=<span class="num">0.5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Quarterly Sales'</span>); plt.<span class="fn">show</span>()
+
+<span class="cm"># Horizontal: plt.barh(categories, values)</span></pre>
+        </div>
+      </div>
+
+      <!-- 4. Stem Plot -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="stem plot plt.stem discrete signal">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.stem(x, y)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Draws vertical lines (stems) from baseline to data points topped with markers. Excellent for discrete signal and digital data visualization where individual samples matter.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📡 Signal Processing</span>
+          <span class="meta-chip use">🔢 Discrete Sequences</span>
+          <span class="meta-chip">DSP samples</span>
+          <span class="meta-chip">Impulse responses</span>
+          <span class="meta-chip">Spectral analysis</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">n</span> = np.<span class="fn">arange</span>(<span class="num">0</span>, <span class="num">20</span>)
+<span class="var">y</span> = np.<span class="fn">cos</span>(n * <span class="num">0.4</span>) * np.<span class="fn">exp</span>(-n * <span class="num">0.1</span>)
+
+plt.<span class="fn">stem</span>(n, y, linefmt=<span class="str">'steelblue'</span>,
+         markerfmt=<span class="str">'o'</span>, basefmt=<span class="str">'gray'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Discrete Signal (Stem)'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 5. Fill Between -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="fill between area chart plt.fill_between">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.fill_between(x, y1, y2)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Fills the area between two curves or between a curve and a baseline. Great for confidence intervals, uncertainty bands, and range highlighting.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📐 Confidence Intervals</span>
+          <span class="meta-chip use">🌡 Ranges</span>
+          <span class="meta-chip">Forecast uncertainty</span>
+          <span class="meta-chip">Min/Max bands</span>
+          <span class="meta-chip">Area charts</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span>  = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">200</span>)
+<span class="var">y1</span> = np.<span class="fn">sin</span>(x) + <span class="num">0.5</span>  <span class="cm"># upper bound</span>
+<span class="var">y2</span> = np.<span class="fn">sin</span>(x) - <span class="num">0.5</span>  <span class="cm"># lower bound</span>
+
+plt.<span class="fn">fill_between</span>(x, y1, y2,
+    alpha=<span class="num">0.3</span>, color=<span class="str">'royalblue'</span>, label=<span class="str">'95% CI'</span>)
+plt.<span class="fn">plot</span>(x, np.<span class="fn">sin</span>(x), color=<span class="str">'royalblue'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 6. Stack Plot -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="stackplot stacked area plt.stackplot">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.stackplot(x, y)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Stacked area chart where multiple series are stacked on top of each other. Shows both individual contributions and the total over a continuous domain.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📦 Part-to-Whole</span>
+          <span class="meta-chip use">📅 Time Evolution</span>
+          <span class="meta-chip">Market share over time</span>
+          <span class="meta-chip">Resource allocation</span>
+          <span class="meta-chip">Revenue breakdown</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span>  = [<span class="num">2020</span>, <span class="num">2021</span>, <span class="num">2022</span>, <span class="num">2023</span>]
+<span class="var">y1</span> = [<span class="num">30</span>, <span class="num">35</span>, <span class="num">40</span>, <span class="num">50</span>]  <span class="cm"># Product A</span>
+<span class="var">y2</span> = [<span class="num">20</span>, <span class="num">25</span>, <span class="num">30</span>, <span class="num">28</span>]  <span class="cm"># Product B</span>
+<span class="var">y3</span> = [<span class="num">10</span>, <span class="num">15</span>, <span class="num">12</span>, <span class="num">18</span>]  <span class="cm"># Product C</span>
+
+plt.<span class="fn">stackplot</span>(x, y1, y2, y3,
+    labels=[<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="str">'C'</span>], alpha=<span class="num">0.8</span>)
+plt.<span class="fn">legend</span>(loc=<span class="str">'upper left'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 7. Stairs -->
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="stairs step plot plt.stairs">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.stairs(values)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Draws a step function connecting constant value segments. Useful for histograms without bars, cumulative distributions, and event-driven processes where values change in discrete steps.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📶 Step Functions</span>
+          <span class="meta-chip use">🔢 Piecewise Constant</span>
+          <span class="meta-chip">Histogram outline</span>
+          <span class="meta-chip">Queue length over time</span>
+          <span class="meta-chip">State machine history</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">vals</span>  = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">2</span>, <span class="num">5</span>, <span class="num">4</span>, <span class="num">6</span>]
+<span class="var">edges</span> = np.<span class="fn">arange</span>(<span class="num">7</span>)  <span class="cm"># bin edges</span>
+
+plt.<span class="fn">stairs</span>(vals, edges, fill=<span class="kw">True</span>,
+          color=<span class="str">'teal'</span>, alpha=<span class="num">0.5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Staircase Plot'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MPL: STATISTICAL DISTRIBUTIONS ──────────── -->
+  <div class="section-block" id="mpl-stats">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">Statistical Distributions</h2>
+      <span class="section-count">9 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <!-- Histogram -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="histogram plt.hist distribution">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.hist(x)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Divides data into bins and plots frequency counts as bars. The go-to tool for visualizing a variable's distribution, identifying skewness, peaks, and spread.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📊 Distribution Shape</span>
+          <span class="meta-chip use">🔍 Skewness</span>
+          <span class="meta-chip">Test scores</span>
+          <span class="meta-chip">Pixel intensities</span>
+          <span class="meta-chip">Measurement errors</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">data</span> = np.<span class="fn">random.normal</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1000</span>)
+
+plt.<span class="fn">hist</span>(data, bins=<span class="num">30</span>, color=<span class="str">'steelblue'</span>,
+        edgecolor=<span class="str">'white'</span>, density=<span class="kw">True</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Value'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Density'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Histogram'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Box Plot -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="box plot plt.boxplot quartile">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.boxplot(X)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Summarizes distribution using five statistics: minimum, Q1, median, Q3, maximum. Box whiskers show spread; dots mark outliers. Perfect for comparing distributions across groups.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📦 Five-number Summary</span>
+          <span class="meta-chip use">🔄 Group Comparison</span>
+          <span class="meta-chip">Salary by department</span>
+          <span class="meta-chip">A/B test results</span>
+          <span class="meta-chip">Quality control</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">data</span> = [np.<span class="fn">random.normal</span>(i, <span class="num">1</span>, <span class="num">100</span>)
+        <span class="kw">for</span> i <span class="kw">in</span> [<span class="num">0</span>, <span class="num">2</span>, <span class="num">4</span>]]
+
+fig, ax = plt.<span class="fn">subplots</span>()
+ax.<span class="fn">boxplot</span>(data, labels=[<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="str">'C'</span>],
+           patch_artist=<span class="kw">True</span>,
+           boxprops=<span class="fn">dict</span>(facecolor=<span class="str">'lightblue'</span>))
+plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Error Bar -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="errorbar plt.errorbar confidence measurement error">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.errorbar(x, y, yerr, xerr)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Plots points with error bars indicating uncertainty or variability. Essential for scientific data where measurement precision or confidence intervals must be communicated.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">⚗ Scientific Data</span>
+          <span class="meta-chip use">📏 Uncertainty</span>
+          <span class="meta-chip">Experimental results</span>
+          <span class="meta-chip">Survey margins</span>
+          <span class="meta-chip">Model predictions</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span>    = np.<span class="fn">arange</span>(<span class="num">1</span>, <span class="num">6</span>)
+<span class="var">y</span>    = [<span class="num">2.3</span>, <span class="num">3.1</span>, <span class="num">4.8</span>, <span class="num">3.5</span>, <span class="num">5.2</span>]
+<span class="var">yerr</span> = [<span class="num">0.4</span>, <span class="num">0.3</span>, <span class="num">0.6</span>, <span class="num">0.5</span>, <span class="num">0.2</span>]
+
+plt.<span class="fn">errorbar</span>(x, y, yerr=yerr, fmt=<span class="str">'o-'</span>,
+            capsize=<span class="num">5</span>, color=<span class="str">'royalblue'</span>,
+            ecolor=<span class="str">'gray'</span>, elinewidth=<span class="num">2</span>)
+plt.<span class="fn">title</span>(<span class="str">'Error Bar Plot'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Violin -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="violin plot plt.violinplot kde distribution">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.violinplot(D)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Combines KDE density estimation with a box plot. The symmetric violin shape shows the full probability distribution, revealing bimodality and detailed distributional structure.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🎻 Full Distribution</span>
+          <span class="meta-chip use">🔀 Bimodal Data</span>
+          <span class="meta-chip">Gene expression</span>
+          <span class="meta-chip">Income distribution</span>
+          <span class="meta-chip">Response times</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">data</span> = [np.<span class="fn">random.normal</span>(m, <span class="num">0.8</span>, <span class="num">200</span>)
+        <span class="kw">for</span> m <span class="kw">in</span> [<span class="num">0</span>, <span class="num">2</span>, <span class="num">4</span>, <span class="num">6</span>]]
+
+fig, ax = plt.<span class="fn">subplots</span>()
+<span class="var">vp</span> = ax.<span class="fn">violinplot</span>(data, showmeans=<span class="kw">True</span>)
+<span class="kw">for</span> body <span class="kw">in</span> vp[<span class="str">'bodies'</span>]:
+    body.<span class="fn">set_alpha</span>(<span class="num">0.7</span>)
+plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Event Plot -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="event plot plt.eventplot spike raster">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.eventplot(D)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Displays collections of events as parallel vertical lines (like a raster plot). Standard in neuroscience for visualizing spike trains and in physics for particle events.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🧠 Neuroscience</span>
+          <span class="meta-chip use">⚡ Spike Trains</span>
+          <span class="meta-chip">Neuron firing</span>
+          <span class="meta-chip">Click timestamps</span>
+          <span class="meta-chip">Event logs</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="cm"># Simulate 4 neurons spiking</span>
+<span class="var">spikes</span> = [np.<span class="fn">sort</span>(np.<span class="fn">random.uniform</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">50</span>))
+          <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>)]
+
+plt.<span class="fn">eventplot</span>(spikes, orientation=<span class="str">'horizontal'</span>,
+             colors=[<span class="str">'r'</span>,<span class="str">'g'</span>,<span class="str">'b'</span>,<span class="str">'orange'</span>],
+             linewidths=<span class="num">1.5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Raster Plot'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- 2D Histogram -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="hist2d 2d histogram density plt.hist2d bivariate">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.hist2d(x, y)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">A 2D histogram that divides the x-y plane into rectangular bins and color-codes the count in each. Better than scatter for very large datasets with overplotting issues.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🗺 Joint Distribution</span>
+          <span class="meta-chip use">🔢 Large Datasets</span>
+          <span class="meta-chip">User click heatmaps</span>
+          <span class="meta-chip">Astrophysics data</span>
+          <span class="meta-chip">GPS density</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span> = np.<span class="fn">random.normal</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">10000</span>)
+<span class="var">y</span> = np.<span class="fn">random.normal</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">10000</span>)
+
+plt.<span class="fn">hist2d</span>(x, y, bins=<span class="num">50</span>, cmap=<span class="str">'plasma'</span>)
+plt.<span class="fn">colorbar</span>(label=<span class="str">'Count'</span>)
+plt.<span class="fn">title</span>(<span class="str">'2D Histogram'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Hexbin -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="hexbin plt.hexbin hex bin density large data">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.hexbin(x, y, C)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Aggregates scatter data into hexagonal bins, color-coding each by count or custom aggregation. Hexagons tile without gaps and are perceptually less biased than squares for spatial data.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🔷 Spatial Density</span>
+          <span class="meta-chip use">📍 Geospatial</span>
+          <span class="meta-chip">City density maps</span>
+          <span class="meta-chip">Transaction hotspots</span>
+          <span class="meta-chip">Million-point scatter</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span> = np.<span class="fn">random.randn</span>(<span class="num">50000</span>)
+<span class="var">y</span> = np.<span class="fn">random.randn</span>(<span class="num">50000</span>)
+
+<span class="var">hb</span> = plt.<span class="fn">hexbin</span>(x, y, gridsize=<span class="num">30</span>,
+               cmap=<span class="str">'inferno'</span>)
+plt.<span class="fn">colorbar</span>(hb, label=<span class="str">'Count'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Hexbin Plot'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="pie chart plt.pie proportion percentage">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.pie(x)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Circular chart divided into slices proportional to values. Best for showing part-to-whole relationships with a small number of categories (≤ 6). Use sparingly; bar charts are often clearer.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">🥧 Part-to-Whole</span>
+          <span class="meta-chip use">📊 Proportions</span>
+          <span class="meta-chip">Market share</span>
+          <span class="meta-chip">Budget allocation</span>
+          <span class="meta-chip">Survey responses</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">sizes</span>   = [<span class="num">35</span>, <span class="num">25</span>, <span class="num">20</span>, <span class="num">15</span>, <span class="num">5</span>]
+<span class="var">labels</span>  = [<span class="str">'Python'</span>,<span class="str">'JS'</span>,<span class="str">'Java'</span>,<span class="str">'C++'</span>,<span class="str">'Other'</span>]
+<span class="var">explode</span> = [<span class="num">0.05</span>]*<span class="num">5</span>
+
+plt.<span class="fn">pie</span>(sizes, labels=labels, explode=explode,
+       autopct=<span class="str">'%1.1f%%'</span>, startangle=<span class="num">90</span>)
+plt.<span class="fn">title</span>(<span class="str">'Language Popularity'</span>); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+      <!-- ECDF -->
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="ecdf empirical cumulative distribution function plt.ecdf">
+        <div class="card-top">
+          <span class="card-name mpl-color">plt.ecdf(x)</span>
+          <span class="card-tag tag-mpl">Matplotlib</span>
+        </div>
+        <p class="card-desc">Empirical Cumulative Distribution Function. Shows the proportion of data below any given value without binning assumptions. Useful for comparing two distributions directly.</p>
+        <div class="card-meta">
+          <span class="meta-chip use">📈 CDF</span>
+          <span class="meta-chip use">🔀 Distribution Comparison</span>
+          <span class="meta-chip">Latency percentiles</span>
+          <span class="meta-chip">Test score ranks</span>
+          <span class="meta-chip">Quality thresholds</span>
+        </div>
+        <div class="card-code-wrap">
+          <div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">data</span> = np.<span class="fn">random.normal</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">500</span>)
+
+<span class="cm"># Available since matplotlib 3.8+</span>
+plt.<span class="fn">ecdf</span>(data, label=<span class="str">'Group A'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Value'</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">'Cumulative Probability'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MPL: GRIDDED DATA ───────────────────────── -->
+  <div class="section-block" id="mpl-grid">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">Gridded Data</h2>
+      <span class="section-count">7 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="imshow image heatmap plt.imshow matrix">
+        <div class="card-top"><span class="card-name mpl-color">plt.imshow(Z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Displays matrix or image data as a colored pixel grid. The primary function for showing images, correlation matrices, confusion matrices, and any 2D array data.</p>
+        <div class="card-meta"><span class="meta-chip use">🖼 Images</span><span class="meta-chip use">🔢 Matrices</span><span class="meta-chip">Confusion matrix</span><span class="meta-chip">Correlation matrix</span><span class="meta-chip">Image processing</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">Z</span> = np.<span class="fn">random.rand</span>(<span class="num">10</span>, <span class="num">10</span>)
+plt.<span class="fn">imshow</span>(Z, cmap=<span class="str">'viridis'</span>,
+           interpolation=<span class="str">'nearest'</span>)
+plt.<span class="fn">colorbar</span>(); plt.<span class="fn">title</span>(<span class="str">'imshow'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="pcolormesh pseudo color mesh plt.pcolormesh grid">
+        <div class="card-top"><span class="card-name mpl-color">plt.pcolormesh(X, Y, Z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Creates a pseudocolor plot of a 2D array on a non-uniform grid. Like imshow but works on arbitrary (possibly non-rectangular) coordinate grids. Preferred over pcolor for performance.</p>
+        <div class="card-meta"><span class="meta-chip use">🌍 Geo Grids</span><span class="meta-chip use">🌡 Field Maps</span><span class="meta-chip">Temperature fields</span><span class="meta-chip">Simulation output</span><span class="meta-chip">Radar data</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">X</span>, <span class="var">Y</span> = np.<span class="fn">meshgrid</span>(np.<span class="fn">linspace</span>(-<span class="num">3</span>,<span class="num">3</span>,<span class="num">50</span>),
+                    np.<span class="fn">linspace</span>(-<span class="num">3</span>,<span class="num">3</span>,<span class="num">50</span>))
+<span class="var">Z</span> = np.<span class="fn">sin</span>(X) * np.<span class="fn">cos</span>(Y)
+plt.<span class="fn">pcolormesh</span>(X, Y, Z, cmap=<span class="str">'RdBu_r'</span>,
+              shading=<span class="str">'auto'</span>)
+plt.<span class="fn">colorbar</span>(); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="contour contour lines plt.contour topographic">
+        <div class="card-top"><span class="card-name mpl-color">plt.contour(X, Y, Z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Draws iso-value contour lines on a 2D scalar field. Classic for topographic maps, pressure isobars in meteorology, and level sets in optimization landscapes.</p>
+        <div class="card-meta"><span class="meta-chip use">🗺 Topography</span><span class="meta-chip use">📈 Level Sets</span><span class="meta-chip">Terrain maps</span><span class="meta-chip">Weather isobars</span><span class="meta-chip">Optimization surface</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">X</span>, <span class="var">Y</span> = np.<span class="fn">meshgrid</span>(np.<span class="fn">linspace</span>(-<span class="num">2</span>,<span class="num">2</span>,<span class="num">100</span>),
+                    np.<span class="fn">linspace</span>(-<span class="num">2</span>,<span class="num">2</span>,<span class="num">100</span>))
+<span class="var">Z</span> = X**<span class="num">2</span> + Y**<span class="num">2</span>
+<span class="var">cs</span> = plt.<span class="fn">contour</span>(X, Y, Z, levels=<span class="num">10</span>)
+plt.<span class="fn">clabel</span>(cs, inline=<span class="kw">True</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="contourf filled contour plt.contourf">
+        <div class="card-top"><span class="card-name mpl-color">plt.contourf(X, Y, Z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Filled contour plot — same as contour but with solid color fills between levels. Ideal for showing continuous field strength visually; widely used in climate and fluid simulations.</p>
+        <div class="card-meta"><span class="meta-chip use">🌈 Field Strength</span><span class="meta-chip use">🌊 Fluid Flow</span><span class="meta-chip">Pressure maps</span><span class="meta-chip">Heat diffusion</span><span class="meta-chip">ML decision regions</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">Z</span> = np.<span class="fn">sin</span>(X) + np.<span class="fn">cos</span>(Y)
+plt.<span class="fn">contourf</span>(X, Y, Z, levels=<span class="num">20</span>,
+            cmap=<span class="str">'coolwarm'</span>)
+plt.<span class="fn">colorbar</span>(label=<span class="str">'Amplitude'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Filled Contour'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="quiver vector field arrow plt.quiver">
+        <div class="card-top"><span class="card-name mpl-color">plt.quiver(X, Y, U, V)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Draws arrows on a grid to represent a 2D vector field. Direction and optionally magnitude are encoded. Used in fluid dynamics, electromagnetics, and gradient visualization.</p>
+        <div class="card-meta"><span class="meta-chip use">➡ Vector Fields</span><span class="meta-chip use">🌊 Fluid Dynamics</span><span class="meta-chip">Wind vectors</span><span class="meta-chip">Gradient descent</span><span class="meta-chip">EM fields</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">X</span>, <span class="var">Y</span> = np.<span class="fn">meshgrid</span>(np.<span class="fn">arange</span>(-<span class="num">2</span>,<span class="num">3</span>),
+                    np.<span class="fn">arange</span>(-<span class="num">2</span>,<span class="num">3</span>))
+<span class="var">U</span> = -Y; <span class="var">V</span> = X  <span class="cm"># circular field</span>
+plt.<span class="fn">quiver</span>(X, Y, U, V, color=<span class="str">'teal'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Quiver Plot'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="streamplot streamline plt.streamplot flow">
+        <div class="card-top"><span class="card-name mpl-color">plt.streamplot(X, Y, U, V)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Draws continuous streamlines following a 2D vector field. Unlike quiver, streamlines show flow paths rather than local arrows, making global flow patterns more legible.</p>
+        <div class="card-meta"><span class="meta-chip use">🌊 Flow Patterns</span><span class="meta-chip use">💨 Wind/Fluid</span><span class="meta-chip">Ocean currents</span><span class="meta-chip">Aerodynamics</span><span class="meta-chip">Magnetic field lines</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">Y</span>, <span class="var">X</span> = np.<span class="fn">mgrid</span>[-<span class="num">3</span>:<span class="num">3</span>:<span class="num">100j</span>, -<span class="num">3</span>:<span class="num">3</span>:<span class="num">100j</span>]
+<span class="var">U</span> = -<span class="num">1</span> - X**<span class="num">2</span> + Y
+<span class="var">V</span> = <span class="num">1</span> + X - Y**<span class="num">2</span>
+<span class="var">speed</span> = np.<span class="fn">sqrt</span>(U*U + V*V)
+plt.<span class="fn">streamplot</span>(X, Y, U, V,
+    color=speed, cmap=<span class="str">'autumn'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="barbs wind barbs plt.barbs meteorology">
+        <div class="card-top"><span class="card-name mpl-color">plt.barbs(X, Y, U, V)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Meteorological wind barb symbols that encode both wind direction and speed using a flag-and-feather notation. Standard in weather maps and atmospheric science.</p>
+        <div class="card-meta"><span class="meta-chip use">🌤 Meteorology</span><span class="meta-chip use">💨 Wind Speed/Direction</span><span class="meta-chip">Weather maps</span><span class="meta-chip">Aviation charts</span><span class="meta-chip">Climate models</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">X</span>, <span class="var">Y</span> = np.<span class="fn">meshgrid</span>(np.<span class="fn">arange</span>(<span class="num">0</span>,<span class="num">5</span>),
+                    np.<span class="fn">arange</span>(<span class="num">0</span>,<span class="num">5</span>))
+<span class="var">U</span> = np.<span class="fn">random.uniform</span>(-<span class="num">20</span>,<span class="num">20</span>,X.shape)
+<span class="var">V</span> = np.<span class="fn">random.uniform</span>(-<span class="num">20</span>,<span class="num">20</span>,Y.shape)
+plt.<span class="fn">barbs</span>(X, Y, U, V)
+plt.<span class="fn">title</span>(<span class="str">'Wind Barbs'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MPL: IRREGULAR GRIDS ────────────────────── -->
+  <div class="section-block" id="mpl-irreg">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">Irregularly Gridded Data</h2>
+      <span class="section-count">4 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="tricontour triangular contour plt.tricontour unstructured">
+        <div class="card-top"><span class="card-name mpl-color">plt.tricontour(x, y, z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Contour plot on unstructured triangular mesh data. Used when data comes from irregular sampling (sensors, FEM simulations) rather than a regular grid.</p>
+        <div class="card-meta"><span class="meta-chip use">🔺 FEM Simulations</span><span class="meta-chip use">📡 Sensor Networks</span><span class="meta-chip">Geophysical surveys</span><span class="meta-chip">Structural analysis</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">n</span> = <span class="num">200</span>
+<span class="var">x</span> = np.<span class="fn">random.uniform</span>(-<span class="num">1</span>, <span class="num">1</span>, n)
+<span class="var">y</span> = np.<span class="fn">random.uniform</span>(-<span class="num">1</span>, <span class="num">1</span>, n)
+<span class="var">z</span> = x**<span class="num">2</span> - y**<span class="num">2</span>
+plt.<span class="fn">tricontour</span>(x, y, z, levels=<span class="num">8</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="tricontourf filled triangular contour plt.tricontourf">
+        <div class="card-top"><span class="card-name mpl-color">plt.tricontourf(x, y, z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Filled contour version of tricontour. Produces smooth filled regions on triangulated irregular networks, ideal for environmental data interpolation and geospatial analysis.</p>
+        <div class="card-meta"><span class="meta-chip use">🌍 Environmental Data</span><span class="meta-chip use">🗺 Spatial Interpolation</span><span class="meta-chip">Soil contamination</span><span class="meta-chip">Groundwater levels</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">plt.<span class="fn">tricontourf</span>(x, y, z, levels=<span class="num">10</span>,
+               cmap=<span class="str">'terrain'</span>)
+plt.<span class="fn">colorbar</span>(); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="tripcolor triangular pseudocolor plt.tripcolor">
+        <div class="card-top"><span class="card-name mpl-color">plt.tripcolor(x, y, z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Colors each triangle face by its value in a Delaunay triangulation. Shows raw unsmoothed triangulated data, useful for finite element visualization and debugging mesh quality.</p>
+        <div class="card-meta"><span class="meta-chip use">🔺 FEM Results</span><span class="meta-chip use">🔬 Mesh Visualization</span><span class="meta-chip">Stress analysis</span><span class="meta-chip">CFD results</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">plt.<span class="fn">tripcolor</span>(x, y, z, cmap=<span class="str">'plasma'</span>)
+plt.<span class="fn">colorbar</span>(); plt.<span class="fn">title</span>(<span class="str">'Tripcolor'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="grid" data-name="triplot triangulation mesh plt.triplot">
+        <div class="card-top"><span class="card-name mpl-color">plt.triplot(x, y)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Plots the Delaunay triangulation mesh over scatter data. Used to inspect mesh quality, verify triangulation of sensor placement, and as an overlay with tripcolor/tricontour.</p>
+        <div class="card-meta"><span class="meta-chip use">🔺 Mesh Inspection</span><span class="meta-chip use">🗺 Triangulation</span><span class="meta-chip">Sensor placement</span><span class="meta-chip">Delaunay verification</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">plt.<span class="fn">triplot</span>(x, y, <span class="str">'go-'</span>,
+           linewidth=<span class="num">0.5</span>, markersize=<span class="num">3</span>)
+plt.<span class="fn">title</span>(<span class="str">'Triangulation Mesh'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MPL: 3D ──────────────────────────────────── -->
+  <div class="section-block" id="mpl-3d">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">3D &amp; Volumetric Data</h2>
+      <span class="section-count">10 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="plot surface 3d surface ax.plot_surface">
+        <div class="card-top"><span class="card-name mpl-color">ax.plot_surface(X, Y, Z)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">Renders a 3D surface mesh colored by height or custom values. The most popular 3D chart for mathematical functions, terrain models, and machine learning loss landscapes.</p>
+        <div class="card-meta"><span class="meta-chip use">🏔 Surface Functions</span><span class="meta-chip use">📉 Loss Landscapes</span><span class="meta-chip">Math visualizations</span><span class="meta-chip">Terrain elevation</span><span class="meta-chip">Neural net loss</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="imp">from</span> mpl_toolkits.mplot3d <span class="imp">import</span> Axes3D
+
+fig = plt.<span class="fn">figure</span>(); ax = fig.<span class="fn">add_subplot</span>(<span class="num">111</span>, projection=<span class="str">'3d'</span>)
+<span class="var">X</span>, <span class="var">Y</span> = np.<span class="fn">meshgrid</span>(np.<span class="fn">linspace</span>(-<span class="num">3</span>,<span class="num">3</span>,<span class="num">50</span>), np.<span class="fn">linspace</span>(-<span class="num">3</span>,<span class="num">3</span>,<span class="num">50</span>))
+<span class="var">Z</span> = np.<span class="fn">sin</span>(np.<span class="fn">sqrt</span>(X**<span class="num">2</span>+Y**<span class="num">2</span>))
+ax.<span class="fn">plot_surface</span>(X, Y, Z, cmap=<span class="str">'viridis'</span>, alpha=<span class="num">0.9</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="wireframe 3d ax.plot_wireframe">
+        <div class="card-top"><span class="card-name mpl-color">ax.plot_wireframe(X, Y, Z)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">Renders a 3D surface as a mesh of lines (wireframe) without filled faces. Shows topology more clearly than solid surface for complex shapes; useful for demonstrating structure.</p>
+        <div class="card-meta"><span class="meta-chip use">🔲 Topology</span><span class="meta-chip use">🏗 Structure</span><span class="meta-chip">3D mesh preview</span><span class="meta-chip">Mathematical surfaces</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">ax.<span class="fn">plot_wireframe</span>(X, Y, Z,
+    rstride=<span class="num">2</span>, cstride=<span class="num">2</span>,
+    color=<span class="str">'steelblue'</span>, linewidth=<span class="num">0.5</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="scatter 3d ax.scatter 3D points">
+        <div class="card-top"><span class="card-name mpl-color">ax.scatter(xs, ys, zs)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">3D scatter plot for three-variable relationships. Color and size can encode additional dimensions. Used in multivariate EDA, 3D clustering, and dimensionality reduction visualization.</p>
+        <div class="card-meta"><span class="meta-chip use">🔵 3D Clustering</span><span class="meta-chip use">📊 Multivariate</span><span class="meta-chip">PCA/t-SNE results</span><span class="meta-chip">3D point clouds</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">xs</span> = np.<span class="fn">random.randn</span>(<span class="num">200</span>)
+<span class="var">ys</span> = np.<span class="fn">random.randn</span>(<span class="num">200</span>)
+<span class="var">zs</span> = xs**<span class="num">2</span> + ys**<span class="num">2</span>
+ax.<span class="fn">scatter</span>(xs, ys, zs, c=zs, cmap=<span class="str">'plasma'</span>,
+           s=<span class="num">30</span>, alpha=<span class="num">0.7</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="plot 3d line ax.plot 3D line trajectory">
+        <div class="card-top"><span class="card-name mpl-color">ax.plot(xs, ys, zs)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">3D line plot — connects points in 3D space. Perfect for trajectories, parametric curves, time-evolving paths, and 3D signal traces like helices or Lissajous figures.</p>
+        <div class="card-meta"><span class="meta-chip use">🚀 Trajectories</span><span class="meta-chip use">〰 3D Curves</span><span class="meta-chip">Flight paths</span><span class="meta-chip">Particle tracks</span><span class="meta-chip">Chaotic attractors</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">t</span>  = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">4</span>*np.pi, <span class="num">300</span>)
+<span class="var">xs</span> = np.<span class="fn">cos</span>(t); <span class="var">ys</span> = np.<span class="fn">sin</span>(t); <span class="var">zs</span> = t
+ax.<span class="fn">plot</span>(xs, ys, zs, color=<span class="str">'royalblue'</span>, lw=<span class="num">2</span>)
+ax.<span class="fn">set_title</span>(<span class="str">'3D Helix'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="bar3d 3d bar chart ax.bar3d">
+        <div class="card-top"><span class="card-name mpl-color">ax.bar3d(x,y,z,dx,dy,dz)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">3D bar chart placing rectangular columns at (x,y) with heights dz. Useful for multi-categorical data and for adding a visually striking 3D dimension to standard bar comparisons.</p>
+        <div class="card-meta"><span class="meta-chip use">📊 3D Comparison</span><span class="meta-chip use">🗂 Multi-Category</span><span class="meta-chip">Monthly sales by product</span><span class="meta-chip">3D histograms</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">xpos</span> = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]; <span class="var">ypos</span> = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+<span class="var">zpos</span> = np.<span class="fn">zeros</span>(<span class="num">9</span>)
+<span class="var">dx</span> = <span class="var">dy</span> = <span class="num">0.6</span>
+<span class="var">dz</span> = np.<span class="fn">random.randint</span>(<span class="num">1</span>,<span class="num">10</span>,<span class="num">9</span>)
+ax.<span class="fn">bar3d</span>(np.<span class="fn">repeat</span>(xpos,<span class="num">3</span>), np.<span class="fn">tile</span>(ypos,<span class="num">3</span>),
+        zpos, dx, dy, dz, shade=<span class="kw">True</span>)</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="plot trisurf triangular surface ax.plot_trisurf">
+        <div class="card-top"><span class="card-name mpl-color">ax.plot_trisurf(x, y, z)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">Surface plot over irregular (not grid) 3D point data using Delaunay triangulation. Useful when z values come from scattered measurements rather than a regular XY grid.</p>
+        <div class="card-meta"><span class="meta-chip use">🔺 Unstructured 3D</span><span class="meta-chip use">🌍 Terrain</span><span class="meta-chip">LiDAR point clouds</span><span class="meta-chip">Experimental data</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">theta</span> = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">2</span>*np.pi, <span class="num">200</span>)
+<span class="var">r</span> = np.<span class="fn">random.uniform</span>(<span class="num">0.1</span>,<span class="num">1</span>,<span class="num">200</span>)
+<span class="var">x</span> = r*np.<span class="fn">cos</span>(theta); <span class="var">y</span> = r*np.<span class="fn">sin</span>(theta)
+<span class="var">z</span> = x**<span class="num">2</span> + y**<span class="num">2</span>
+ax.<span class="fn">plot_trisurf</span>(x, y, z, cmap=<span class="str">'coolwarm'</span>)</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="voxel 3d voxels ax.voxels volumetric">
+        <div class="card-top"><span class="card-name mpl-color">ax.voxels(filled)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">Renders 3D volumetric data as filled cubes (voxels). Used for 3D medical imaging, MRI data, CT scans, and any volumetric dataset with binary or categorical values.</p>
+        <div class="card-meta"><span class="meta-chip use">🧬 Medical Imaging</span><span class="meta-chip use">🎮 3D Grids</span><span class="meta-chip">MRI/CT scans</span><span class="meta-chip">3D cellular automata</span><span class="meta-chip">Voxel art</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span>, <span class="var">y</span>, <span class="var">z</span> = np.<span class="fn">indices</span>((<span class="num">8</span>, <span class="num">8</span>, <span class="num">8</span>))
+<span class="var">cube1</span> = (x < <span class="num">3</span>) &amp; (y < <span class="num">3</span>) &amp; (z < <span class="num">3</span>)
+<span class="var">cube2</span> = (x >= <span class="num">5</span>) &amp; (y >= <span class="num">5</span>) &amp; (z >= <span class="num">5</span>)
+ax.<span class="fn">voxels</span>(cube1 | cube2,
+         facecolors=<span class="str">'royalblue'</span>, alpha=<span class="num">0.7</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="stem3d 3d stem ax.stem 3D">
+        <div class="card-top"><span class="card-name mpl-color">ax.stem(x, y, z)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">3D version of stem plot — drops vertical lines from each data point to the Z=0 plane. Useful for visualizing discrete 3D data where the floor projection helps interpret depth.</p>
+        <div class="card-meta"><span class="meta-chip use">📡 3D Discrete Signals</span><span class="meta-chip use">🔢 3D Point Sets</span><span class="meta-chip">3D spectral data</span><span class="meta-chip">Geographic spikes</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span> = np.<span class="fn">random.rand</span>(<span class="num">20</span>)
+<span class="var">y</span> = np.<span class="fn">random.rand</span>(<span class="num">20</span>)
+<span class="var">z</span> = x + y
+ax.<span class="fn">stem</span>(x, y, z)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="quiver3d 3d vector field ax.quiver 3D">
+        <div class="card-top"><span class="card-name mpl-color">ax.quiver(X,Y,Z,U,V,W)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">3D arrow/quiver plot showing vectors in 3D space. Used for 3D electromagnetic fields, gradient vectors of 3D functions, and fluid dynamics in three dimensions.</p>
+        <div class="card-meta"><span class="meta-chip use">➡ 3D Vector Fields</span><span class="meta-chip use">🧲 EM Fields</span><span class="meta-chip">3D gradients</span><span class="meta-chip">Force vectors</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">X</span>,<span class="var">Y</span>,<span class="var">Z</span> = np.<span class="fn">meshgrid</span>([<span class="num">0</span>,<span class="num">1</span>],[<span class="num">0</span>,<span class="num">1</span>],[<span class="num">0</span>,<span class="num">1</span>])
+<span class="var">U</span> = X; <span class="var">V</span> = -Y; <span class="var">W</span> = Z*<span class="num">0.5</span>
+ax.<span class="fn">quiver</span>(X,Y,Z,U,V,W, length=<span class="num">0.3</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="3d" data-name="fill between 3d ax.fill_between 3D">
+        <div class="card-top"><span class="card-name mpl-color">ax.fill_between (3D)</span><span class="card-tag tag-3d">3D</span></div>
+        <p class="card-desc">Fills the area between two curves in 3D space. Useful for depicting 3D ribbons, surfaces bounded by two paths, and confidence bands in 3D projections of time series.</p>
+        <div class="card-meta"><span class="meta-chip use">🎗 3D Ribbons</span><span class="meta-chip use">📐 3D Bands</span><span class="meta-chip">3D confidence bands</span><span class="meta-chip">Bounded surfaces</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">t</span>  = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">2</span>*np.pi, <span class="num">100</span>)
+<span class="var">x1</span> = np.<span class="fn">cos</span>(t); <span class="var">y1</span> = np.<span class="fn">sin</span>(t); <span class="var">z1</span> = t
+<span class="var">x2</span> = np.<span class="fn">cos</span>(t)+<span class="num">0.3</span>; <span class="var">y2</span>=np.<span class="fn">sin</span>(t)+<span class="num">0.3</span>; <span class="var">z2</span>=t
+ax.<span class="fn">fill_between</span>(x1, y1, z1, x2, y2, z2,
+               alpha=<span class="num">0.4</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MPL: SPECIAL ────────────────────────────── -->
+  <div class="section-block" id="mpl-special">
+    <div class="section-header">
+      <span class="section-pill pill-mpl">Matplotlib</span>
+      <h2 class="section-title">Special &amp; Miscellaneous</h2>
+      <span class="section-count">6 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="polar plot plt.polar radar circular">
+        <div class="card-top"><span class="card-name mpl-color">Polar Plot (projection='polar')</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Uses polar coordinates (r, θ) instead of Cartesian. Excellent for cyclic data, compass directions, and radar/spider charts that compare multiple attributes simultaneously.</p>
+        <div class="card-meta"><span class="meta-chip use">🧭 Cyclic Data</span><span class="meta-chip use">🕸 Radar Charts</span><span class="meta-chip">Wind roses</span><span class="meta-chip">Skill assessments</span><span class="meta-chip">Antenna patterns</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">fig, ax = plt.<span class="fn">subplots</span>(subplot_kw=<span class="fn">dict</span>(projection=<span class="str">'polar'</span>))
+<span class="var">theta</span> = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">2</span>*np.pi, <span class="num">100</span>)
+<span class="var">r</span>     = <span class="num">1</span> + np.<span class="fn">sin</span>(<span class="num">5</span>*theta)  <span class="cm"># rose curve</span>
+ax.<span class="fn">plot</span>(theta, r, color=<span class="str">'crimson'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Polar Plot'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="spectrogram plt.specgram audio frequency time">
+        <div class="card-top"><span class="card-name mpl-color">plt.specgram(x)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Displays a spectrogram — the short-time Fourier transform of a signal. Shows how frequency content evolves over time. Standard in audio analysis, speech processing, and vibration analysis.</p>
+        <div class="card-meta"><span class="meta-chip use">🎵 Audio Analysis</span><span class="meta-chip use">📡 Signal Frequency</span><span class="meta-chip">Speech recognition</span><span class="meta-chip">Seismic data</span><span class="meta-chip">Vibration monitoring</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">Fs</span> = <span class="num">1000</span>  <span class="cm"># sample rate Hz</span>
+<span class="var">t</span>  = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">2</span>, <span class="num">2</span>*Fs)
+<span class="cm"># Chirp signal: freq grows over time</span>
+<span class="var">x</span>  = np.<span class="fn">sin</span>(<span class="num">2</span>*np.pi*(t + t**<span class="num">2</span>)*<span class="num">50</span>)
+plt.<span class="fn">specgram</span>(x, Fs=Fs, cmap=<span class="str">'magma'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Time'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Freq'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="spy sparse matrix plt.spy">
+        <div class="card-top"><span class="card-name mpl-color">plt.spy(Z)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Visualizes non-zero positions in a sparse matrix. Essential for inspecting graph adjacency matrices, neural network connectivity, and the sparsity patterns in large linear systems.</p>
+        <div class="card-meta"><span class="meta-chip use">🔢 Sparse Matrices</span><span class="meta-chip use">🕸 Graph Structure</span><span class="meta-chip">Adjacency matrices</span><span class="meta-chip">Linear system structure</span><span class="meta-chip">Neural connectivity</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="imp">from</span> scipy.sparse <span class="imp">import</span> random <span class="imp">as</span> sprand
+<span class="var">A</span> = sprand(<span class="num">100</span>, <span class="num">100</span>, density=<span class="num">0.05</span>).toarray()
+plt.<span class="fn">spy</span>(A, markersize=<span class="num">2</span>, color=<span class="str">'navy'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Sparse Matrix Sparsity'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="log log semilogx semilogy loglog scale">
+        <div class="card-top"><span class="card-name mpl-color">plt.loglog / semilogx / semilogy</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Log-scale axis plots. <code>loglog</code> uses log scale on both axes; <code>semilogx/semilogy</code> on one. Essential for data spanning many orders of magnitude like power laws and exponential growth.</p>
+        <div class="card-meta"><span class="meta-chip use">📈 Power Laws</span><span class="meta-chip use">🔭 Wide-range Data</span><span class="meta-chip">Frequency spectra</span><span class="meta-chip">Richter scale</span><span class="meta-chip">Population growth</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">x</span> = np.<span class="fn">logspace</span>(-<span class="num">2</span>, <span class="num">3</span>, <span class="num">100</span>)
+<span class="var">y</span> = x**<span class="num">2.5</span>
+
+plt.<span class="fn">loglog</span>(x, y, label=<span class="str">'Power Law x^2.5'</span>)
+<span class="cm"># plt.semilogx(x, y)  # log only x-axis</span>
+<span class="cm"># plt.semilogy(x, y)  # log only y-axis</span>
+plt.<span class="fn">legend</span>(); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="basic" data-name="broken_barh horizontal broken bar gantt plt.broken_barh">
+        <div class="card-top"><span class="card-name mpl-color">plt.broken_barh(xranges, yrange)</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Draws horizontal bars with gaps — each series is composed of discrete horizontal segments. The go-to chart for Gantt scheduling, process timelines, and CPU/task scheduling visualization.</p>
+        <div class="card-meta"><span class="meta-chip use">📅 Gantt Charts</span><span class="meta-chip use">⏱ Scheduling</span><span class="meta-chip">Project timelines</span><span class="meta-chip">CPU task scheduling</span><span class="meta-chip">Sleep stages</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">fig, ax = plt.<span class="fn">subplots</span>()
+ax.<span class="fn">broken_barh</span>(
+    [(<span class="num">10</span>,<span class="num">20</span>),(<span class="num">40</span>,<span class="num">15</span>)], (<span class="num">0</span>,<span class="num">9</span>),
+    facecolors=<span class="str">'steelblue'</span>)
+ax.<span class="fn">broken_barh</span>(
+    [(<span class="num">5</span>,<span class="num">30</span>),(<span class="num">45</span>,<span class="num">10</span>)], (<span class="num">10</span>,<span class="num">9</span>),
+    facecolors=<span class="str">'tomato'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card mpl" data-lib="mpl" data-cat="stats" data-name="acorr xcorr autocorrelation cross-correlation plt.acorr">
+        <div class="card-top"><span class="card-name mpl-color">plt.acorr / plt.xcorr</span><span class="card-tag tag-mpl">Matplotlib</span></div>
+        <p class="card-desc">Plots the autocorrelation (<code>acorr</code>) or cross-correlation (<code>xcorr</code>) of a signal at various lags. Used in time series analysis to detect periodicity, seasonality, and signal relationships.</p>
+        <div class="card-meta"><span class="meta-chip use">📡 Time Series Analysis</span><span class="meta-chip use">🔄 Periodicity</span><span class="meta-chip">Seasonal detection</span><span class="meta-chip">Lag analysis</span><span class="meta-chip">Signal similarity</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">t</span>    = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">300</span>)
+<span class="var">sig</span>  = np.<span class="fn">sin</span>(<span class="num">2</span>*np.pi*t) + np.<span class="fn">random.randn</span>(<span class="num">300</span>)*<span class="num">0.3</span>
+
+plt.<span class="fn">acorr</span>(sig, maxlags=<span class="num">50</span>, lw=<span class="num">1.5</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Lag'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Correlation'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Autocorrelation'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SEABORN
+       ═══════════════════════════════════════════════ -->
+
+  <!-- ── SNS: RELATIONAL ────────────────────────── -->
+  <div class="section-block" id="sns-rel">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Relational Plots</h2>
+      <span class="section-count">3 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="rel" data-name="seaborn scatterplot sns.scatterplot relational">
+        <div class="card-top"><span class="card-name sns-color">sns.scatterplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Statistical scatter plot with rich semantic encoding — hue, size, style can each map to data variables. Automatically handles legends and integrates directly with pandas DataFrames.</p>
+        <div class="card-meta"><span class="meta-chip use">🔵 Relationships</span><span class="meta-chip use">📊 Multi-dimensional</span><span class="meta-chip">Iris dataset EDA</span><span class="meta-chip">Correlation analysis</span><span class="meta-chip">A/B test groups</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="imp">import</span> seaborn <span class="imp">as</span> <span class="var">sns</span>
+<span class="var">tips</span> = sns.<span class="fn">load_dataset</span>(<span class="str">'tips'</span>)
+
+sns.<span class="fn">scatterplot</span>(
+    data=tips, x=<span class="str">'total_bill'</span>, y=<span class="str">'tip'</span>,
+    hue=<span class="str">'sex'</span>, size=<span class="str">'size'</span>, style=<span class="str">'smoker'</span>,
+    palette=<span class="str">'viridis'</span>, alpha=<span class="num">0.8</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="rel" data-name="seaborn lineplot sns.lineplot time series aggregate">
+        <div class="card-top"><span class="card-name sns-color">sns.lineplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Line plot with automatic confidence interval bands when multiple observations exist per x-value. Aggregates repeated measurements and shows uncertainty — ideal for time series grouped by category.</p>
+        <div class="card-meta"><span class="meta-chip use">📈 Aggregated Trends</span><span class="meta-chip use">📅 Time Series</span><span class="meta-chip">Monthly metrics by group</span><span class="meta-chip">Clinical trial timelines</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">flights</span> = sns.<span class="fn">load_dataset</span>(<span class="str">'flights'</span>)
+
+sns.<span class="fn">lineplot</span>(data=flights, x=<span class="str">'year'</span>,
+    y=<span class="str">'passengers'</span>, hue=<span class="str">'month'</span>,
+    palette=<span class="str">'tab20'</span>, linewidth=<span class="num">1.5</span>)
+plt.<span class="fn">legend</span>(bbox_to_anchor=(<span class="num">1.05</span>,<span class="num">1</span>))
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="rel" data-name="seaborn relplot figure-level relational sns.relplot facet">
+        <div class="card-top"><span class="card-name sns-color">sns.relplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Figure-level function wrapping scatterplot/lineplot. Adds faceting across rows and columns with a single function call. Creates small multiples comparing the same relationship across subgroups.</p>
+        <div class="card-meta"><span class="meta-chip use">🗂 Small Multiples</span><span class="meta-chip use">📊 Faceted Views</span><span class="meta-chip">Segmented analysis</span><span class="meta-chip">Group comparisons</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">relplot</span>(
+    data=tips, x=<span class="str">'total_bill'</span>, y=<span class="str">'tip'</span>,
+    col=<span class="str">'time'</span>,    <span class="cm"># column facets</span>
+    hue=<span class="str">'smoker'</span>, style=<span class="str">'sex'</span>,
+    kind=<span class="str">'scatter'</span>, height=<span class="num">4</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SNS: DISTRIBUTION ───────────────────────── -->
+  <div class="section-block" id="sns-dist">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Distribution Plots</h2>
+      <span class="section-count">5 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="dist" data-name="seaborn histplot histogram sns.histplot distribution">
+        <div class="card-top"><span class="card-name sns-color">sns.histplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Enhanced histogram with optional KDE overlay, bivariate support (2D histogram), and cumulative mode. Smarter bin selection than matplotlib's hist and tightly integrates with DataFrames.</p>
+        <div class="card-meta"><span class="meta-chip use">📊 Distribution</span><span class="meta-chip use">📉 Density Estimate</span><span class="meta-chip">Feature distributions</span><span class="meta-chip">2D joint histogram</span><span class="meta-chip">Cumulative view</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">penguins</span> = sns.<span class="fn">load_dataset</span>(<span class="str">'penguins'</span>)
+
+sns.<span class="fn">histplot</span>(data=penguins, x=<span class="str">'flipper_length_mm'</span>,
+    hue=<span class="str">'species'</span>, kde=<span class="kw">True</span>, bins=<span class="num">20</span>,
+    multiple=<span class="str">'stack'</span>, palette=<span class="str">'Set2'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="dist" data-name="seaborn kdeplot kde kernel density sns.kdeplot">
+        <div class="card-top"><span class="card-name sns-color">sns.kdeplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Kernel Density Estimate — smooth continuous probability density using kernel smoothing. Supports univariate and bivariate (2D) KDE with filled contours. No binning artifacts.</p>
+        <div class="card-meta"><span class="meta-chip use">🌊 Smooth Density</span><span class="meta-chip use">🗺 2D Density</span><span class="meta-chip">Overlapping distributions</span><span class="meta-chip">2D probability clouds</span><span class="meta-chip">Density comparison</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="cm"># Univariate</span>
+sns.<span class="fn">kdeplot</span>(data=penguins,
+    x=<span class="str">'body_mass_g'</span>, hue=<span class="str">'species'</span>,
+    fill=<span class="kw">True</span>, alpha=<span class="num">0.4</span>)
+
+<span class="cm"># Bivariate 2D</span>
+sns.<span class="fn">kdeplot</span>(data=penguins,
+    x=<span class="str">'bill_length_mm'</span>, y=<span class="str">'bill_depth_mm'</span>,
+    hue=<span class="str">'species'</span>, levels=<span class="num">5</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="dist" data-name="seaborn ecdfplot empirical cumulative sns.ecdfplot">
+        <div class="card-top"><span class="card-name sns-color">sns.ecdfplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Empirical CDF with optional confidence bands and complementary (survival) mode. Groups can be compared on the same axes using hue. Better than histograms for comparing percentiles directly.</p>
+        <div class="card-meta"><span class="meta-chip use">📈 Percentile Analysis</span><span class="meta-chip use">🔀 CDF Comparison</span><span class="meta-chip">SLA threshold analysis</span><span class="meta-chip">Latency comparisons</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">ecdfplot</span>(data=penguins,
+    x=<span class="str">'body_mass_g'</span>, hue=<span class="str">'species'</span>,
+    complementary=<span class="kw">False</span>)  <span class="cm"># True = survival fn</span>
+plt.<span class="fn">xlabel</span>(<span class="str">'Body Mass (g)'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="dist" data-name="seaborn rugplot rug ticks sns.rugplot marginal">
+        <div class="card-top"><span class="card-name sns-color">sns.rugplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Draws tick marks along axes at each data point — a 1D "rug" showing every observation. Best used as an overlay on KDE or histogram to show exact data points at the axis margins.</p>
+        <div class="card-meta"><span class="meta-chip use">📌 Data Point Marks</span><span class="meta-chip use">📏 Marginal Distribution</span><span class="meta-chip">Overlay on KDE</span><span class="meta-chip">Sparse data emphasis</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">kdeplot</span>(data=tips, x=<span class="str">'total_bill'</span>,
+    hue=<span class="str">'time'</span>, fill=<span class="kw">True</span>)
+sns.<span class="fn">rugplot</span>(data=tips, x=<span class="str">'total_bill'</span>,
+    hue=<span class="str">'time'</span>, height=<span class="num">0.04</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="dist" data-name="seaborn displot figure-level distribution sns.displot">
+        <div class="card-top"><span class="card-name sns-color">sns.displot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Figure-level wrapper for all distribution plots (hist, kde, ecdf). Adds faceting by row/col, making it easy to compare distributions across multiple subgroups in a grid layout.</p>
+        <div class="card-meta"><span class="meta-chip use">🗂 Faceted Distributions</span><span class="meta-chip use">📊 Multi-view</span><span class="meta-chip">Per-group distributions</span><span class="meta-chip">Exploratory analysis</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">displot</span>(
+    data=penguins, x=<span class="str">'flipper_length_mm'</span>,
+    col=<span class="str">'species'</span>, row=<span class="str">'sex'</span>,
+    kind=<span class="str">'hist'</span>, kde=<span class="kw">True</span>,
+    height=<span class="num">3</span>, aspect=<span class="num">0.8</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SNS: CATEGORICAL ────────────────────────── -->
+  <div class="section-block" id="sns-cat">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Categorical Plots</h2>
+      <span class="section-count">8 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn barplot bar sns.barplot estimate">
+        <div class="card-top"><span class="card-name sns-color">sns.barplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Shows point estimates (mean by default) with confidence interval error bars for each category. Unlike a simple bar chart, it shows statistical uncertainty, not just the raw total.</p>
+        <div class="card-meta"><span class="meta-chip use">📊 Mean ± CI</span><span class="meta-chip use">🔄 Category Comparison</span><span class="meta-chip">Avg tip per day</span><span class="meta-chip">A/B test significance</span><span class="meta-chip">Group means</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">barplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'total_bill'</span>,
+    hue=<span class="str">'sex'</span>, palette=<span class="str">'pastel'</span>,
+    capsize=<span class="num">0.1</span>, errwidth=<span class="num">1.5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Mean Bill by Day'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn countplot count sns.countplot frequency">
+        <div class="card-top"><span class="card-name sns-color">sns.countplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Bar chart that automatically counts occurrences of each category — no pre-aggregation needed. Perfect for frequency distributions of categorical columns in a DataFrame.</p>
+        <div class="card-meta"><span class="meta-chip use">🔢 Frequency Count</span><span class="meta-chip use">🗂 Categorical Distribution</span><span class="meta-chip">Customer segments</span><span class="meta-chip">Response categories</span><span class="meta-chip">Class imbalance</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">countplot</span>(data=tips, x=<span class="str">'day'</span>,
+    hue=<span class="str">'smoker'</span>, palette=<span class="str">'Set2'</span>,
+    order=[<span class="str">'Thur'</span>,<span class="str">'Fri'</span>,<span class="str">'Sat'</span>,<span class="str">'Sun'</span>])
+plt.<span class="fn">title</span>(<span class="str">'Visit Count per Day'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn boxplot box sns.boxplot quartile">
+        <div class="card-top"><span class="card-name sns-color">sns.boxplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Seaborn's boxplot adds easier categorical grouping, native hue support, and cleaner defaults over matplotlib's. Shows Q1/Q3/median/outliers with automatic notching for median confidence.</p>
+        <div class="card-meta"><span class="meta-chip use">📦 Distribution Summary</span><span class="meta-chip use">🔄 Group Comparison</span><span class="meta-chip">Salary distribution</span><span class="meta-chip">Feature importance spread</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">boxplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'total_bill'</span>,
+    hue=<span class="str">'sex'</span>, palette=<span class="str">'Set3'</span>,
+    notch=<span class="kw">True</span>, width=<span class="num">0.5</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn violinplot violin sns.violinplot kde categorical">
+        <div class="card-top"><span class="card-name sns-color">sns.violinplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Seaborn's violin plot is the most feature-rich in any Python library — supports split violins (halving by hue), inner box/quartile/stick options, and bw_adjust for bandwidth control.</p>
+        <div class="card-meta"><span class="meta-chip use">🎻 Full Distribution</span><span class="meta-chip use">↔ Split Comparison</span><span class="meta-chip">Male vs. Female split</span><span class="meta-chip">Bimodal detection</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">violinplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'tip'</span>,
+    hue=<span class="str">'sex'</span>, split=<span class="kw">True</span>,
+    inner=<span class="str">'quartile'</span>, palette=<span class="str">'muted'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn boxenplot letter value plot sns.boxenplot enhanced box">
+        <div class="card-top"><span class="card-name sns-color">sns.boxenplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Enhanced box plot ("letter-value plot") that shows many more quantiles with progressively narrower boxes. Provides much more detail about the tails and is better than boxplot for large datasets (&gt;200 points).</p>
+        <div class="card-meta"><span class="meta-chip use">📦 Detailed Quantiles</span><span class="meta-chip use">🐋 Large Datasets</span><span class="meta-chip">Financial returns</span><span class="meta-chip">ML model residuals</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">diamonds = sns.<span class="fn">load_dataset</span>(<span class="str">'diamonds'</span>)
+sns.<span class="fn">boxenplot</span>(data=diamonds, x=<span class="str">'color'</span>,
+    y=<span class="str">'price'</span>, palette=<span class="str">'viridis'</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn stripplot jitter sns.stripplot categorical scatter">
+        <div class="card-top"><span class="card-name sns-color">sns.stripplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Scatter plot along categorical axis with jitter to prevent overplotting. Shows every individual data point. Often combined with boxplot or violinplot to add raw observations to summary statistics.</p>
+        <div class="card-meta"><span class="meta-chip use">⚫ All Points Shown</span><span class="meta-chip use">📊 Raw Data Overlay</span><span class="meta-chip">Small dataset inspection</span><span class="meta-chip">Overlay on box/violin</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="cm"># Combine with boxplot</span>
+sns.<span class="fn">boxplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'tip'</span>,
+    color=<span class="str">'white'</span>, fliersize=<span class="num">0</span>)
+sns.<span class="fn">stripplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'tip'</span>,
+    hue=<span class="str">'sex'</span>, dodge=<span class="kw">True</span>, alpha=<span class="num">0.5</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn swarmplot sns.swarmplot beeswarm non-overlapping">
+        <div class="card-top"><span class="card-name sns-color">sns.swarmplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Like stripplot but points are adjusted to never overlap using a beeswarm algorithm. Every point is visible without obscuring others. Gives a sense of distribution shape, especially for small samples.</p>
+        <div class="card-meta"><span class="meta-chip use">🐝 Beeswarm</span><span class="meta-chip use">👁 All Points Visible</span><span class="meta-chip">Clinical trial outcomes</span><span class="meta-chip">Small n studies</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">violinplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'tip'</span>,
+    color=<span class="str">'lightblue'</span>, inner=<span class="kw">None</span>)
+sns.<span class="fn">swarmplot</span>(data=tips, x=<span class="str">'day'</span>, y=<span class="str">'tip'</span>,
+    color=<span class="str">'navy'</span>, size=<span class="num">3</span>, alpha=<span class="num">0.7</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="cat" data-name="seaborn pointplot sns.pointplot mean confidence interval categorical">
+        <div class="card-top"><span class="card-name sns-color">sns.pointplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Plots point estimates as dots connected by lines across categories. Better than barplot for visualizing interactions and trends across ordered categories, especially when comparing multiple hue groups.</p>
+        <div class="card-meta"><span class="meta-chip use">📍 Point Estimates</span><span class="meta-chip use">🔄 Interactions</span><span class="meta-chip">Factorial ANOVA</span><span class="meta-chip">Before/after comparison</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">pointplot</span>(data=tips, x=<span class="str">'time'</span>, y=<span class="str">'tip'</span>,
+    hue=<span class="str">'smoker'</span>, palette=<span class="str">'Set1'</span>,
+    dodge=<span class="kw">True</span>, capsize=<span class="num">0.1</span>)
+plt.<span class="fn">title</span>(<span class="str">'Mean Tip by Time'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SNS: REGRESSION ────────────────────────── -->
+  <div class="section-block" id="sns-reg">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Regression Plots</h2>
+      <span class="section-count">3 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="reg" data-name="seaborn regplot regression scatter sns.regplot linear model">
+        <div class="card-top"><span class="card-name sns-color">sns.regplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Scatter plot with a fitted regression line and confidence band. Supports linear, polynomial, logistic, and lowess smoothing. The simplest way to visualize and check relationships.</p>
+        <div class="card-meta"><span class="meta-chip use">📐 Linear Fit</span><span class="meta-chip use">🔍 Correlation Check</span><span class="meta-chip">Price vs. area</span><span class="meta-chip">Model diagnostics</span><span class="meta-chip">Polynomial fit</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">regplot</span>(data=tips, x=<span class="str">'total_bill'</span>, y=<span class="str">'tip'</span>,
+    scatter_kws={<span class="str">'alpha'</span>:<span class="num">0.4</span>},
+    line_kws={<span class="str">'color'</span>:<span class="str">'red'</span>},
+    order=<span class="num">1</span>)  <span class="cm"># order=2 for polynomial</span>
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="reg" data-name="seaborn lmplot faceted regression sns.lmplot figure-level">
+        <div class="card-top"><span class="card-name sns-color">sns.lmplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Figure-level regression plot that combines regplot with FacetGrid. Fits separate regression lines per hue group and supports row/col faceting, making it ideal for comparing trends across subgroups.</p>
+        <div class="card-meta"><span class="meta-chip use">🗂 Faceted Regression</span><span class="meta-chip use">📊 Group-wise Fits</span><span class="meta-chip">Gender salary trends</span><span class="meta-chip">Product region analysis</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">lmplot</span>(data=tips, x=<span class="str">'total_bill'</span>, y=<span class="str">'tip'</span>,
+    hue=<span class="str">'smoker'</span>, col=<span class="str">'time'</span>,
+    height=<span class="num">4</span>, aspect=<span class="num">0.8</span>,
+    ci=<span class="num">95</span>)  <span class="cm"># confidence interval</span>
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="reg" data-name="seaborn residplot residual regression sns.residplot diagnostics">
+        <div class="card-top"><span class="card-name sns-color">sns.residplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Plots residuals of a linear regression against the predictor. A horizontal band around zero suggests a good linear fit; patterns indicate non-linearity, heteroscedasticity, or missing variables.</p>
+        <div class="card-meta"><span class="meta-chip use">🔬 Model Diagnostics</span><span class="meta-chip use">📐 Fit Quality</span><span class="meta-chip">Linearity assumption check</span><span class="meta-chip">Heteroscedasticity</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">residplot</span>(data=tips,
+    x=<span class="str">'total_bill'</span>, y=<span class="str">'tip'</span>,
+    lowess=<span class="kw">True</span>,
+    scatter_kws={<span class="str">'alpha'</span>:<span class="num">0.5</span>})
+plt.<span class="fn">axhline</span>(<span class="num">0</span>, color=<span class="str">'red'</span>, lw=<span class="num">1</span>)
+plt.<span class="fn">title</span>(<span class="str">'Residual Plot'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SNS: MATRIX ─────────────────────────────── -->
+  <div class="section-block" id="sns-mat">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Matrix Plots</h2>
+      <span class="section-count">2 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="mat" data-name="seaborn heatmap sns.heatmap correlation matrix">
+        <div class="card-top"><span class="card-name sns-color">sns.heatmap()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Color-encodes 2D matrix data. Optionally annotates cells with values. The standard tool for correlation matrices, confusion matrices, feature importance matrices, and any tabular value heatmap.</p>
+        <div class="card-meta"><span class="meta-chip use">🔥 Correlation</span><span class="meta-chip use">🧩 Confusion Matrix</span><span class="meta-chip">Feature correlations</span><span class="meta-chip">ML confusion matrix</span><span class="meta-chip">User interaction grids</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">corr</span> = penguins.<span class="fn">select_dtypes</span>(<span class="str">'number'</span>).<span class="fn">corr</span>()
+
+sns.<span class="fn">heatmap</span>(corr, annot=<span class="kw">True</span>, fmt=<span class="str">'.2f'</span>,
+    cmap=<span class="str">'coolwarm'</span>, vmin=-<span class="num">1</span>, vmax=<span class="num">1</span>,
+    square=<span class="kw">True</span>, linewidths=<span class="num">0.5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Correlation Heatmap'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="mat" data-name="seaborn clustermap hierarchical clustering heatmap sns.clustermap">
+        <div class="card-top"><span class="card-name sns-color">sns.clustermap()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Hierarchically-clustered heatmap that reorders rows and columns by similarity (using linkage clustering) and adds dendrograms. Standard in bioinformatics for gene expression and proteomics analysis.</p>
+        <div class="card-meta"><span class="meta-chip use">🧬 Bioinformatics</span><span class="meta-chip use">🌳 Hierarchical Clustering</span><span class="meta-chip">Gene expression</span><span class="meta-chip">Customer segmentation</span><span class="meta-chip">Document similarity</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">iris</span> = sns.<span class="fn">load_dataset</span>(<span class="str">'iris'</span>)
+<span class="var">X</span> = iris.<span class="fn">drop</span>(<span class="str">'species'</span>, axis=<span class="num">1</span>)
+
+sns.<span class="fn">clustermap</span>(X, standardize=<span class="kw">True</span>,
+    cmap=<span class="str">'vlag'</span>, method=<span class="str">'ward'</span>,
+    figsize=(<span class="num">8</span>,<span class="num">10</span>))
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SNS: MULTI-PLOT GRIDS ───────────────────── -->
+  <div class="section-block" id="sns-multi">
+    <div class="section-header">
+      <span class="section-pill pill-sns">Seaborn</span>
+      <h2 class="section-title">Multi-Plot Grids</h2>
+      <span class="section-count">3 charts</span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card sns" data-lib="sns" data-cat="multi" data-name="seaborn pairplot pairs sns.pairplot matrix scatter">
+        <div class="card-top"><span class="card-name sns-color">sns.pairplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Creates an NxN grid of scatter plots for every pair of numeric variables, with distribution plots on the diagonal. The single most powerful EDA starting point for multivariate datasets.</p>
+        <div class="card-meta"><span class="meta-chip use">🔍 Multivariate EDA</span><span class="meta-chip use">📊 All Pairs</span><span class="meta-chip">First ML exploration</span><span class="meta-chip">Feature correlation matrix</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">pairplot</span>(penguins,
+    hue=<span class="str">'species'</span>,
+    diag_kind=<span class="str">'kde'</span>,
+    plot_kws={<span class="str">'alpha'</span>: <span class="num">0.5</span>},
+    corner=<span class="kw">True</span>)
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="multi" data-name="seaborn jointplot joint bivariate marginal sns.jointplot">
+        <div class="card-top"><span class="card-name sns-color">sns.jointplot()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">Shows the joint distribution of two variables in a central panel (scatter/KDE/hex) plus their marginal distributions (histogram/KDE) on the borders. Gives a complete bivariate picture in one chart.</p>
+        <div class="card-meta"><span class="meta-chip use">🗺 Joint + Marginals</span><span class="meta-chip use">📊 Bivariate</span><span class="meta-chip">Paired measurements</span><span class="meta-chip">Correlation + dist</span><span class="meta-chip">Physical measurements</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block">sns.<span class="fn">jointplot</span>(data=penguins,
+    x=<span class="str">'bill_length_mm'</span>,
+    y=<span class="str">'bill_depth_mm'</span>,
+    hue=<span class="str">'species'</span>,
+    kind=<span class="str">'scatter'</span>)  <span class="cm"># or 'hex','kde','hist'</span>
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+      <div class="card sns" data-lib="sns" data-cat="multi" data-name="seaborn facetgrid small multiples sns.FacetGrid conditional">
+        <div class="card-top"><span class="card-name sns-color">sns.FacetGrid()</span><span class="card-tag tag-sns">Seaborn</span></div>
+        <p class="card-desc">A flexible grid of axes where different subsets of data are plotted in separate panels (facets). Allows any plot function to be applied per subplot, enabling powerful conditional visualizations.</p>
+        <div class="card-meta"><span class="meta-chip use">🗂 Conditional Panels</span><span class="meta-chip use">🔄 Data Subsets</span><span class="meta-chip">Per-category analysis</span><span class="meta-chip">Custom small multiples</span></div>
+        <div class="card-code-wrap"><div class="code-bar"><span class="code-dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span><span>python</span></div>
+          <pre class="code-block"><span class="var">g</span> = sns.<span class="fn">FacetGrid</span>(tips, col=<span class="str">'time'</span>,
+    row=<span class="str">'smoker'</span>, height=<span class="num">3</span>)
+g.<span class="fn">map_dataframe</span>(sns.histplot,
+    x=<span class="str">'total_bill'</span>, kde=<span class="kw">True</span>)
+g.<span class="fn">add_legend</span>()
+plt.<span class="fn">show</span>()</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ══ SCRIPT ═════════════════════════════════════ -->
+<script>
+  // ── Sidebar smooth scroll ──────────────────────
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Library filter tabs ─────────────────────────
+  let activeLib = 'all', activeCat = 'all';
+
+  function filterLib(lib) {
+    activeLib = lib;
+    const tabs = document.querySelectorAll('.lib-tab');
+    tabs.forEach(t => t.classList.remove('active-mpl','active-sns','active-both'));
+    const idx = lib === 'mpl' ? 0 : lib === 'sns' ? 1 : 2;
+    tabs[idx].classList.add(lib === 'mpl' ? 'active-mpl' : lib === 'sns' ? 'active-sns' : 'active-both');
+    applyFilters();
+  }
+
+  // ── Category filter chips ───────────────────────
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCat = chip.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  function applyFilters() {
+    const searchVal = document.getElementById('search').value.toLowerCase();
+    let visible = 0;
+
+    document.querySelectorAll('.card').forEach(card => {
+      const libOk  = activeLib === 'all' || card.dataset.lib === activeLib;
+      const catOk  = activeCat === 'all' || card.dataset.cat === activeCat;
+      const nameOk = !searchVal || card.dataset.name.includes(searchVal);
+      if (libOk && catOk && nameOk) {
+        card.classList.remove('hidden-card');
+        visible++;
+      } else {
+        card.classList.add('hidden-card');
+      }
+    });
+
+    // Show/hide section blocks
+    document.querySelectorAll('.section-block').forEach(sec => {
+      const hasVisible = sec.querySelectorAll('.card:not(.hidden-card)').length > 0;
+      sec.style.display = hasVisible ? '' : 'none';
+    });
+
+    document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  // ── Search ──────────────────────────────────────
+  document.getElementById('search').addEventListener('input', applyFilters);
+
+  // ── Sidebar active highlighting on scroll ────────
+  const sections = document.querySelectorAll('.section-block');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(l => l.classList.remove('active-mpl','active-sns'));
+        const target = document.querySelector(`.nav-link[onclick="scrollTo('${id}')"]`);
+        if (target) {
+          target.classList.add(id.startsWith('mpl') ? 'active-mpl' : 'active-sns');
+        }
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
