@@ -28,13 +28,13 @@
 |---|---|---|---|
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
 | NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
-| Pandas | 3 / 7 | 3 / 7 | 🔄 In progress |
+| Pandas | 3 / 7 | 3 / 7 | ✅ Complete |
 | matplotlib | 2 / 2 | 2 / 2 | ✅ Complete |
 | seaborn | 2 / 2 | - | ⏳ Upcoming  |
 | Data Analysis Process | 0 / 3 | 0 / 3 | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
 | Statistics | 1 / 14 | 1 / 14 | 🔄 In progress |
-| Machine Learning | 0 / 40+ | — | ⏳ Upcoming |
+| Machine Learning | 0 / 100+ | — | ⏳ In progress |
 
 > Last updated: May 2026
 
