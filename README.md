@@ -34,7 +34,7 @@
 | Data Analysis Process | 0 / 3 | 0 / 3 | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
 | Statistics | 1 / 14 | 1 / 14 | 🔄 In progress |
-| Machine Learning | 0 / 100+ | — | ⏳ In progress |
+| Machine Learning | 30 / 100+ | — | ⏳ In progress |
 
 > Last updated: May 2026
 
