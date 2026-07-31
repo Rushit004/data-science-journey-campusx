@@ -113,7 +113,7 @@ After running the above commands, Jupyter Lab will open in your browser, where y
 
 ## About me
 
-2nd year B.Tech (Computer Science) at Nirma University, Ahmedabad. Building toward a career in data science and machine learning — specifically interested in models that ship to real users, not just notebooks.
+Rushit  Tholiya
 
 🔗 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) 
 
