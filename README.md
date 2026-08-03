@@ -1,29 +1,18 @@
 ![banner](images/READMEbanner.png)
 # Data Science — Structured Learning Log
-
 > **Who:** Rushit Tholiya · 2nd year B.Tech (CS) at Nirma University, Ahmedabad
 >
 > **Why:** I want to build end-to-end ML projects — from raw data to a working model — and move into a data or ML engineering role after graduation. This repo is my daily proof-of-work.
 >
 > **How:** Working through the [CampusX 100-Days of ML](https://youtube.com/playlist?list=PLKnIA16_RmvbAlyx4_rdtR66B7EHX5k3z) course. For each lecture, I write my own notes *before* watching the solution, then compare.
-
 ---
-
 ## How this repository reflects my learning
-
-
 - I write notes **in my own words** before watching the solution video
-
 - Every task has a comment block at the top: what I tried, where I got stuck, what I learned
-
 - I track *actual mistakes* — not just the polished final answer
-
 - Notebooks include my own **additional experiments** beyond the assigned tasks
-
 ---
-
 ## Progress
-
 | Module | Lectures | Tasks Solved | Status |
 |---|---|---|---|
 | Python Basics | 12 / 12 | 12 / 12 | ✅ Complete |
@@ -35,13 +24,9 @@
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
 | Statistics | 1 / 14 | 1 / 14 | 🔄 In progress |
 | Machine Learning | 40 / 100+ | — | ⏳ In progress |
-
 > Last updated: July 2026
-
 ---
-
 ## Repo structure
-
 ```
 /
 ├── 01-python-basics/
@@ -57,68 +42,41 @@
 ├── 09-machine-learning/
 └── datasets/
 ```
-
 ---
-
 ## A few things I found genuinely interesting so far
-
 - NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
-
 - Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
 - Matplotlib and Seaborn have so many graph types that I kept forgetting syntax mid-project — so I built a **quick-reference cheatsheet** covering the most-used plots in one place. View it 🔗 [Live Preview](https://matplotlib-and-seaborn-graphs.netlify.app/) or browse the [source file](04-Matplotlib/matplotlib_seaborn_graphs.html) in the repo.
-
+- Python's built-in functions and methods are things I know exist but rarely remember the exact syntax for under pressure — so I built a searchable **Python quick-reference site** covering all 69 built-ins, core methods, and runnable examples in one place. View it 🔗 [Live Preview](https://python-quick-reference.netlify.app/) or browse the [source file](01-python-basics/python-quick-reference.html) in the repo.
 ---
-
 ## Environment
-
 ```
 Python 3.11  ·  Jupyter Notebook / JupyterLab / Google Colab
 NumPy  ·  Pandas  ·  Matplotlib  ·  Seaborn  ·  Scikit-learn
 ```
-
-
-
 ## Clone and run locally:
-
 1. Create a new folder on your system and open it in the terminal.
-
 2. Clone the repository:
-
 ```
 git clone https://github.com/Rushit004/data-science-journey-campusx.git
 ```
-
 3. Move into the project folder:
-
 ```
 cd data-science-journey-campusx
 ```
-
 4. Install the required libraries:
-
 ```
 pip install numpy pandas matplotlib seaborn scikit-learn jupyterlab
 ```
-
 5. Launch Jupyter Lab:
-
 ```
 jupyter lab
 ```
-
 After running the above commands, Jupyter Lab will open in your browser, where you can explore all the notebooks and work.
-
-
 ---
-
 ## About me
-
 Rushit  Tholiya
-
 🔗 [LinkedIn](https://linkedin.com/in/rushit-tholiya-605341311) 
-
 🔗 [GitHub profile](https://github.com/Rushit004)
-
 ---
-
 *Live repo — updated as I progress. Feedback and suggestions welcome via Issues.*
