@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Quick Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Subject: Python source files & the REPL. Section eyebrows read
+   like module paths (python.strings.methods); card headers read
+   like a docstring/REPL line. Blue = builtins, amber = methods,
+   teal = stdlib modules, violet = keywords/syntax.
+   ============================================================ */
+:root{
+  --bg:#F7F8FA;
+  --surface:#FFFFFF;
+  --surface-2:#F0F2F5;
+  --border:#E1E5EA;
+  --border-strong:#CBD2D9;
+  --text:#1B2430;
+  --text-muted:#5B6773;
+  --text-faint:#8A94A0;
+  --accent:#2C5F8A;
+  --accent-strong:#1E4666;
+  --amber:#B9852D;
+  --amber-strong:#8F6621;
+  --teal:#2C8A78;
+  --violet:#7A5FB0;
+  --red:#B54545;
+  --green:#3E8C5E;
+  --code-bg:#EEF1F4;
+  --code-text:#1B2430;
+  --shadow: 0 1px 2px rgba(20,30,45,0.06), 0 4px 14px rgba(20,30,45,0.06);
+  --radius: 10px;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-code: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --sidebar-w: 264px;
+  --header-h: 64px;
+}
+html[data-theme="dark"]{
+  --bg:#10161F;
+  --surface:#161D28;
+  --surface-2:#1C2531;
+  --border:#28323F;
+  --border-strong:#38424F;
+  --text:#DCE3EA;
+  --text-muted:#8FA0AF;
+  --text-faint:#647383;
+  --accent:#6FA0CC;
+  --accent-strong:#8FB6DA;
+  --amber:#E0AE55;
+  --amber-strong:#EFC272;
+  --teal:#5FC4AE;
+  --violet:#A38DDA;
+  --red:#E28787;
+  --green:#7FC79B;
+  --code-bg:#0D1218;
+  --code-text:#D9E1E8;
+  --shadow: 0 1px 2px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background .2s ease, color .2s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+}
+a{color:var(--accent);}
+::selection{background:var(--accent); color:#fff;}
+
+/* ---------- Eyebrow / module-path label ---------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.02em;
+  color:var(--text-faint);
+  margin:0 0 6px;
+}
+.eyebrow::before{content:"# ";color:var(--border-strong);}
+
+/* ---------- Header ---------- */
+header.topbar{
+  position:sticky; top:0; z-index:40;
+  height:var(--header-h);
+  display:flex; align-items:center; gap:16px;
+  padding:0 20px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.brand{
+  display:flex; align-items:baseline; gap:10px;
+  white-space:nowrap;
+  font-family:var(--font-mono);
+}
+.brand-mark{
+  font-weight:700; color:var(--accent);
+  font-size:16px;
+}
+.brand-title{font-weight:600; font-size:15px; color:var(--text);}
+.brand-sub{display:none;}
+@media (min-width:860px){
+  .brand-sub{display:inline; font-size:12px; color:var(--text-faint); font-family:var(--font-body);}
+}
+.menu-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); cursor:pointer; flex-shrink:0;
+}
+@media (min-width:960px){ .menu-btn{display:none;} }
+
+/* ---------- Search ---------- */
+.search-wrap{flex:1; min-width:0; max-width:640px; position:relative;}
+.search-box{
+  display:flex; align-items:center; gap:8px; min-width:0;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+}
+.search-box:focus-within{border-color:var(--accent);}
+.search-box svg{flex-shrink:0; opacity:.6;}
+#searchInput{
+  border:none; background:transparent; outline:none; width:100%; min-width:0;
+  font-family:var(--font-body); font-size:14px; color:var(--text);
+}
+@media (max-width:480px){
+  .search-box kbd{display:none;}
+  #searchCount{display:none !important;}
+  header.topbar{gap:8px; padding:0 12px;}
+  .brand-mark{display:none;}
+}
+#searchInput::placeholder{color:var(--text-faint);}
+kbd{
+  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
+  border:1px solid var(--border-strong); border-radius:4px; padding:1px 5px;
+  background:var(--surface);
+}
+#searchClear{
+  cursor:pointer; border:none; background:transparent; color:var(--text-faint);
+  font-size:16px; line-height:1; padding:2px 4px; display:none;
+}
+#searchCount{
+  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
+  padding:2px 6px; white-space:nowrap; display:none;
+}
+.search-results-panel{
+  display:none;
+  position:absolute; top:calc(100% + 8px); left:0; right:0;
+  max-height:60vh; overflow:auto;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; box-shadow:var(--shadow); z-index:50;
+  padding:6px;
+}
+.search-results-panel.open{display:block;}
+.result-item{
+  display:block; padding:9px 10px; border-radius:7px; cursor:pointer;
+  text-decoration:none; color:var(--text);
+}
+.result-item:hover, .result-item.active{background:var(--surface-2);}
+.result-item .rtitle{font-family:var(--font-mono); font-size:13px; font-weight:600;}
+.result-item .rmeta{font-size:12px; color:var(--text-faint); margin-top:2px;}
+mark{background:rgba(224,174,85,0.45); color:inherit; border-radius:2px; padding:0 1px;}
+
+/* ---------- Theme toggle ---------- */
+.icon-btn{
+  width:36px; height:36px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.icon-btn:hover{border-color:var(--border-strong);}
+
+/* ---------- Layout ---------- */
+.layout{display:flex; align-items:flex-start;}
+nav.sidebar{
+  position:sticky; top:var(--header-h);
+  height:calc(100vh - var(--header-h));
+  width:var(--sidebar-w); flex-shrink:0;
+  overflow-y:auto;
+  border-right:1px solid var(--border);
+  background:var(--surface);
+  padding:18px 10px 40px;
+}
+nav.sidebar .tree-root{
+  font-family:var(--font-mono); font-size:12px; color:var(--text-faint);
+  padding:0 10px 10px; letter-spacing:.02em;
+}
+nav.sidebar a{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; margin:1px 0; border-radius:7px;
+  color:var(--text-muted); text-decoration:none; font-size:13.5px;
+  border-left:2px solid transparent;
+}
+nav.sidebar a .num{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); width:18px; flex-shrink:0;}
+nav.sidebar a:hover{background:var(--surface-2); color:var(--text);}
+nav.sidebar a.active{background:var(--surface-2); color:var(--accent); border-left-color:var(--accent); font-weight:600;}
+
+main{
+  flex:1; min-width:0; max-width:100%;
+  padding:28px 28px 100px;
+  max-width:980px;
+  overflow-x:hidden;
+}
+.overlay{
+  display:none; position:fixed; inset:0; background:rgba(10,14,20,.5); z-index:45;
+}
+.overlay.open{display:block;}
+
+@media (max-width:959px){
+  nav.sidebar{
+    position:fixed; left:0; top:0; height:100vh; z-index:50;
+    transform:translateX(-105%); transition:transform .22s ease;
+    box-shadow:var(--shadow);
+    padding-top:20px;
+  }
+  nav.sidebar.open{transform:translateX(0);}
+  main{padding:20px 16px 100px;}
+  .brand-sub{display:none;}
+}
+
+/* ---------- Section ---------- */
+section.ref-section{
+  padding-top:34px; margin-top:10px;
+  border-top:1px solid var(--border);
+  scroll-margin-top:calc(var(--header-h) + 14px);
+}
+section.ref-section:first-of-type{border-top:none; padding-top:6px;}
+.section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.section-head h2{
+  font-family:var(--font-mono); font-size:22px; margin:0 0 4px; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+}
+.section-head h2 .idx{color:var(--accent); font-weight:700;}
+.section-desc{color:var(--text-muted); margin:6px 0 22px; max-width:70ch; font-size:14px;}
+.collapse-btn{
+  font-family:var(--font-mono); font-size:12px; color:var(--text-faint);
+  background:none; border:1px solid var(--border); border-radius:7px;
+  padding:5px 10px; cursor:pointer;
+}
+.collapse-btn:hover{color:var(--text); border-color:var(--border-strong);}
+.section-body.collapsed{display:none;}
+
+h3.sub{
+  font-family:var(--font-mono); font-size:15px; color:var(--text);
+  margin:26px 0 10px; padding-top:2px;
+}
+h4.subtle{font-size:13px; color:var(--text-muted); margin:16px 0 8px; text-transform:uppercase; letter-spacing:.05em;}
+
+p{margin:8px 0;}
+.lead{color:var(--text-muted); font-size:14px;}
+
+/* ---------- Code blocks ---------- */
+.code-block{
+  position:relative; background:var(--code-bg); border:1px solid var(--border);
+  border-radius:9px; margin:10px 0 16px; overflow:hidden; min-width:0; max-width:100%;
+}
+.code-block pre{
+  margin:0; padding:14px 44px 14px 16px; overflow-x:auto; max-width:100%;
+  font-family:var(--font-code); font-size:13px; line-height:1.55; color:var(--code-text);
+}
+.code-block .copy-btn{
+  position:absolute; top:8px; right:8px;
+  font-family:var(--font-mono); font-size:11px;
+  background:var(--surface); color:var(--text-muted);
+  border:1px solid var(--border); border-radius:6px;
+  padding:4px 8px; cursor:pointer; opacity:.75;
+}
+.code-block .copy-btn:hover{opacity:1; border-color:var(--border-strong);}
+.code-block .copy-btn.copied{color:var(--green); border-color:var(--green);}
+.code-block .out{
+  border-top:1px dashed var(--border-strong);
+  padding:9px 16px; font-family:var(--font-code); font-size:12.5px;
+  color:var(--text-muted); background:transparent;
+}
+.code-block .out .lbl{color:var(--text-faint); margin-right:6px;}
+
+/* token colors, applied via span classes from a tiny highlighter */
+.tok-kw{color:var(--violet);}
+.tok-str{color:var(--green);}
+.tok-num{color:var(--amber-strong);}
+.tok-com{color:var(--text-faint); font-style:italic;}
+.tok-fn{color:var(--accent-strong);}
+code.inline{
+  font-family:var(--font-code); font-size:.88em; background:var(--code-bg);
+  border:1px solid var(--border); border-radius:5px; padding:1px 5px;
+}
+
+/* ---------- Cards (functions/methods) ---------- */
+.card-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:14px 0 6px;}
+@media (min-width:720px){.card-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+.card-grid.single{grid-template-columns:minmax(0,1fr);}
+.ref-card{
+  min-width:0; max-width:100%;
+  background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
+  border-radius:9px; padding:14px 16px; box-shadow:var(--shadow);
+}
+.ref-card[data-tag="method"]{border-left-color:var(--amber);}
+.ref-card[data-tag="module"]{border-left-color:var(--teal);}
+.ref-card[data-tag="keyword"]{border-left-color:var(--violet);}
+.ref-card .rc-head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.ref-card .rc-name{font-family:var(--font-code); font-weight:700; font-size:14.5px; color:var(--text);}
+.ref-card .rc-tag{
+  font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--text-faint); border:1px solid var(--border); border-radius:5px; padding:2px 6px;
+}
+.ref-card .rc-desc{color:var(--text-muted); font-size:13.5px; margin:6px 0 8px;}
+.ref-card .rc-row{margin:6px 0; font-size:12.5px;}
+.ref-card .rc-row .k{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);
+  text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:3px;
+}
+.ref-card .rc-syntax{
+  font-family:var(--font-code); font-size:12.5px; background:var(--code-bg);
+  border:1px solid var(--border); border-radius:6px; padding:6px 9px; color:var(--code-text);
+}
+.ref-card .rc-example{
+  font-family:var(--font-code); font-size:12.5px; background:var(--code-bg);
+  border:1px solid var(--border); border-radius:6px; padding:8px 9px; color:var(--code-text);
+  white-space:pre-wrap; word-break:break-word;
+}
+.ref-card .rc-note{
+  font-size:12px; color:var(--text-muted); background:var(--surface-2);
+  border-radius:6px; padding:6px 8px; margin-top:6px;
+}
+.ref-card .rc-note b{color:var(--amber-strong);}
+.ref-card .rc-link{font-size:11.5px; display:inline-block; margin-top:8px;}
+.ref-card.hidden{display:none;}
+
+/* ---------- Tables ---------- */
+.table-wrap{overflow-x:auto; margin:14px 0 20px; border:1px solid var(--border); border-radius:9px;}
+table{border-collapse:collapse; width:100%; font-size:13px; min-width:480px;}
+table caption{caption-side:top; text-align:left; padding:8px 12px; font-family:var(--font-mono); font-size:12px; color:var(--text-faint);}
+th, td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top;}
+thead th{
+  background:var(--surface-2); font-family:var(--font-mono); font-size:11.5px;
+  text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface-2);}
+td code, th code{font-family:var(--font-code); font-size:12px;}
+
+/* ---------- Pattern list (data-handling patterns) ---------- */
+.pattern{
+  min-width:0; max-width:100%;
+  border:1px solid var(--border); border-radius:9px; padding:12px 14px; margin:10px 0; background:var(--surface);
+}
+.pattern .p-title{font-family:var(--font-mono); font-weight:600; font-size:13.5px; margin-bottom:6px;}
+
+/* ---------- Mistake list ---------- */
+.mistake{
+  min-width:0; max-width:100%;
+  border-left:3px solid var(--red); background:var(--surface); border:1px solid var(--border); border-left-width:3px;
+  border-radius:8px; padding:10px 14px; margin:10px 0;
+}
+.mistake .m-title{font-family:var(--font-mono); font-weight:700; font-size:13.5px; color:var(--red); margin-bottom:4px;}
+
+/* ---------- Footer ---------- */
+footer.site-footer{
+  border-top:1px solid var(--border); margin-top:50px; padding:26px 0 10px;
+}
+.footer-links{display:flex; flex-wrap:wrap; gap:10px 18px; margin-bottom:14px;}
+.footer-links a{font-size:13px; color:var(--text-muted); text-decoration:none; font-family:var(--font-mono);}
+.footer-links a:hover{color:var(--accent);}
+.footer-note{font-size:12px; color:var(--text-faint);}
+
+/* ---------- Back to top ---------- */
+#backToTop{
+  position:fixed; right:20px; bottom:20px; z-index:40;
+  width:40px; height:40px; border-radius:50%;
+  background:var(--accent); color:#fff; border:none; cursor:pointer;
+  box-shadow:var(--shadow); display:none; align-items:center; justify-content:center;
+  font-size:16px;
+}
+#backToTop.show{display:flex;}
+
+/* fade-in on scroll */
+.ref-section{opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease;}
+.ref-section.visible{opacity:1; transform:none;}
+
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px;}
+.pybadge{
+  font-family:var(--font-mono); font-size:11px; color:var(--text-muted);
+  border:1px solid var(--border); border-radius:6px; padding:3px 8px; background:var(--surface-2);
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="brand">
+    <span class="brand-mark">&gt;&gt;&gt;</span>
+    <span class="brand-title">Python Quick Reference</span>
+    <span class="brand-sub">Syntax · Functions · Methods · Stdlib · Examples</span>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="text" placeholder="Search functions, methods, keywords… ( / )" autocomplete="off">
+      <span id="searchCount"></span>
+      <button id="searchClear" aria-label="Clear search">&times;</button>
+      <kbd>/</kbd>
+    </div>
+    <div class="search-results-panel" id="searchPanel"></div>
+  </div>
+  <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+    <svg id="themeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </button>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="tree-root">python_quick_reference/</div>
+  <a href="#basics"><span class="num">01</span>Basics</a>
+  <a href="#builtins"><span class="num">02</span>Built-in Functions</a>
+  <a href="#strings"><span class="num">03</span>Strings</a>
+  <a href="#lists"><span class="num">04</span>Lists</a>
+  <a href="#tuples"><span class="num">05</span>Tuples</a>
+  <a href="#sets"><span class="num">06</span>Sets</a>
+  <a href="#dicts"><span class="num">07</span>Dictionaries</a>
+  <a href="#control-flow"><span class="num">08</span>Control Flow</a>
+  <a href="#comprehensions"><span class="num">09</span>Comprehensions</a>
+  <a href="#functions"><span class="num">10</span>Functions</a>
+  <a href="#lambda-functional"><span class="num">11</span>Lambda &amp; Functional</a>
+  <a href="#iterators-generators"><span class="num">12</span>Iterators &amp; Generators</a>
+  <a href="#oop"><span class="num">13</span>OOP</a>
+  <a href="#exceptions"><span class="num">14</span>Exceptions</a>
+  <a href="#file-handling"><span class="num">15</span>File Handling</a>
+  <a href="#modules-imports"><span class="num">16</span>Modules &amp; Imports</a>
+  <a href="#stdlib"><span class="num">17</span>Standard Library</a>
+  <a href="#regex"><span class="num">18</span>Regular Expressions</a>
+  <a href="#datetime-ref"><span class="num">19</span>Date &amp; Time</a>
+  <a href="#patterns"><span class="num">20</span>Data Patterns</a>
+  <a href="#syntax-glance"><span class="num">21</span>Syntax at a Glance</a>
+  <a href="#decorators"><span class="num">22</span>Decorators</a>
+  <a href="#context-managers"><span class="num">23</span>Context Managers</a>
+  <a href="#type-hints"><span class="num">24</span>Type Hints</a>
+  <a href="#dataclasses"><span class="num">25</span>Dataclasses</a>
+  <a href="#async"><span class="num">26</span>Async Python</a>
+  <a href="#operators"><span class="num">27</span>Special Syntax / Operators</a>
+  <a href="#mistakes"><span class="num">28</span>Common Mistakes</a>
+</nav>
+
+<main id="mainContent">
+<section class="ref-section" id="basics">
+  <div class="section-head">
+    <h2><span class="idx">01</span> Basics</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.basics</p>
+  <p class="section-desc">Core building blocks: comments, variables, naming, I/O, and every operator category. Reference covers <strong>Python 3.12+</strong> (notes flag anything version-specific).</p>
+  <div class="section-body">
+
+  <h3 class="sub">Comments</h3>
+  <div class="code-block"><pre># single-line comment
+
+"""
+Multi-line string used
+as a block comment (not a true comment,
+but the common convention)
+"""</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Variables &amp; multiple assignment</h3>
+  <div class="code-block"><pre>x = 10                 # dynamic typing, no declaration keyword
+name = "Rushit"
+
+a, b, c = 1, 2, 3       # multiple assignment
+x = y = z = 0           # chained assignment
+a, b = b, a             # swap without a temp variable</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Constants &amp; naming conventions</h3>
+  <div class="code-block"><pre>MAX_SIZE = 100          # convention only — Python has no true constants
+PI = 3.14159
+
+# naming conventions
+variable_name = 1       # snake_case for variables/functions
+class ClassName: ...    # PascalCase for classes
+_private = 1            # leading underscore: "internal use" hint
+__very_private = 1      # name-mangled inside classes
+__dunder__ = 1          # reserved for language/magic methods</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Input / Output</h3>
+  <div class="code-block"><pre>name = input("Enter name: ")   # ALWAYS returns a str
+age = int(input("Age: "))     # convert manually if you need a number
+
+print("Hello", name, sep=", ", end="!\n")
+print(f"{name} is {age}")     # f-string (see Strings section)</pre><button class="copy-btn">Copy</button>
+  <div class="out"><span class="lbl">note</span>print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)</div></div>
+
+  <h3 class="sub">Type conversion &amp; inspection</h3>
+  <p class="lead">Conversion functions (<code class="inline">int()</code>, <code class="inline">float()</code>, <code class="inline">str()</code>, <code class="inline">list()</code>…) are documented as built-ins below. Quick inspection tools:</p>
+  <div class="code-block"><pre>type(3.14)                 # -> &lt;class 'float'&gt;
+isinstance(3.14, float)     # -> True
+isinstance(3, (int, float)) # -> True (tuple of types allowed)
+id(name)                    # -> unique memory identity (int)
+help(str.split)             # -> interactive docs in the REPL
+dir(list)                   # -> list of all attributes/methods</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Operators</h3>
+
+  <div class="table-wrap"><table>
+  <caption>Arithmetic</caption>
+  <thead><tr><th>Op</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+  <tbody>
+  <tr><td><code>+</code></td><td>Add</td><td><code>5 + 2</code></td><td><code>7</code></td></tr>
+  <tr><td><code>-</code></td><td>Subtract</td><td><code>5 - 2</code></td><td><code>3</code></td></tr>
+  <tr><td><code>*</code></td><td>Multiply</td><td><code>5 * 2</code></td><td><code>10</code></td></tr>
+  <tr><td><code>/</code></td><td>True division (always float)</td><td><code>5 / 2</code></td><td><code>2.5</code></td></tr>
+  <tr><td><code>//</code></td><td>Floor division</td><td><code>5 // 2</code></td><td><code>2</code></td></tr>
+  <tr><td><code>%</code></td><td>Modulo (remainder)</td><td><code>5 % 2</code></td><td><code>1</code></td></tr>
+  <tr><td><code>**</code></td><td>Exponent</td><td><code>5 ** 2</code></td><td><code>25</code></td></tr>
+  </tbody></table></div>
+
+  <div class="table-wrap"><table>
+  <caption>Comparison &amp; Logical</caption>
+  <thead><tr><th>Op</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+  <tbody>
+  <tr><td><code>==</code> <code>!=</code></td><td>Equal / not equal</td><td><code>3 == 3</code></td><td><code>True</code></td></tr>
+  <tr><td><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td><td>Ordering</td><td><code>5 &gt;= 5</code></td><td><code>True</code></td></tr>
+  <tr><td><code>and</code></td><td>Both truthy</td><td><code>True and False</code></td><td><code>False</code></td></tr>
+  <tr><td><code>or</code></td><td>Either truthy</td><td><code>True or False</code></td><td><code>True</code></td></tr>
+  <tr><td><code>not</code></td><td>Negation</td><td><code>not True</code></td><td><code>False</code></td></tr>
+  </tbody></table></div>
+
+  <div class="table-wrap"><table>
+  <caption>Assignment</caption>
+  <thead><tr><th>Op</th><th>Same as</th></tr></thead>
+  <tbody>
+  <tr><td><code>+=  -=  *=  /=</code></td><td><code>x = x + y</code>, etc.</td></tr>
+  <tr><td><code>//=  %=  **=</code></td><td>floor-div / mod / power, in place</td></tr>
+  <tr><td><code>&amp;=  |=  ^=  &gt;&gt;=  &lt;&lt;=</code></td><td>bitwise, in place</td></tr>
+  </tbody></table></div>
+
+  <div class="table-wrap"><table>
+  <caption>Bitwise (operate on integer bit patterns)</caption>
+  <thead><tr><th>Op</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+  <tbody>
+  <tr><td><code>&amp;</code></td><td>AND</td><td><code>6 &amp; 3</code></td><td><code>2</code></td></tr>
+  <tr><td><code>|</code></td><td>OR</td><td><code>6 | 3</code></td><td><code>7</code></td></tr>
+  <tr><td><code>^</code></td><td>XOR</td><td><code>6 ^ 3</code></td><td><code>5</code></td></tr>
+  <tr><td><code>~</code></td><td>NOT (invert bits)</td><td><code>~6</code></td><td><code>-7</code></td></tr>
+  <tr><td><code>&lt;&lt;</code></td><td>Left shift</td><td><code>1 &lt;&lt; 3</code></td><td><code>8</code></td></tr>
+  <tr><td><code>&gt;&gt;</code></td><td>Right shift</td><td><code>8 &gt;&gt; 2</code></td><td><code>2</code></td></tr>
+  </tbody></table></div>
+
+  <div class="table-wrap"><table>
+  <caption>Membership &amp; Identity</caption>
+  <thead><tr><th>Op</th><th>Meaning</th><th>Example</th></tr></thead>
+  <tbody>
+  <tr><td><code>in</code></td><td>Value exists in container</td><td><code>3 in [1,2,3]</code></td></tr>
+  <tr><td><code>not in</code></td><td>Value absent</td><td><code>5 not in [1,2,3]</code></td></tr>
+  <tr><td><code>is</code></td><td>Same object identity (not equality)</td><td><code>a is b</code></td></tr>
+  <tr><td><code>is not</code></td><td>Different identity</td><td><code>a is not None</code></td></tr>
+  </tbody></table></div>
+
+  <h3 class="sub">Operator precedence (high &rarr; low, abridged)</h3>
+  <div class="code-block"><pre>()                         # grouping
+**                         # exponent (right-assoc)
++x -x ~x                   # unary
+*  /  //  %
++  -
+&lt;&lt;  &gt;&gt;
+&amp;
+^
+|
+==  !=  &lt;  &gt;  &lt;=  &gt;=  is  is not  in  not in
+not
+and
+or
+:=  (walrus, lowest — used as an expression)</pre><button class="copy-btn">Copy</button></div>
+  <div class="rc-note" style="background:var(--surface-2);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--text-muted);">When in doubt, use parentheses — precedence bugs are hard to spot on re-read.</div>
+
+  <h3 class="sub">Walrus operator <code class="inline">:=</code> <span class="pybadge">3.8+</span></h3>
+  <p class="lead">Assigns and returns a value in the same expression — useful in <code class="inline">while</code>/<code class="inline">if</code> conditions and comprehensions.</p>
+  <div class="code-block"><pre># without walrus
+data = get_data()
+while data:
+    process(data)
+    data = get_data()
+
+# with walrus
+while (data := get_data()):
+    process(data)
+
+# in a comprehension
+results = [y for x in values if (y := transform(x)) is not None]</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="builtins">
+  <div class="section-head">
+    <h2><span class="idx">02</span> Built-in Functions</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.builtins &mdash; docs.python.org/3/library/functions.html</p>
+  <p class="section-desc">All 69 built-ins always available with no import. Search above or scan cards below — each shows syntax, parameters, a working example, and its official doc link.</p>
+  <div class="section-body">
+    <div class="card-grid" id="builtinsGrid"></div>
+  </div>
+</section>
+
+<section class="ref-section" id="strings">
+  <div class="section-head">
+    <h2><span class="idx">03</span> Strings</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.str</p>
+  <p class="section-desc">Strings are immutable sequences of Unicode code points.</p>
+  <div class="section-body">
+
+  <h3 class="sub">Creating strings</h3>
+  <div class="code-block"><pre>'single quotes'
+"double quotes"
+'''triple single —
+   spans multiple lines'''
+"""triple double — same, and the
+   convention for docstrings"""
+
+r"raw string — \n is two chars, not a newline"   # great for regex / Windows paths
+f"f-string — inline {1 + 1} expressions"          # see below</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Indexing, slicing &amp; core operations</h3>
+  <div class="code-block"><pre>s = "Python"
+s[0]        # 'P'            (indexing)
+s[-1]       # 'n'            (negative indexing, from the end)
+s[1:4]      # 'yth'          (slicing: start:stop, stop excluded)
+s[::-1]     # 'nohtyP'       (reverse via step -1)
+s[::2]      # 'Pto'          (every 2nd char)
+
+s + "3"     # 'Python3'      (concatenation)
+s * 2       # 'PythonPython' (repetition)
+'y' in s    # True           (membership)
+s == "Python"  # True        (comparison, case-sensitive)</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">f-strings &amp; format specifiers</h3>
+  <div class="code-block"><pre>name, pi = "Rushit", 3.14159
+f"{name} scored {pi:.2f}"     # -> 'Rushit scored 3.14'   (2 decimal places)
+f"{42:05d}"                   # -> '00042'                (zero-padded width 5)
+f"{1234567:,}"                # -> '1,234,567'            (thousands separator)
+f"{pi:>10.2f}"                # -> '      3.14'            (right-align, width 10)
+f"{name=}"                    # -> "name='Rushit'"        (debug spec, 3.8+)</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Escape characters &amp; multiline</h3>
+  <div class="code-block"><pre>"Line1\nLine2"     # \n newline, \t tab, \\ backslash, \' \" quotes
+"""
+This spans
+multiple physical lines
+"""</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">String methods</h3>
+  <div class="card-grid" id="stringMethodsGrid"></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="lists">
+  <div class="section-head">
+    <h2><span class="idx">04</span> Lists</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.list &mdash; mutable, ordered sequence</p>
+  <div class="section-body">
+
+  <h3 class="sub">Creating &amp; core operations</h3>
+  <div class="code-block"><pre>nums = [1, 2, 3]
+mixed = [1, "two", 3.0, [4, 5]]     # nested list
+empty = []
+
+nums[0]          # 1              indexing
+nums[-1]         # 3              negative indexing
+nums[0:2]        # [1, 2]         slicing
+nested = [[1,2],[3,4]]
+nested[1][0]     # 3              nested access
+
+a, b, c = nums              # unpacking
+first, *rest = nums         # first=1, rest=[2, 3]
+
+[1,2] + [3,4]    # [1, 2, 3, 4]   concatenation
+[1,2] * 3        # [1,2,1,2,1,2]  repetition
+2 in nums        # True           membership</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">List methods</h3>
+  <div class="card-grid" id="listMethodsGrid"></div>
+
+  <h3 class="sub"><code class="inline">sorted()</code> vs <code class="inline">.sort()</code></h3>
+  <div class="code-block"><pre>nums = [3, 1, 2]
+new_list = sorted(nums)     # returns a NEW sorted list; nums unchanged
+nums.sort()                 # sorts IN PLACE; returns None (common bug: x = nums.sort())</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Shallow copy vs reference</h3>
+  <div class="code-block"><pre>a = [1, 2, 3]
+b = a              # reference — b and a point to the SAME list
+b.append(4)        # a is now [1, 2, 3, 4] too!
+
+c = a.copy()       # or list(a), or a[:] — shallow copy, new outer list
+c.append(5)        # a is unaffected
+
+import copy
+d = copy.deepcopy(a)   # needed when a contains nested mutable objects</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">List comprehensions</h3>
+  <div class="code-block"><pre>squares = [x**2 for x in range(6)]                 # [0,1,4,9,16,25]
+evens   = [x for x in range(10) if x % 2 == 0]     # conditional
+grid    = [[r*3+c for c in range(3)] for r in range(3)]  # nested
+tagged  = ["even" if x%2==0 else "odd" for x in range(4)] # if/else expr form</pre><button class="copy-btn">Copy</button>
+  <div class="out"><span class="lbl">see also</span>full Comprehensions section (09) for dict/set/generator forms</div></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="tuples">
+  <div class="section-head">
+    <h2><span class="idx">05</span> Tuples</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.tuple &mdash; immutable, ordered sequence</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>t = (1, 2, 3)
+single = (5,)          # the COMMA makes it a tuple, not the parens
+not_a_tuple = (5)      # this is just int 5
+
+t[0]            # 1            indexing
+t[1:]           # (2, 3)       slicing
+nested = (1, (2, 3), [4, 5])
+
+a, b, c = t              # unpacking
+first, *rest = t         # first=1, rest=[2, 3]
+
+t.count(2)      # 1            only 2 methods exist: count, index
+t.index(3)      # 2</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="table-wrap"><table>
+  <caption>Tuple vs List</caption>
+  <thead><tr><th></th><th>Tuple</th><th>List</th></tr></thead>
+  <tbody>
+  <tr><td>Mutable</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Syntax</td><td><code>(1, 2)</code></td><td><code>[1, 2]</code></td></tr>
+  <tr><td>Methods</td><td><code>count</code>, <code>index</code></td><td>11 methods (append, sort, …)</td></tr>
+  <tr><td>Hashable</td><td>Yes (if elements are)</td><td>No — can't be a dict key</td></tr>
+  <tr><td>Typical use</td><td>Fixed records, dict keys, function returns</td><td>Growing collections</td></tr>
+  </tbody></table></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="sets">
+  <div class="section-head">
+    <h2><span class="idx">06</span> Sets</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.set &mdash; unordered, unique elements</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>s = {1, 2, 3}
+empty = set()          # NOT {} — that creates an empty dict!
+s.add(4)
+s.remove(1)             # KeyError if missing
+s.discard(99)           # no error if missing
+
+a, b = {1,2,3}, {2,3,4}
+a | b     # union                -> {1,2,3,4}
+a &amp; b     # intersection         -> {2,3}
+a - b     # difference           -> {1}
+a ^ b     # symmetric difference -> {1,4}
+a &lt;= b    # subset?              -> False
+a &gt;= b    # superset?            -> False
+a.isdisjoint(b)          # False (they share elements)
+
+evens = {x for x in range(10) if x % 2 == 0}   # set comprehension
+frozen = frozenset([1, 2, 3])                   # immutable, hashable set</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Set methods</h3>
+  <div class="card-grid" id="setMethodsGrid"></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="dicts">
+  <div class="section-head">
+    <h2><span class="idx">07</span> Dictionaries</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.dict &mdash; key-value mapping, insertion-ordered (3.7+)</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>d = {"name": "Rushit", "year": 2}
+d["name"]          # 'Rushit'       access (KeyError if missing)
+d.get("gpa")       # None           .get() — safe, no KeyError
+d.get("gpa", 0.0)  # 0.0            .get() with default
+
+d["year"] = 3            # update
+d["branch"] = "CS"       # add new key
+del d["branch"]           # remove
+d.pop("year")             # remove + return value
+
+nested = {"student": {"name": "Rushit", "skills": ["Python", "SQL"]}}
+nested["student"]["skills"]
+
+merged = {**d, **{"gpa": 8.5}}   # dict unpacking merge (or d | other, 3.9+)
+
+d.keys()      # view of keys (dict_keys)
+d.values()    # view of values
+d.items()     # view of (key, value) pairs</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Dictionary methods</h3>
+  <div class="card-grid" id="dictMethodsGrid"></div>
+
+  <h3 class="sub">Comprehension &amp; iteration patterns</h3>
+  <div class="code-block"><pre>squares = {x: x**2 for x in range(5)}          # dict comprehension
+
+for k in d: ...                    # iterates keys
+for k in d.keys(): ...             # same, explicit
+for v in d.values(): ...           # iterates values
+for k, v in d.items(): ...         # iterates pairs (most common)</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="control-flow">
+  <div class="section-head">
+    <h2><span class="idx">08</span> Control Flow</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.control_flow</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>if score >= 90:
+    grade = "A"
+elif score >= 75:
+    grade = "B"
+else:
+    grade = "C"
+
+grade = "A" if score >= 90 else "B"     # ternary / conditional expression
+
+for i in range(5):          # 0..4
+    if i == 3:
+        break                # exit loop entirely
+    if i == 1:
+        continue             # skip to next iteration
+    print(i)
+else:
+    print("loop finished without break")   # runs only if no break
+
+while attempts &lt; 3:
+    attempts += 1
+else:
+    print("while finished without break")
+
+if debug:
+    pass                     # no-op placeholder</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub"><code class="inline">match / case</code> <span class="pybadge">3.10+</span></h3>
+  <div class="code-block"><pre>match command.split():
+    case ["go", direction] if direction in ("n","s","e","w"):
+        move(direction)
+    case ["go", _]:
+        print("unknown direction")
+    case ["quit"]:
+        exit()
+    case _:
+        print("unrecognized command")     # wildcard / default</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="comprehensions">
+  <div class="section-head">
+    <h2><span class="idx">09</span> Comprehensions</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.comprehensions &mdash; loop, condition and expression fused into one line</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre># normal approach
+squares = []
+for x in range(10):
+    squares.append(x**2)
+
+# comprehension approach
+squares = [x**2 for x in range(10)]
+
+# list comprehension with condition
+evens = [x for x in range(10) if x % 2 == 0]
+
+# nested list comprehension (flatten a 2D grid)
+grid = [[1,2],[3,4]]
+flat = [n for row in grid for n in row]        # [1, 2, 3, 4]
+
+# dict comprehension
+squares_map = {x: x**2 for x in range(5)}
+
+# set comprehension
+unique_lengths = {len(w) for w in ["hi","bye","yo"]}
+
+# generator expression — lazy, computed one item at a time, no [] brackets
+gen = (x**2 for x in range(10**6))     # doesn't build the whole list in memory
+sum(x**2 for x in range(10))            # generator expr passed directly to sum()</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="functions">
+  <div class="section-head">
+    <h2><span class="idx">10</span> Functions</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.functions</p>
+  <div class="section-body">
+
+  <h3 class="sub">Defining &amp; calling</h3>
+  <div class="code-block"><pre>def greet(name, greeting="Hello"):
+    """Return a greeting string. (this is a docstring)"""
+    return f"{greeting}, {name}!"
+
+greet("Rushit")                    # positional argument -> uses default greeting
+greet("Rushit", greeting="Hi")     # keyword argument
+greet(name="Rushit", greeting="Hi")</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Parameter kinds compared</h3>
+  <div class="code-block"><pre>def f(a, b):            # positional or keyword — most common
+    ...
+
+def f(a, b=10):         # default argument — evaluated ONCE at def time (careful with mutables)
+    ...
+
+def f(*args):           # collects extra positional args into a tuple
+    ...
+
+def f(**kwargs):        # collects extra keyword args into a dict
+    ...
+
+def f(a, /, b, *, c):   # a = positional-only, b = either, c = keyword-only
+    ...                 #   /  marks end of positional-only section
+                         #   *  marks start of keyword-only section
+
+def f(a, b, *args, c, **kwargs):   # realistic mix, all forms together
+    ...</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Return values</h3>
+  <div class="code-block"><pre>def divmod_(a, b):
+    return a // b, a % b       # multiple return values -> packed as a tuple
+
+q, r = divmod_(17, 5)          # unpacked on the caller's side -> q=3, r=2</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Annotations, scope &amp; closures</h3>
+  <div class="code-block"><pre>def add(a: int, b: int) -> int:    # annotations — hints only, not enforced at runtime
+    return a + b
+
+count = 0
+def increment():
+    global count            # without this, count += 1 below raises UnboundLocalError
+    count += 1
+
+def outer():
+    total = 0
+    def inner(x):
+        nonlocal total       # modifies the ENCLOSING function's variable, not global
+        total += x
+    inner(5)
+    return total
+
+def make_multiplier(n):      # closure: inner() "remembers" n after make_multiplier returns
+    def multiplier(x):
+        return x * n
+    return multiplier
+times3 = make_multiplier(3)
+times3(10)                    # -> 30</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Recursion, first-class &amp; higher-order functions</h3>
+  <div class="code-block"><pre>def factorial(n):
+    return 1 if n &lt;= 1 else n * factorial(n - 1)     # recursion
+
+def apply_twice(fn, x):        # functions are first-class: pass them like any value
+    return fn(fn(x))
+apply_twice(lambda x: x*2, 3)   # -> 12  (higher-order function: takes a function as arg)</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="lambda-functional">
+  <div class="section-head">
+    <h2><span class="idx">11</span> Lambda &amp; Functional Programming</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.functional</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>square = lambda x: x ** 2          # anonymous, single-expression function
+square(5)                           # -> 25
+
+list(map(lambda x: x*2, [1,2,3]))          # [2, 4, 6]
+list(filter(lambda x: x % 2 == 0, range(10)))  # [0, 2, 4, 6, 8]
+
+from functools import reduce
+reduce(lambda acc, x: acc + x, [1,2,3,4])   # -> 10  (running accumulation)
+
+list(zip([1,2,3], ['a','b','c']))           # [(1,'a'), (2,'b'), (3,'c')]
+list(enumerate(['a','b','c'], start=1))      # [(1,'a'), (2,'b'), (3,'c')]
+
+any(x &gt; 5 for x in [1,2,8])       # True  — at least one truthy
+all(x &gt; 0 for x in [1,2,8])       # True  — every element truthy</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Realistic combinations</h3>
+  <div class="code-block"><pre>data = [("Rushit", 82), ("Aman", 91), ("Zoya", 76)]
+
+sorted(data, key=lambda x: x[1])              # sort by score ascending
+sorted(data, key=lambda x: x[1], reverse=True) # descending
+max(data, key=lambda x: x[1])                  # ('Aman', 91)
+min(data, key=lambda x: x[1])                  # ('Zoya', 76)</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="iterators-generators">
+  <div class="section-head">
+    <h2><span class="idx">12</span> Iterators &amp; Generators</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.iterators</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>Iterable  -&gt;  has __iter__()          e.g. a list, tuple, str, dict
+Iterator  -&gt;  has __next__() AND __iter__()  e.g. what iter(list) produces
+
+nums = [1, 2, 3]      # iterable, not itself an iterator
+it = iter(nums)        # -> iterator object
+next(it)               # 1
+next(it)               # 2
+next(it)               # 3
+next(it)               # raises StopIteration — the loop-ending signal</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Generator functions (<code class="inline">yield</code>)</h3>
+  <div class="code-block"><pre>def countdown(n):
+    while n &gt; 0:
+        yield n            # pauses here, resumes on next next() call
+        n -= 1
+
+for x in countdown(3):     # 3, 2, 1 — computed lazily, one at a time
+    print(x)
+
+def chain_gen():
+    yield from countdown(2)   # delegate to another generator/iterable
+    yield from [10, 20]
+list(chain_gen())            # [2, 1, 10, 20]
+
+gen_expr = (x**2 for x in range(5))   # generator expression, same laziness as yield</pre><button class="copy-btn">Copy</button>
+  <div class="out"><span class="lbl">why it matters</span>generators produce values on demand instead of building a full list in memory — key for large datasets / streaming data</div></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="oop">
+  <div class="section-head">
+    <h2><span class="idx">13</span> Object-Oriented Programming</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.oop</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>class Student:
+    school = "Nirma University"          # class attribute — shared by all instances
+
+    def __init__(self, name, gpa):        # constructor
+        self.name = name                  # instance attribute
+        self.gpa = gpa
+
+    def summary(self):                    # instance method — needs self
+        return f"{self.name}: {self.gpa}"
+
+    @classmethod
+    def from_string(cls, data):           # class method — receives the class (cls)
+        name, gpa = data.split(",")
+        return cls(name, float(gpa))
+
+    @staticmethod
+    def is_passing(gpa):                  # static method — no self/cls, just grouped in the class
+        return gpa &gt;= 5.0
+
+    @property
+    def status(self):                     # property — call like an attribute, no ()
+        return "Good standing" if self.gpa &gt;= 7 else "At risk"
+
+s = Student("Rushit", 8.5)
+s.summary()
+Student.from_string("Aman,7.2")
+Student.is_passing(6.0)
+s.status                # no parentheses — properties act like read-only attributes</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Inheritance &amp; polymorphism</h3>
+  <div class="code-block"><pre>class Person:
+    def __init__(self, name):
+        self.name = name
+    def greet(self):
+        return f"Hi, I'm {self.name}"
+
+class Student(Person):                 # single inheritance
+    def __init__(self, name, roll_no):
+        super().__init__(name)          # call the parent's __init__
+        self.roll_no = roll_no
+    def greet(self):                    # method overriding
+        return super().greet() + f" ({self.roll_no})"
+
+class TA(Student, Person):              # multiple inheritance (MRO decides lookup order)
+    pass
+
+for p in [Person("A"), Student("B", 1)]:
+    print(p.greet())                    # polymorphism — same call, different behavior</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Encapsulation &amp; abstract classes</h3>
+  <div class="code-block"><pre>class Account:
+    def __init__(self, balance):
+        self._balance = balance          # "protected" convention (single underscore)
+        self.__pin = 1234                # "private" convention (name-mangled)
+
+from abc import ABC, abstractmethod
+class Shape(ABC):
+    @abstractmethod
+    def area(self):                      # subclasses MUST implement this
+        ...
+
+class Circle(Shape):
+    def __init__(self, r): self.r = r
+    def area(self): return 3.14159 * self.r ** 2
+
+Shape()      # TypeError — can't instantiate an abstract class directly</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Common dunder (magic) methods</h3>
+  <div class="table-wrap"><table>
+  <thead><tr><th>Method</th><th>Triggered by</th></tr></thead>
+  <tbody>
+  <tr><td><code>__init__(self, ...)</code></td><td>Object creation — the constructor</td></tr>
+  <tr><td><code>__str__(self)</code></td><td><code>str(obj)</code> / <code>print(obj)</code> — readable form</td></tr>
+  <tr><td><code>__repr__(self)</code></td><td><code>repr(obj)</code> — unambiguous, debug-friendly form</td></tr>
+  <tr><td><code>__len__(self)</code></td><td><code>len(obj)</code></td></tr>
+  <tr><td><code>__getitem__(self,k)</code></td><td><code>obj[k]</code></td></tr>
+  <tr><td><code>__setitem__(self,k,v)</code></td><td><code>obj[k] = v</code></td></tr>
+  <tr><td><code>__iter__(self)</code></td><td>Makes the object iterable (<code>for x in obj</code>)</td></tr>
+  <tr><td><code>__next__(self)</code></td><td><code>next(obj)</code> when <code>obj</code> is an iterator</td></tr>
+  <tr><td><code>__eq__(self, other)</code></td><td><code>obj == other</code></td></tr>
+  <tr><td><code>__lt__(self, other)</code></td><td><code>obj &lt; other</code></td></tr>
+  <tr><td><code>__add__(self, other)</code></td><td><code>obj + other</code></td></tr>
+  <tr><td><code>__enter__</code> / <code>__exit__</code></td><td><code>with obj:</code> — context manager protocol</td></tr>
+  </tbody></table></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="exceptions">
+  <div class="section-head">
+    <h2><span class="idx">14</span> Exception Handling</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.exceptions</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>try:
+    result = 10 / divisor
+except ZeroDivisionError:
+    result = 0
+except (TypeError, ValueError) as e:      # multiple exceptions + alias
+    print(f"bad input: {e}")
+else:
+    print("ran only if no exception was raised")
+finally:
+    print("always runs — cleanup goes here")
+
+raise ValueError("gpa must be between 0 and 10")   # raise manually
+
+class InvalidGPAError(Exception):          # custom exception
+    pass
+raise InvalidGPAError("gpa out of range")</pre><button class="copy-btn">Copy</button></div>
+
+  <h3 class="sub">Exception quick reference</h3>
+  <div class="table-wrap"><table>
+  <thead><tr><th>Exception</th><th>Usually happens when</th><th>Example</th></tr></thead>
+  <tbody>
+  <tr><td><code>Exception</code></td><td>Base class for (almost) all built-in exceptions</td><td><code>except Exception as e:</code></td></tr>
+  <tr><td><code>ValueError</code></td><td>Right type, invalid value</td><td><code>int("abc")</code></td></tr>
+  <tr><td><code>TypeError</code></td><td>Wrong type used in an operation</td><td><code>"2" + 2</code></td></tr>
+  <tr><td><code>IndexError</code></td><td>Sequence index out of range</td><td><code>[1,2][5]</code></td></tr>
+  <tr><td><code>KeyError</code></td><td>Dict key doesn't exist</td><td><code>{}["x"]</code></td></tr>
+  <tr><td><code>FileNotFoundError</code></td><td>Path doesn't exist on disk</td><td><code>open("missing.txt")</code></td></tr>
+  <tr><td><code>ZeroDivisionError</code></td><td>Dividing by zero</td><td><code>5 / 0</code></td></tr>
+  <tr><td><code>AttributeError</code></td><td>Attribute/method doesn't exist</td><td><code>"x".push()</code></td></tr>
+  <tr><td><code>ImportError</code></td><td>Name can't be imported from a module</td><td><code>from math import fake</code></td></tr>
+  <tr><td><code>ModuleNotFoundError</code></td><td>Module itself doesn't exist</td><td><code>import fakemodule</code></td></tr>
+  </tbody></table></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="file-handling">
+  <div class="section-head">
+    <h2><span class="idx">15</span> File Handling</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.files</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>with open("data.txt", "r") as f:     # ALWAYS prefer 'with' — see why below
+    content = f.read()                # whole file as one string
+    # f.readline()                    # one line at a time
+    # f.readlines()                   # list of all lines
+
+with open("data.txt", "w") as f:      # 'w' overwrites the whole file
+    f.write("first line\n")
+    f.writelines(["second\n", "third\n"])
+
+with open("data.txt", "a") as f:      # 'a' appends without erasing
+    f.write("appended line\n")
+
+with open("data.txt") as f:
+    f.seek(0)                          # move cursor to byte offset
+    pos = f.tell()                     # current cursor position</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="table-wrap"><table>
+  <caption>File modes</caption>
+  <thead><tr><th>Mode</th><th>Meaning</th></tr></thead>
+  <tbody>
+  <tr><td><code>'r'</code></td><td>Read (default) — errors if file doesn't exist</td></tr>
+  <tr><td><code>'w'</code></td><td>Write — creates file, truncates if it exists</td></tr>
+  <tr><td><code>'a'</code></td><td>Append — creates file if missing, adds to the end</td></tr>
+  <tr><td><code>'x'</code></td><td>Exclusive create — errors if the file already exists</td></tr>
+  <tr><td><code>'b'</code></td><td>Binary mode suffix, e.g. <code>'rb'</code>, <code>'wb'</code></td></tr>
+  <tr><td><code>'+'</code></td><td>Read and write, e.g. <code>'r+'</code></td></tr>
+  </tbody></table></div>
+
+  <div class="rc-note" style="background:var(--surface-2);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--text-muted);"><b>Why <code class="inline">with</code>:</b> it calls <code class="inline">f.close()</code> automatically — even if an exception happens inside the block — so file handles never leak.</div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="modules-imports">
+  <div class="section-head">
+    <h2><span class="idx">16</span> Modules &amp; Imports</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.modules</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>import math                    # whole module -> use as math.sqrt()
+from math import sqrt          # just one name -> use as sqrt()
+from math import *             # everything (avoid — pollutes namespace, unclear origin)
+import numpy as np             # aliased import — very common convention
+
+# your own module: save as helpers.py, then anywhere in the same project:
+import helpers
+helpers.my_function()
+
+if __name__ == "__main__":     # True only when this file is run directly,
+    main()                       # False when it's imported by another file</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="code-block"><pre># package layout
+myproject/
+├── main.py
+└── mypackage/
+    ├── __init__.py
+    └── utils.py
+
+# inside main.py
+from mypackage import utils
+from mypackage.utils import helper_fn
+from . import utils              # relative import — only inside a package
+
+import sys
+sys.path                          # list of directories Python searches for modules
+sys.path.append("/custom/path")   # add a directory at runtime</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="code-block"><pre># command line — package management
+pip install pandas
+pip install pandas==2.2.0
+pip freeze &gt; requirements.txt     # snapshot installed packages
+pip install -r requirements.txt    # install from that snapshot
+
+python -m venv .venv                # create a virtual environment
+.venv\Scripts\activate              # activate on Windows
+source .venv/bin/activate           # activate on macOS/Linux</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="stdlib">
+  <div class="section-head">
+    <h2><span class="idx">17</span> Standard Library</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.stdlib &mdash; the modules used most in data work, scripting &amp; backend code</p>
+  <div class="section-body">
+  <div class="card-grid" id="stdlibGrid"></div>
+  </div>
+</section>
+
+<section class="ref-section" id="regex">
+  <div class="section-head">
+    <h2><span class="idx">18</span> Regular Expressions</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.re &mdash; docs.python.org/3/library/re.html</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>import re
+
+re.search(r"\d+", "room 42")        # -> Match object at first occurrence, or None
+re.match(r"\d+", "42 room")          # -> matches only at the START of the string
+re.fullmatch(r"\d+", "42")           # -> matches only if the WHOLE string fits
+re.findall(r"\d+", "a1 b22 c333")    # -> ['1', '22', '333']  (all matches, as strings)
+re.finditer(r"\d+", "a1 b22")        # -> iterator of Match objects (has .start()/.end())
+re.sub(r"\d+", "#", "room 42")       # -> 'room #'  (replace matches)
+re.split(r"\s+", "a   b  c")         # -> ['a', 'b', 'c']  (split on a pattern)
+
+pattern = re.compile(r"\d+")         # pre-compile for reuse in a loop (faster)
+pattern.findall("a1 b22")</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="table-wrap"><table>
+  <caption>Character classes &amp; quantifiers</caption>
+  <thead><tr><th>Token</th><th>Meaning</th></tr></thead>
+  <tbody>
+  <tr><td><code>\d</code> <code>\D</code></td><td>digit / non-digit</td></tr>
+  <tr><td><code>\w</code> <code>\W</code></td><td>word char (letter/digit/_) / non-word</td></tr>
+  <tr><td><code>\s</code> <code>\S</code></td><td>whitespace / non-whitespace</td></tr>
+  <tr><td><code>.</code></td><td>any char except newline</td></tr>
+  <tr><td><code>[abc]</code> <code>[^abc]</code></td><td>one of a/b/c / none of a/b/c</td></tr>
+  <tr><td><code>*</code> <code>+</code> <code>?</code></td><td>0+, 1+, 0-or-1 of the previous token</td></tr>
+  <tr><td><code>{n,m}</code></td><td>between n and m repetitions</td></tr>
+  <tr><td><code>^</code> <code>$</code></td><td>start / end of string (anchors)</td></tr>
+  <tr><td><code>(...)</code></td><td>capturing group — retrievable via <code>.group(1)</code></td></tr>
+  <tr><td><code>(?:...)</code></td><td>non-capturing group</td></tr>
+  </tbody></table></div>
+
+  <h3 class="sub">Common patterns</h3>
+  <div class="code-block"><pre>email    = r"[\w.+-]+@[\w-]+\.[\w.-]+"
+phone_in = r"\d{10}"                        # simple 10-digit number
+digits   = r"\d+"
+whitespace = r"\s+"
+
+# extracting numbers from mixed text
+re.findall(r"\d+\.?\d*", "Price: 199.99, Qty: 3")   # ['199.99', '3']
+
+# finding whole words only (word boundary)
+re.findall(r"\bcat\b", "cat category concatenate")   # ['cat']
+
+# always use RAW strings for patterns — avoids \d becoming an invalid escape</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="datetime-ref">
+  <div class="section-head">
+    <h2><span class="idx">19</span> Date &amp; Time</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.datetime</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>from datetime import date, time, datetime, timedelta
+
+date.today()                       # date(2026, 8, 2) — today's date, no time
+datetime.now()                      # datetime(2026, 8, 2, 14, 30, 5, ...)
+time(14, 30)                        # time object, 2:30 PM, no date attached
+
+datetime.now() + timedelta(days=7)       # a week from now
+datetime.now() - timedelta(hours=3)      # 3 hours ago
+d1, d2 = date(2026,1,1), date(2026,8,2)
+(d2 - d1).days                            # -> 213 (difference as a timedelta)
+
+now = datetime.now()
+now.strftime("%Y-%m-%d %H:%M:%S")         # datetime -&gt; string
+datetime.strptime("2026-08-02", "%Y-%m-%d")  # string -&gt; datetime</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="table-wrap"><table>
+  <caption>Common format codes (used in strftime / strptime)</caption>
+  <thead><tr><th>Code</th><th>Meaning</th><th>Example</th></tr></thead>
+  <tbody>
+  <tr><td><code>%Y</code></td><td>4-digit year</td><td>2026</td></tr>
+  <tr><td><code>%y</code></td><td>2-digit year</td><td>26</td></tr>
+  <tr><td><code>%m</code></td><td>month (01-12)</td><td>08</td></tr>
+  <tr><td><code>%d</code></td><td>day of month</td><td>02</td></tr>
+  <tr><td><code>%H</code></td><td>hour, 24h (00-23)</td><td>14</td></tr>
+  <tr><td><code>%I</code></td><td>hour, 12h (01-12)</td><td>02</td></tr>
+  <tr><td><code>%M</code></td><td>minute</td><td>30</td></tr>
+  <tr><td><code>%S</code></td><td>second</td><td>05</td></tr>
+  <tr><td><code>%A</code> / <code>%a</code></td><td>weekday name / abbreviated</td><td>Sunday / Sun</td></tr>
+  <tr><td><code>%B</code> / <code>%b</code></td><td>month name / abbreviated</td><td>August / Aug</td></tr>
+  <tr><td><code>%p</code></td><td>AM/PM</td><td>PM</td></tr>
+  </tbody></table></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="patterns">
+  <div class="section-head">
+    <h2><span class="idx">20</span> Python Data Handling Patterns</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.patterns &mdash; the snippets you reach for constantly</p>
+  <div class="section-body">
+  <div class="card-grid single" id="patternsGrid"></div>
+  </div>
+</section>
+
+<section class="ref-section" id="syntax-glance">
+  <div class="section-head">
+    <h2><span class="idx">21</span> Syntax at a Glance</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.syntax_index &mdash; every core construct, compressed to its shape</p>
+  <div class="section-body">
+  <div class="card-grid" id="syntaxGlanceGrid"></div>
+  </div>
+</section>
+
+<section class="ref-section" id="decorators">
+  <div class="section-head">
+    <h2><span class="idx">22</span> Decorators</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.decorators &mdash; a function that wraps another function</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>def logger(func):                 # a decorator is just a function...
+    def wrapper(*args, **kwargs):  # ...that returns a wrapper function
+        print(f"calling {func.__name__}")
+        result = func(*args, **kwargs)
+        print(f"done: {result}")
+        return result
+    return wrapper
+
+@logger                            # sugar for: greet = logger(greet)
+def greet(name):
+    return f"Hi {name}"
+
+greet("Rushit")   # prints the log lines, then returns "Hi Rushit"</pre><button class="copy-btn">Copy</button></div>
+
+  <div class="code-block"><pre>from functools import wraps
+
+def logger(func):
+    @wraps(func)                   # preserves func.__name__ / __doc__ on the wrapper
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+@logger
+@staticmethod                      # stacking decorators — applied bottom-up
+def utility(): ...</pre><button class="copy-btn">Copy</button>
+  <div class="out"><span class="lbl">note</span>without @wraps, greet.__name__ becomes "wrapper" instead of "greet" — breaks introspection/docs</div></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="context-managers">
+  <div class="section-head">
+    <h2><span class="idx">23</span> Context Managers</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.context_managers &mdash; guaranteed setup / teardown around a block</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>with open("f.txt") as f:      # the classic example — guarantees f.close()
+    data = f.read()
+
+class Timer:                    # writing your own — implement __enter__/__exit__
+    def __enter__(self):
+        import time
+        self.start = time.time()
+        return self                   # value bound to "as x"
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(f"took {time.time() - self.start:.4f}s")
+        return False                  # False -&gt; don't suppress exceptions
+
+with Timer() as t:
+    do_something_slow()
+
+from contextlib import contextmanager
+@contextmanager                      # simpler way, using a generator
+def timer():
+    import time
+    start = time.time()
+    yield                              # code inside the "with" block runs here
+    print(f"took {time.time() - start:.4f}s")
+
+with timer():
+    do_something_slow()</pre><button class="copy-btn">Copy</button></div>
+  <div class="rc-note" style="background:var(--surface-2);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--text-muted);"><b>Why bother:</b> cleanup (closing files, releasing locks, closing DB connections) runs even if the block raises an exception.</div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="type-hints">
+  <div class="section-head">
+    <h2><span class="idx">24</span> Type Hints</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.typing &mdash; hints only, not enforced at runtime (use mypy/pyright to check)</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>x: int = 5
+name: str = "Rushit"
+numbers: list[int] = [1, 2, 3]              # modern generic syntax (3.9+)
+data: dict[str, int] = {"a": 1}
+point: tuple[int, str] = (1, "x")
+maybe_name: int | None = None                # union, modern syntax (3.10+)
+
+def add(a: int, b: int) -&gt; int:              # param + return annotations
+    return a + b
+
+from typing import Optional, Union, Any, Callable, TypeVar, TypedDict
+
+def find(x: int) -&gt; Optional[str]: ...        # same as -> str | None
+def parse(x: Union[int, str]) -&gt; Any: ...     # same as int | str (pre-3.10 style)
+
+on_click: Callable[[int, int], None]           # a function taking (int,int) -> None
+
+T = TypeVar("T")
+def first(items: list[T]) -&gt; T:                # generic function — works for any type
+    return items[0]
+
+class Movie(TypedDict):                        # dict with a fixed, typed shape
+    title: str
+    year: int</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="dataclasses">
+  <div class="section-head">
+    <h2><span class="idx">25</span> Dataclasses</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.dataclasses &mdash; auto-generates __init__, __repr__, __eq__ from field annotations</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>from dataclasses import dataclass, field
+
+@dataclass
+class Student:
+    name: str
+    gpa: float = 0.0                       # default value
+    skills: list[str] = field(default_factory=list)   # mutable default — needs field()
+
+s = Student("Rushit", 8.5, ["Python", "SQL"])
+print(s)                    # Student(name='Rushit', gpa=8.5, skills=['Python', 'SQL'])
+s == Student("Rushit", 8.5, ["Python", "SQL"])   # True — __eq__ generated for free
+
+@dataclass(frozen=True)      # immutable — raises on attribute assignment after creation
+class Point:
+    x: int
+    y: int</pre><button class="copy-btn">Copy</button></div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="async">
+  <div class="section-head">
+    <h2><span class="idx">26</span> Async Python</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.asyncio &mdash; concurrency for I/O-bound work (network calls, file/database I/O)</p>
+  <div class="section-body">
+
+  <div class="code-block"><pre>import asyncio
+
+async def fetch(id):                 # 'async def' -> defines a coroutine function
+    await asyncio.sleep(1)            # 'await' -> pause here, let other tasks run
+    return f"result {id}"
+
+async def main():
+    result = await fetch(1)           # run one coroutine and wait for it
+
+    task = asyncio.create_task(fetch(2))    # schedule concurrently, keep running
+    other_result = await task
+
+    results = await asyncio.gather(fetch(3), fetch(4), fetch(5))  # run several at once
+
+asyncio.run(main())                    # entry point — starts the event loop</pre><button class="copy-btn">Copy</button></div>
+  <div class="rc-note" style="background:var(--surface-2);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--text-muted);"><b>When it helps:</b> waiting on many network requests / API calls / DB queries at once. It does <b>not</b> speed up CPU-heavy work (use <code class="inline">multiprocessing</code> for that instead).</div>
+
+  </div>
+</section>
+
+<section class="ref-section" id="operators">
+  <div class="section-head">
+    <h2><span class="idx">27</span> Special Syntax &amp; Operators</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.operators &mdash; the symbols that trip people up out of context</p>
+  <div class="section-body">
+  <div class="table-wrap"><table>
+  <thead><tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+  <tbody>
+  <tr><td><code>*</code></td><td>Unpack iterable into positional args / collect extra positional args</td><td><code>f(*args)</code> · <code>a, *rest = [1,2,3]</code></td></tr>
+  <tr><td><code>**</code></td><td>Unpack dict into keyword args / collect extra keyword args / exponent</td><td><code>f(**kwargs)</code> · <code>2**10</code></td></tr>
+  <tr><td><code>:=</code></td><td>Walrus — assign inside an expression</td><td><code>if (n := len(a)) &gt; 5:</code></td></tr>
+  <tr><td><code>/</code></td><td>True division</td><td><code>7 / 2</code> &rarr; <code>3.5</code></td></tr>
+  <tr><td><code>//</code></td><td>Floor division</td><td><code>7 // 2</code> &rarr; <code>3</code></td></tr>
+  <tr><td><code>%</code></td><td>Modulo</td><td><code>7 % 2</code> &rarr; <code>1</code></td></tr>
+  <tr><td><code>@</code></td><td>Decorator syntax / matrix multiplication (numpy)</td><td><code>@staticmethod</code> · <code>A @ B</code></td></tr>
+  <tr><td><code>|</code></td><td>Bitwise OR / set union / type union (3.10+)</td><td><code>a | b</code> · <code>int | None</code></td></tr>
+  <tr><td><code>&amp;</code></td><td>Bitwise AND / set intersection</td><td><code>a &amp; b</code></td></tr>
+  <tr><td><code>^</code></td><td>Bitwise XOR / set symmetric difference</td><td><code>a ^ b</code></td></tr>
+  <tr><td><code>~</code></td><td>Bitwise NOT (inverts bits)</td><td><code>~5</code> &rarr; <code>-6</code></td></tr>
+  <tr><td><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td>Bit shift left / right</td><td><code>1 &lt;&lt; 4</code> &rarr; <code>16</code></td></tr>
+  <tr><td><code>is</code> / <code>is not</code></td><td>Identity comparison (same object in memory)</td><td><code>x is None</code></td></tr>
+  <tr><td><code>in</code> / <code>not in</code></td><td>Membership test</td><td><code>"a" in "cat"</code></td></tr>
+  </tbody></table></div>
+  </div>
+</section>
+
+<section class="ref-section" id="mistakes">
+  <div class="section-head">
+    <h2><span class="idx">28</span> Common Mistakes</h2>
+    <button class="collapse-btn" data-collapse>collapse</button>
+  </div>
+  <p class="eyebrow">python.gotchas &mdash; don't forget these</p>
+  <div class="section-body">
+  <div id="mistakesGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="https://docs.python.org/3/" target="_blank" rel="noopener">Python Documentation</a>
+    <a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">Python Tutorial</a>
+    <a href="https://docs.python.org/3/reference/" target="_blank" rel="noopener">Language Reference</a>
+    <a href="https://docs.python.org/3/library/" target="_blank" rel="noopener">Standard Library</a>
+    <a href="https://docs.python.org/3/library/functions.html" target="_blank" rel="noopener">Built-in Functions</a>
+    <a href="https://docs.python.org/3/py-modindex.html" target="_blank" rel="noopener">Module Index</a>
+  </div>
+  <p class="footer-note">Personal quick reference for RT · built for fast lookup while coding · verified against the official Python 3 documentation.</p>
+</footer>
+
+</main>
+</div>
+
+<button id="backToTop" aria-label="Back to top">&uarr;</button>
+
+
+<style>
+.flash-highlight{ animation: pyrefFlash 1.6s ease; }
+@keyframes pyrefFlash{
+  0% { box-shadow: 0 0 0 3px var(--accent); }
+  70% { box-shadow: 0 0 0 3px var(--accent); }
+  100% { box-shadow: none; }
+}
+</style>
+
+<script>
+const BUILTINS = [
+["abs()","Return the absolute value of a number.","abs(x)","x — int, float, or complex","abs(-7)\nabs(-3.5)","7\n3.5","For a complex number, returns its magnitude.","https://docs.python.org/3/library/functions.html#abs"],
+["all()","True if every element of an iterable is truthy (or it's empty).","all(iterable)","iterable","all([1, 2, 3])\nall([1, 0, 3])","True\nFalse","all([]) is True — vacuous truth, easy to forget.","https://docs.python.org/3/library/functions.html#all"],
+["any()","True if at least one element of an iterable is truthy.","any(iterable)","iterable","any([0, 0, 3])\nany([])","True\nFalse","Opposite edge case from all() — any([]) is False.","https://docs.python.org/3/library/functions.html#any"],
+["ascii()","repr() of an object, escaping non-ASCII characters.","ascii(object)","object","ascii('café')","'caf\\xe9'","Rarely needed day-to-day; mainly for ASCII-only output/logs.","https://docs.python.org/3/library/functions.html#ascii"],
+["bin()","Convert an integer to a binary string, prefixed '0b'.","bin(x)","x — int","bin(10)","'0b1010'","Use format(x, 'b') to omit the '0b' prefix.","https://docs.python.org/3/library/functions.html#bin"],
+["bool()","Convert a value to True/False using standard truthiness rules.","bool(x)","x — any object","bool(0)\nbool('')\nbool([1])","False\nFalse\nTrue","0, 0.0, '', [], {}, (), None are all falsy.","https://docs.python.org/3/library/functions.html#bool"],
+["breakpoint()","Drop into the debugger (pdb) at this line.","breakpoint()","none","def f(x):\n    breakpoint()\n    return x + 1","(opens pdb prompt)","Cleaner than sprinkling print() calls while debugging.","https://docs.python.org/3/library/functions.html#breakpoint"],
+["bytearray()","Create a mutable sequence of bytes.","bytearray(source, encoding, errors)","source — int/iterable/bytes-like; encoding — for str source","ba = bytearray('hi', 'utf-8')\nba[0] = 72","bytearray(b'Hi')","Unlike bytes, elements can be reassigned in place.","https://docs.python.org/3/library/functions.html#func-bytearray"],
+["bytes()","Create an immutable sequence of bytes.","bytes(source, encoding, errors)","source — int/iterable/str; encoding — required for str source","bytes('hi', 'utf-8')\nbytes([72, 105])","b'hi'\nb'Hi'","Immutable counterpart of bytearray.","https://docs.python.org/3/library/functions.html#func-bytes"],
+["callable()","Check whether an object can be called like a function.","callable(object)","object","callable(len)\ncallable(5)","True\nFalse","Classes are callable too (calling them constructs an instance).","https://docs.python.org/3/library/functions.html#callable"],
+["chr()","Return the character for a given Unicode code point.","chr(i)","i — int, 0 to 1,114,111","chr(97)\nchr(128512)","'a'\n'\\U0001f600'","Inverse of ord().","https://docs.python.org/3/library/functions.html#chr"],
+["classmethod()","Turn a method into a class method (receives cls, not self).","classmethod(function)","function","class C:\n    @classmethod\n    def make(cls):\n        return cls()","—","Almost always used as the @classmethod decorator, not called directly.","https://docs.python.org/3/library/functions.html#classmethod"],
+["compile()","Compile source into a code object for exec()/eval().","compile(source, filename, mode)","source; filename — for error msgs; mode — 'exec'/'eval'/'single'","code = compile('x = 1+1', '&lt;str&gt;', 'exec')\nexec(code)","x is now 2","Low-level; used to build custom interpreters/tools, not typical app code.","https://docs.python.org/3/library/functions.html#compile"],
+["complex()","Create a complex number.","complex(real, imag)","real, imag — numbers (imag defaults to 0)","complex(2, 3)\n(2+3j) * (1-1j)","(2+3j)\n(5+1j)","Literal form: 3+4j.","https://docs.python.org/3/library/functions.html#complex"],
+["delattr()","Delete a named attribute from an object.","delattr(object, name)","object; name — str attribute name","delattr(obj, 'temp')","(removes obj.temp)","Same as `del obj.temp`, but the name can be a dynamic string.","https://docs.python.org/3/library/functions.html#delattr"],
+["dict()","Create a dictionary.","dict(**kwargs) / dict(mapping) / dict(iterable)","mapping, iterable of pairs, or keyword args","dict(a=1, b=2)\ndict([('a',1),('b',2)])","{'a': 1, 'b': 2}\n{'a': 1, 'b': 2}","See the full Dictionaries section for methods.","https://docs.python.org/3/library/functions.html#func-dict"],
+["dir()","List the attributes/methods available on an object (or local scope).","dir(object=None)","object — optional","dir([])","['append', 'clear', 'copy', ...]","With no argument, lists names in the current local scope.","https://docs.python.org/3/library/functions.html#dir"],
+["divmod()","Return (quotient, remainder) as a tuple in one call.","divmod(a, b)","a, b — numbers","divmod(17, 5)","(3, 2)","Equivalent to (a // b, a % b) computed together.","https://docs.python.org/3/library/functions.html#divmod"],
+["enumerate()","Pair each item of an iterable with its index.","enumerate(iterable, start=0)","iterable; start — first index used","list(enumerate(['a','b'], start=1))","[(1, 'a'), (2, 'b')]","Preferred over manually tracking an index with range(len(x)).","https://docs.python.org/3/library/functions.html#enumerate"],
+["eval()","Evaluate a string as a Python expression and return its value.","eval(expression, globals, locals)","expression — str","eval('2 + 3 * 4')","14","Never eval() untrusted input — arbitrary code execution risk.","https://docs.python.org/3/library/functions.html#eval"],
+["exec()","Execute a string of Python statements (no return value).","exec(object, globals, locals)","object — str or code object","exec('x = 5\\nprint(x)')","5","Same security caution as eval() — avoid on untrusted input.","https://docs.python.org/3/library/functions.html#exec"],
+["filter()","Keep only elements where a function returns truthy.","filter(function, iterable)","function — predicate or None; iterable","list(filter(lambda x: x % 2 == 0, range(6)))","[0, 2, 4]","Returns a lazy iterator — wrap in list() to see all results.","https://docs.python.org/3/library/functions.html#filter"],
+["float()","Convert a number or numeric string to a float.","float(x=0.0)","x — number, str, or omitted","float('3.14')\nfloat(5)","3.14\n5.0","float('nan') and float('inf') are valid special values.","https://docs.python.org/3/library/functions.html#float"],
+["format()","Format a single value using the format spec mini-language.","format(value, format_spec)","value; format_spec — str, e.g. '.2f'","format(3.14159, '.2f')\nformat(42, '05d')","'3.14'\n'00042'","Same spec syntax used inside f-strings after the colon.","https://docs.python.org/3/library/functions.html#format"],
+["frozenset()","Create an immutable, hashable set.","frozenset(iterable=())","iterable","frozenset([1, 2, 2, 3])","frozenset({1, 2, 3})","Usable as a dict key or set element (a regular set is not).","https://docs.python.org/3/library/functions.html#func-frozenset"],
+["getattr()","Get an attribute by name, with an optional default.","getattr(object, name, default)","object; name — str; default — optional","getattr(obj, 'x', 0)","obj.x if it exists, else 0","Avoids a try/except AttributeError for optional attributes.","https://docs.python.org/3/library/functions.html#getattr"],
+["globals()","Return the dictionary of the current module's global symbol table.","globals()","none","globals()['x'] = 5","(sets a global named x)","Mutating it directly is rarely a good idea — prefer normal assignment.","https://docs.python.org/3/library/functions.html#globals"],
+["hasattr()","Check whether an object has a given attribute.","hasattr(object, name)","object; name — str","hasattr('hi', 'upper')","True","Internally calls getattr() and checks for AttributeError.","https://docs.python.org/3/library/functions.html#hasattr"],
+["hash()","Return the hash value of an object (for dict/set use).","hash(object)","object — must be hashable","hash('python')\nhash([1,2])","(some int)\nTypeError","Lists/dicts/sets are unhashable — that's why they can't be dict keys.","https://docs.python.org/3/library/functions.html#hash"],
+["help()","Launch the interactive help system / show docs for an object.","help(object)","object — optional","help(str.split)","(prints str.split's docstring)","Fastest way to check a method's signature without leaving the REPL.","https://docs.python.org/3/library/functions.html#help"],
+["hex()","Convert an integer to a hexadecimal string, prefixed '0x'.","hex(x)","x — int","hex(255)","'0xff'","Use format(x, 'x') to omit the '0x' prefix.","https://docs.python.org/3/library/functions.html#hex"],
+["id()","Return the unique identity (memory address in CPython) of an object.","id(object)","object","id(x) == id(y)","True only if x and y are the SAME object","Used with 'is' conceptually — 'is' compares id() under the hood.","https://docs.python.org/3/library/functions.html#id"],
+["input()","Read a line of text from stdin as a string.","input(prompt='')","prompt — optional str shown before reading","age = int(input('Age: '))","(waits for user input)","ALWAYS returns str — convert manually for numbers.","https://docs.python.org/3/library/functions.html#input"],
+["int()","Convert a value to an integer.","int(x=0, base=10)","x — number/str; base — for str parsing","int('42')\nint('101', 2)\nint(3.9)","42\n5\n3","int() truncates floats toward zero — it does not round.","https://docs.python.org/3/library/functions.html#int"],
+["isinstance()","Check whether an object is an instance of a type (or types).","isinstance(object, classinfo)","object; classinfo — a type or tuple of types","isinstance(3, (int, float))","True","Preferred over type(x) == int since it respects inheritance.","https://docs.python.org/3/library/functions.html#isinstance"],
+["issubclass()","Check whether a class is a subclass of another.","issubclass(class, classinfo)","class; classinfo — a type or tuple of types","issubclass(bool, int)","True","bool is technically a subclass of int in Python.","https://docs.python.org/3/library/functions.html#issubclass"],
+["iter()","Get an iterator from an iterable object.","iter(object, sentinel)","object; sentinel — optional stop value (call form)","it = iter([1,2,3])\nnext(it)","1","With a sentinel, iter(callable, sentinel) keeps calling until sentinel.","https://docs.python.org/3/library/functions.html#iter"],
+["len()","Return the number of items in a container.","len(s)","s — sequence, mapping, or set","len('hello')\nlen([1,2,3])","5\n3","Works on strings, lists, tuples, dicts, sets — anything with __len__.","https://docs.python.org/3/library/functions.html#len"],
+["list()","Convert an iterable to a list, or create an empty list.","list(iterable=())","iterable — optional","list('abc')\nlist(range(3))","['a','b','c']\n[0, 1, 2]","See the full Lists section for methods.","https://docs.python.org/3/library/functions.html#func-list"],
+["locals()","Return a dict of the current local symbol table.","locals()","none","def f():\n    x = 5\n    return locals()","{'x': 5}","Read-only in practice — modifying it doesn't reliably change local vars.","https://docs.python.org/3/library/functions.html#locals"],
+["map()","Apply a function to every item of an iterable, lazily.","map(function, iterable, ...)","function; one or more iterables","list(map(str, [1, 2, 3]))","['1', '2', '3']","Returns a lazy iterator — wrap in list() to materialize it.","https://docs.python.org/3/library/functions.html#map"],
+["max()","Return the largest item in an iterable or of several args.","max(iterable, key=None) / max(a, b, ...)","key — optional function; default — fallback for empty iterable","max([3, 1, 9, 2])\nmax(data, key=lambda x: x[1])","9\n(item with largest x[1])","Raises ValueError on an empty iterable unless default= is given.","https://docs.python.org/3/library/functions.html#max"],
+["memoryview()","Create a memory view object over a bytes-like object without copying.","memoryview(object)","object — bytes, bytearray, array","mv = memoryview(b'hello')\nmv[0]","104","Advanced — used for zero-copy slicing of large binary buffers.","https://docs.python.org/3/library/functions.html#func-memoryview"],
+["min()","Return the smallest item in an iterable or of several args.","min(iterable, key=None) / min(a, b, ...)","key — optional function; default — fallback for empty iterable","min([3, 1, 9, 2])","1","Same key= pattern as max() and sorted().","https://docs.python.org/3/library/functions.html#min"],
+["next()","Get the next item from an iterator.","next(iterator, default)","iterator; default — returned instead of raising StopIteration","it = iter([1,2])\nnext(it)\nnext(it, 'done')","1\n2 then 'done' if exhausted","Without default, raises StopIteration once the iterator is empty.","https://docs.python.org/3/library/functions.html#next"],
+["object()","Create a new featureless base object (root of all classes).","object()","none","o = object()","&lt;object object at 0x...&gt;","Rarely instantiated directly — it's the implicit base of every class.","https://docs.python.org/3/library/functions.html#object"],
+["oct()","Convert an integer to an octal string, prefixed '0o'.","oct(x)","x — int","oct(8)","'0o10'","Use format(x, 'o') to omit the '0o' prefix.","https://docs.python.org/3/library/functions.html#oct"],
+["open()","Open a file and return a file object. See File Handling section.","open(file, mode='r', encoding=None)","file — path; mode — 'r'/'w'/'a'/'b'/...","f = open('data.txt')\nf.close()","(file handle)","Prefer `with open(...) as f:` so it's always closed — see section 15.","https://docs.python.org/3/library/functions.html#open"],
+["ord()","Return the Unicode code point of a single character.","ord(c)","c — a single-character string","ord('a')\nord('😀')","97\n128512","Inverse of chr().","https://docs.python.org/3/library/functions.html#ord"],
+["pow()","Raise a number to a power, optionally modulo m.","pow(base, exp, mod=None)","base, exp; mod — optional","pow(2, 10)\npow(2, 10, 100)","1024\n24","pow(b, e, m) is much faster than (b**e) % m for huge numbers.","https://docs.python.org/3/library/functions.html#pow"],
+["print()","Write objects to stdout, separated and terminated as configured.","print(*objects, sep=' ', end='\\n', file=sys.stdout)","objects; sep; end; file; flush","print('a', 'b', sep='-', end='!')","a-b!","Use flush=True for immediate output in long-running scripts.","https://docs.python.org/3/library/functions.html#print"],
+["property()","Create a managed attribute (getter/setter/deleter) — see @property.","property(fget, fset, fdel, doc)","fget, fset, fdel — functions; doc — docstring","class C:\n    @property\n    def x(self): return self._x","(x accessed like an attribute)","Almost always used via the @property decorator, not called directly.","https://docs.python.org/3/library/functions.html#property"],
+["range()","Generate an immutable sequence of numbers (lazy).","range(stop) / range(start, stop, step)","start=0; stop; step=1","list(range(2, 10, 2))","[2, 4, 6, 8]","Doesn't build a list in memory — ideal for large loop counts.","https://docs.python.org/3/library/functions.html#func-range"],
+["repr()","Return an unambiguous, developer-facing string of an object.","repr(object)","object","repr('hi')\nrepr([1,2])","\"'hi'\"\n'[1, 2]'","Ideally, eval(repr(x)) recreates an equal object — used for debugging.","https://docs.python.org/3/library/functions.html#repr"],
+["reversed()","Return a reverse iterator over a sequence.","reversed(seq)","seq — must support __len__/__getitem__ or __reversed__","list(reversed([1,2,3]))","[3, 2, 1]","Doesn't copy/reverse in place — wrap in list() to materialize.","https://docs.python.org/3/library/functions.html#reversed"],
+["round()","Round a number to a given precision (banker's rounding).","round(number, ndigits=None)","number; ndigits — decimal places, default 0","round(2.5)\nround(3.14159, 2)","2\n3.14","round(2.5) is 2, not 3 — ties round to the nearest EVEN digit.","https://docs.python.org/3/library/functions.html#round"],
+["set()","Create a set, or an empty set.","set(iterable=())","iterable — optional","set([1, 2, 2, 3])","{1, 2, 3}","set() for empty — {} creates an empty DICT instead.","https://docs.python.org/3/library/functions.html#func-set"],
+["setattr()","Set a named attribute on an object.","setattr(object, name, value)","object; name — str; value","setattr(obj, 'x', 10)","(sets obj.x = 10)","Useful when the attribute name is only known at runtime.","https://docs.python.org/3/library/functions.html#setattr"],
+["slice()","Create a slice object usable for indexing.","slice(start, stop, step)","start; stop; step — all optional","s = slice(1, 5, 2)\n[0,1,2,3,4,5][s]","[1, 3]","Handy when you need to reuse the same slice in multiple places.","https://docs.python.org/3/library/functions.html#slice"],
+["sorted()","Return a NEW sorted list from any iterable.","sorted(iterable, key=None, reverse=False)","iterable; key — function; reverse — bool","sorted([3,1,2])\nsorted(words, key=len)","[1, 2, 3]\n(shortest to longest)","Unlike list.sort(), works on any iterable and returns a new list.","https://docs.python.org/3/library/functions.html#sorted"],
+["staticmethod()","Turn a method into a static method (no self/cls passed).","staticmethod(function)","function","class C:\n    @staticmethod\n    def util(): return 1","—","Used via @staticmethod — for helpers logically grouped in a class.","https://docs.python.org/3/library/functions.html#staticmethod"],
+["str()","Convert a value to a human-readable string.","str(object='')","object","str(42)\nstr([1,2])","'42'\n'[1, 2]'","See the full Strings section for all string methods.","https://docs.python.org/3/library/functions.html#func-str"],
+["sum()","Add up the items of an iterable.","sum(iterable, start=0)","iterable of numbers; start — initial value","sum([1,2,3])\nsum([1,2,3], 10)","6\n16","Not for strings — use ''.join() instead (sum() on strings raises TypeError).","https://docs.python.org/3/library/functions.html#sum"],
+["super()","Access methods of a parent/sibling class (for cooperative inheritance).","super()","none (inside a method)","class B(A):\n    def __init__(self):\n        super().__init__()","(calls A.__init__)","See Inheritance in the OOP section for a fuller example.","https://docs.python.org/3/library/functions.html#super"],
+["tuple()","Convert an iterable to a tuple, or create an empty tuple.","tuple(iterable=())","iterable — optional","tuple([1,2,3])","(1, 2, 3)","See the Tuples section for indexing/unpacking details.","https://docs.python.org/3/library/functions.html#func-tuple"],
+["type()","Return the type of an object, or dynamically create a new class.","type(object) / type(name, bases, dict)","object — or 3 args to build a class","type(3.14)\ntype('C', (), {})","&lt;class 'float'&gt;\n(new empty class C)","The 3-argument form is how metaclasses build classes under the hood.","https://docs.python.org/3/library/functions.html#type"],
+["vars()","Return the __dict__ of an object (or locals() with no args).","vars(object=None)","object — optional","vars(obj)","{'x': 1, 'y': 2}","Fails with TypeError on objects that don't have a __dict__ (e.g. lists).","https://docs.python.org/3/library/functions.html#vars"],
+["zip()","Combine multiple iterables element-wise into tuples.","zip(*iterables, strict=False)","iterables; strict — 3.10+, error on mismatched lengths","list(zip([1,2],['a','b']))","[(1,'a'), (2,'b')]","Stops at the SHORTEST iterable unless strict=True raises instead.","https://docs.python.org/3/library/functions.html#zip"],
+["__import__()","Low-level function behind the `import` statement.","__import__(name)","name — module name as a string","math = __import__('math')","(same as import math)","Prefer importlib.import_module() for dynamic imports in real code.","https://docs.python.org/3/library/functions.html#import__"]
+];
+const STRING_METHODS = [
+["capitalize()","First character uppercase, rest lowercase.","s.capitalize()","none","'python rocks'.capitalize()","'Python rocks'","Only the FIRST character changes case, not each word (use title() for that).","https://docs.python.org/3/library/stdtypes.html#str.capitalize"],
+["casefold()","Aggressive lowercasing for caseless string matching.","s.casefold()","none","'Straße'.casefold()","'strasse'","Stronger than lower() — handles special Unicode cases like German ß.","https://docs.python.org/3/library/stdtypes.html#str.casefold"],
+["center()","Center a string in a field of given width.","s.center(width, fillchar=' ')","width — int; fillchar — 1 char, default space","'hi'.center(10, '*')","'****hi****'","Returns the original string unchanged if width &lt;= len(s).","https://docs.python.org/3/library/stdtypes.html#str.center"],
+["count()","Count non-overlapping occurrences of a substring.","s.count(sub, start=0, end=len(s))","sub; start; end — optional slice bounds","'banana'.count('a')","3","Occurrences must not overlap: 'aaa'.count('aa') is 1, not 2.","https://docs.python.org/3/library/stdtypes.html#str.count"],
+["encode()","Convert a str to bytes using the given encoding.","s.encode(encoding='utf-8', errors='strict')","encoding; errors — 'strict'/'ignore'/'replace'","'café'.encode('utf-8')","b'caf\\xc3\\xa9'","Pairs with bytes.decode() to go back from bytes to str.","https://docs.python.org/3/library/stdtypes.html#str.encode"],
+["endswith()","Check if a string ends with a given suffix.","s.endswith(suffix, start=0, end=len(s))","suffix — str or tuple of str","'report.pdf'.endswith(('.pdf', '.doc'))","True","Accepts a tuple to check multiple suffixes in one call.","https://docs.python.org/3/library/stdtypes.html#str.endswith"],
+["expandtabs()","Replace tab characters with spaces up to a tab size.","s.expandtabs(tabsize=8)","tabsize — int, default 8","'a\\tb'.expandtabs(4)","'a   b'","Useful before printing tab-indented text in a fixed-width context.","https://docs.python.org/3/library/stdtypes.html#str.expandtabs"],
+["find()","Index of the first occurrence of a substring, or -1.","s.find(sub, start=0, end=len(s))","sub; start; end — optional","'python'.find('th')\n'python'.find('zz')","2\n-1","Never raises — returns -1 on failure (use index() if you want an exception).","https://docs.python.org/3/library/stdtypes.html#str.find"],
+["format()","Insert values into {} placeholders in a string.","s.format(*args, **kwargs)","positional and/or named values","'{} is {}'.format('gpa', 8.5)\n'{n}'.format(n=5)","'gpa is 8.5'\n'5'","f-strings (section 03) are the modern, usually preferred alternative.","https://docs.python.org/3/library/stdtypes.html#str.format"],
+["format_map()","Like format(), but takes a single mapping directly.","s.format_map(mapping)","mapping — dict-like object","'{name}'.format_map({'name': 'Rushit'})","'Rushit'","Avoids the ** unpacking that plain format(**d) requires.","https://docs.python.org/3/library/stdtypes.html#str.format_map"],
+["index()","Like find(), but raises ValueError instead of returning -1.","s.index(sub, start=0, end=len(s))","sub; start; end — optional","'python'.index('th')","2","Use find() instead if a missing substring is an expected case.","https://docs.python.org/3/library/stdtypes.html#str.index"],
+["isalnum()","True if all characters are alphanumeric and it's non-empty.","s.isalnum()","none","'abc123'.isalnum()\n'abc 123'.isalnum()","True\nFalse","Spaces and punctuation make this False.","https://docs.python.org/3/library/stdtypes.html#str.isalnum"],
+["isalpha()","True if all characters are alphabetic and it's non-empty.","s.isalpha()","none","'Python'.isalpha()","True","Digits, spaces, or punctuation make this False.","https://docs.python.org/3/library/stdtypes.html#str.isalpha"],
+["isascii()","True if all characters are ASCII (code points 0-127).","s.isascii()","none","'hello'.isascii()\n'héllo'.isascii()","True\nFalse","Useful before writing to systems that only support plain ASCII.","https://docs.python.org/3/library/stdtypes.html#str.isascii"],
+["isdecimal()","True if all characters are decimal digit characters.","s.isdecimal()","none","'123'.isdecimal()","True","Stricter than isdigit()/isnumeric() — excludes things like superscripts.","https://docs.python.org/3/library/stdtypes.html#str.isdecimal"],
+["isdigit()","True if all characters are digits (includes some non-decimal digits).","s.isdigit()","none","'123'.isdigit()\n'²'.isdigit()","True\nTrue","Superscript digits pass isdigit() but not isdecimal().","https://docs.python.org/3/library/stdtypes.html#str.isdigit"],
+["isidentifier()","True if the string is a valid Python identifier name.","s.isidentifier()","none","'my_var'.isidentifier()\n'2fast'.isidentifier()","True\nFalse","Doesn't check if it's a reserved keyword — pair with `keyword.iskeyword()`.","https://docs.python.org/3/library/stdtypes.html#str.isidentifier"],
+["islower()","True if all cased characters are lowercase and there's at least one.","s.islower()","none","'python'.islower()\n'Python'.islower()","True\nFalse","Ignores characters with no case (digits, punctuation).","https://docs.python.org/3/library/stdtypes.html#str.islower"],
+["isnumeric()","True for digits plus other numeric characters (fractions, Roman-ish forms).","s.isnumeric()","none","'½'.isnumeric()","True","Broadest of isdecimal/isdigit/isnumeric — allows the most character kinds.","https://docs.python.org/3/library/stdtypes.html#str.isnumeric"],
+["isprintable()","True if every character is printable (or the string is empty).","s.isprintable()","none","'hi\\n'.isprintable()","False","Newlines/tabs count as non-printable.","https://docs.python.org/3/library/stdtypes.html#str.isprintable"],
+["isspace()","True if all characters are whitespace and it's non-empty.","s.isspace()","none","'   '.isspace()","True","Includes spaces, tabs, and newlines.","https://docs.python.org/3/library/stdtypes.html#str.isspace"],
+["istitle()","True if the string is titlecased (each word capitalized).","s.istitle()","none","'Python Rocks'.istitle()","True","Compare with str.title() which produces this format.","https://docs.python.org/3/library/stdtypes.html#str.istitle"],
+["isupper()","True if all cased characters are uppercase and there's at least one.","s.isupper()","none","'PYTHON'.isupper()","True","Ignores characters with no case.","https://docs.python.org/3/library/stdtypes.html#str.isupper"],
+["join()","Join an iterable of strings using this string as the separator.","sep.join(iterable)","iterable of strings","','.join(['a', 'b', 'c'])","'a,b,c'","Much faster than concatenating strings with + in a loop.","https://docs.python.org/3/library/stdtypes.html#str.join"],
+["ljust()","Left-justify in a field of given width, padding on the right.","s.ljust(width, fillchar=' ')","width; fillchar — 1 char","'hi'.ljust(5, '.')","'hi...'","Opposite of rjust(); see also center().","https://docs.python.org/3/library/stdtypes.html#str.ljust"],
+["lower()","Convert all characters to lowercase.","s.lower()","none","'PYTHON'.lower()","'python'","For case-insensitive comparisons across locales, casefold() is stronger.","https://docs.python.org/3/library/stdtypes.html#str.lower"],
+["lstrip()","Remove leading whitespace (or given characters).","s.lstrip(chars=None)","chars — optional set of characters to strip","'   hi'.lstrip()\n'xxhi'.lstrip('x')","'hi'\n'hi'","chars is treated as a SET of characters, not a substring/prefix.","https://docs.python.org/3/library/stdtypes.html#str.lstrip"],
+["partition()","Split into (before, sep, after) at the FIRST occurrence of sep.","s.partition(sep)","sep — separator string","'a=b=c'.partition('=')","('a', '=', 'b=c')","If sep isn't found, returns (s, '', '').","https://docs.python.org/3/library/stdtypes.html#str.partition"],
+["removeprefix()","Remove a prefix if present (no-op otherwise).","s.removeprefix(prefix)","prefix — str","'TestCase'.removeprefix('Test')","'Case'","3.9+. Cleaner than manual slicing/startswith checks.","https://docs.python.org/3/library/stdtypes.html#str.removeprefix"],
+["removesuffix()","Remove a suffix if present (no-op otherwise).","s.removesuffix(suffix)","suffix — str","'file.txt'.removesuffix('.txt')","'file'","3.9+. Companion to removeprefix().","https://docs.python.org/3/library/stdtypes.html#str.removesuffix"],
+["replace()","Replace occurrences of a substring with another.","s.replace(old, new, count=-1)","old; new; count — max replacements, default all","'aaa'.replace('a', 'b', 2)","'bba'","count limits how many occurrences are replaced, left to right.","https://docs.python.org/3/library/stdtypes.html#str.replace"],
+["rfind()","Like find(), searching from the RIGHT (still returns a left-to-right index).","s.rfind(sub, start=0, end=len(s))","sub; start; end — optional","'abcabc'.rfind('a')","3","Returns -1 if not found, like find().","https://docs.python.org/3/library/stdtypes.html#str.rfind"],
+["rjust()","Right-justify in a field of given width, padding on the left.","s.rjust(width, fillchar=' ')","width; fillchar — 1 char","'7'.rjust(3, '0')","'007'","Common trick for zero-padding numbers stored as strings.","https://docs.python.org/3/library/stdtypes.html#str.rjust"],
+["rpartition()","Split into (before, sep, after) at the LAST occurrence of sep.","s.rpartition(sep)","sep — separator string","'a=b=c'.rpartition('=')","('a=b', '=', 'c')","Mirror of partition(), searching from the right.","https://docs.python.org/3/library/stdtypes.html#str.rpartition"],
+["rsplit()","Split from the right, optionally limiting the number of splits.","s.rsplit(sep=None, maxsplit=-1)","sep; maxsplit — limit, from the right","'a,b,c'.rsplit(',', 1)","['a,b', 'c']","With maxsplit, the LEFTMOST part absorbs any extra pieces.","https://docs.python.org/3/library/stdtypes.html#str.rsplit"],
+["rstrip()","Remove trailing whitespace (or given characters).","s.rstrip(chars=None)","chars — optional set of characters to strip","'hi   '.rstrip()","'hi'","Like lstrip(), chars is a set of characters, not a substring.","https://docs.python.org/3/library/stdtypes.html#str.rstrip"],
+["split()","Split a string into a list, on whitespace by default.","s.split(sep=None, maxsplit=-1)","sep — optional; maxsplit — limit, default all","'Python is easy'.split()\n'a,b,,c'.split(',')","['Python','is','easy']\n['a','b','','c']","With no sep, runs of whitespace are collapsed; with an explicit sep, empty fields are kept.","https://docs.python.org/3/library/stdtypes.html#str.split"],
+["splitlines()","Split a string at line boundaries (\\n, \\r\\n, etc).","s.splitlines(keepends=False)","keepends — keep the line-break chars if True","'a\\nb\\r\\nc'.splitlines()","['a', 'b', 'c']","Handles \\n, \\r, and \\r\\n uniformly — better than split('\\n') for mixed files.","https://docs.python.org/3/library/stdtypes.html#str.splitlines"],
+["startswith()","Check if a string starts with a given prefix.","s.startswith(prefix, start=0, end=len(s))","prefix — str or tuple of str","'report.pdf'.startswith(('draft', 'report'))","True","Accepts a tuple to check multiple prefixes in one call.","https://docs.python.org/3/library/stdtypes.html#str.startswith"],
+["strip()","Remove leading AND trailing whitespace (or given characters).","s.strip(chars=None)","chars — optional set of characters to strip","'  hi  '.strip()\n'xxhixx'.strip('x')","'hi'\n'hi'","The single most common cleanup call for user input / file lines.","https://docs.python.org/3/library/stdtypes.html#str.strip"],
+["swapcase()","Swap uppercase to lowercase and vice versa.","s.swapcase()","none","'Python'.swapcase()","'pYTHON'","Rarely essential, but handy for quick text transforms.","https://docs.python.org/3/library/stdtypes.html#str.swapcase"],
+["title()","Titlecase a string — first letter of each word uppercase.","s.title()","none","'python is fun'.title()","'Python Is Fun'","Quirk: apostrophes count as word boundaries, e.g. \"don't\" -&gt; \"Don'T\".","https://docs.python.org/3/library/stdtypes.html#str.title"],
+["translate()","Apply a character-to-character mapping built with str.maketrans().","s.translate(table)","table — from str.maketrans()","t = str.maketrans('ab', '12')\n'abc'.translate(t)","'12c'","Fast for bulk character substitution/removal, faster than repeated replace().","https://docs.python.org/3/library/stdtypes.html#str.translate"],
+["upper()","Convert all characters to uppercase.","s.upper()","none","'python'.upper()","'PYTHON'","Pairs with lower()/casefold() for case-insensitive comparisons.","https://docs.python.org/3/library/stdtypes.html#str.upper"],
+["zfill()","Pad a numeric string with leading zeros to a given width.","s.zfill(width)","width — int","'42'.zfill(5)\n'-42'.zfill(5)","'00042'\n'-0042'","Correctly keeps a leading -/+ sign in front of the zero padding.","https://docs.python.org/3/library/stdtypes.html#str.zfill"]
+];
+const LIST_METHODS = [
+["append()","Add a single item to the end of the list, in place.","lst.append(item)","item — any object","nums = [1,2]\nnums.append(3)","[1, 2, 3]","Adds ONE item — appending a list adds it as a single nested element (use extend() to flatten).","https://docs.python.org/3/library/stdtypes.html#list.append"],
+["clear()","Remove all items from the list, in place.","lst.clear()","none","nums = [1,2,3]\nnums.clear()","[]","Equivalent to del nums[:], but more readable.","https://docs.python.org/3/library/stdtypes.html#list.clear"],
+["copy()","Return a shallow copy of the list.","lst.copy()","none","a = [1,2]\nb = a.copy()","b is a new list, same as a[:]","Nested mutable elements are still shared — see copy vs deepcopy.","https://docs.python.org/3/library/stdtypes.html#list.copy"],
+["count()","Count occurrences of a value in the list.","lst.count(value)","value","[1,2,2,3].count(2)","2","Uses == for comparison, works on any hashable or unhashable value.","https://docs.python.org/3/library/stdtypes.html#list.count"],
+["extend()","Append all items from another iterable, in place.","lst.extend(iterable)","iterable","nums = [1,2]\nnums.extend([3,4])","[1, 2, 3, 4]","Use this (not append()) to merge in another list's elements individually.","https://docs.python.org/3/library/stdtypes.html#list.extend"],
+["index()","Index of the first matching value, or raises ValueError.","lst.index(value, start=0, end=len(lst))","value; start; end — optional","['a','b','c'].index('b')","1","Raises ValueError if not found — check with `in` first if unsure.","https://docs.python.org/3/library/stdtypes.html#list.index"],
+["insert()","Insert an item at a given index, shifting the rest right.","lst.insert(index, item)","index — int; item","nums = [1,3]\nnums.insert(1, 2)","[1, 2, 3]","O(n) — shifts every following element; avoid in a tight loop over large lists.","https://docs.python.org/3/library/stdtypes.html#list.insert"],
+["pop()","Remove and return an item at an index (default: the last one).","lst.pop(index=-1)","index — optional, defaults to last item","nums = [1,2,3]\nnums.pop()\nnums.pop(0)","3, then nums=[1,2]\n1, then nums=[2]","Raises IndexError on an empty list.","https://docs.python.org/3/library/stdtypes.html#list.pop"],
+["remove()","Remove the first matching value (by value, not index).","lst.remove(value)","value","nums = [1,2,3,2]\nnums.remove(2)","[1, 3, 2]","Raises ValueError if the value isn't present.","https://docs.python.org/3/library/stdtypes.html#list.remove"],
+["reverse()","Reverse the list in place (returns None).","lst.reverse()","none","nums = [1,2,3]\nnums.reverse()","[3, 2, 1]","For a NEW reversed list without mutating, use list(reversed(nums)) or nums[::-1].","https://docs.python.org/3/library/stdtypes.html#list.reverse"],
+["sort()","Sort the list in place (returns None — a classic gotcha).","lst.sort(key=None, reverse=False)","key — function; reverse — bool","nums = [3,1,2]\nnums.sort()","[1, 2, 3]","x = nums.sort() sets x to None! Use sorted(nums) if you need the result as a value.","https://docs.python.org/3/library/stdtypes.html#list.sort"]
+];
+
+const SET_METHODS = [
+["add()","Add a single element to the set, in place.","s.add(elem)","elem — hashable value","s = {1,2}\ns.add(3)","{1, 2, 3}","No effect (and no error) if the element is already present.","https://docs.python.org/3/library/stdtypes.html#frozenset.add"],
+["clear()","Remove all elements from the set, in place.","s.clear()","none","s = {1,2,3}\ns.clear()","set()","Result prints as set(), since {} means an empty dict.","https://docs.python.org/3/library/stdtypes.html#frozenset.clear"],
+["copy()","Return a shallow copy of the set.","s.copy()","none","a = {1,2}\nb = a.copy()","b is a new, independent set","Elements themselves aren't deep-copied (rarely matters — set elements must be immutable).","https://docs.python.org/3/library/stdtypes.html#frozenset.copy"],
+["difference()","Elements in this set but not in the other(s).","s.difference(*others)","one or more iterables","{1,2,3}.difference({2,3})","{1}","Same as the `-` operator: a - b.","https://docs.python.org/3/library/stdtypes.html#frozenset.difference"],
+["difference_update()","Remove all elements found in another set, in place.","s.difference_update(*others)","one or more iterables","s = {1,2,3}\ns.difference_update({2})","{1, 3}","In-place version of difference(); same as s -= other.","https://docs.python.org/3/library/stdtypes.html#frozenset.difference_update"],
+["discard()","Remove an element if present — no error if it's missing.","s.discard(elem)","elem","s = {1,2}\ns.discard(5)","{1, 2} — no error","Use remove() instead if a missing element SHOULD raise an error.","https://docs.python.org/3/library/stdtypes.html#frozenset.discard"],
+["intersection()","Elements common to this set and all others.","s.intersection(*others)","one or more iterables","{1,2,3}.intersection({2,3,4})","{2, 3}","Same as the `&` operator.","https://docs.python.org/3/library/stdtypes.html#frozenset.intersection"],
+["intersection_update()","Keep only elements also found in another set, in place.","s.intersection_update(*others)","one or more iterables","s = {1,2,3}\ns.intersection_update({2,3,4})","{2, 3}","In-place version of intersection(); same as s &amp;= other.","https://docs.python.org/3/library/stdtypes.html#frozenset.intersection_update"],
+["isdisjoint()","True if the two sets share no elements at all.","s.isdisjoint(other)","other — iterable","{1,2}.isdisjoint({3,4})\n{1,2}.isdisjoint({2,3})","True\nFalse","Faster than checking `not (a & b)` for large sets.","https://docs.python.org/3/library/stdtypes.html#frozenset.isdisjoint"],
+["issubset()","True if every element of this set is in the other.","s.issubset(other)","other — iterable","{1,2}.issubset({1,2,3})","True","Same as the `&lt;=` operator (use `&lt;` for a strict/proper subset).","https://docs.python.org/3/library/stdtypes.html#frozenset.issubset"],
+["issuperset()","True if this set contains every element of the other.","s.issuperset(other)","other — iterable","{1,2,3}.issuperset({1,2})","True","Same as the `&gt;=` operator (use `&gt;` for strict/proper superset).","https://docs.python.org/3/library/stdtypes.html#frozenset.issuperset"],
+["pop()","Remove and return an ARBITRARY element (sets are unordered).","s.pop()","none","s = {1,2,3}\ns.pop()","some element — not guaranteed which","Raises KeyError if the set is empty. Don't rely on which element is removed.","https://docs.python.org/3/library/stdtypes.html#frozenset.pop"],
+["remove()","Remove a specific element — raises KeyError if it's missing.","s.remove(elem)","elem","s = {1,2}\ns.remove(1)","{2}","Use discard() instead if a missing element shouldn't raise an error.","https://docs.python.org/3/library/stdtypes.html#frozenset.remove"],
+["symmetric_difference()","Elements in either set, but not in both.","s.symmetric_difference(other)","other — iterable","{1,2,3}.symmetric_difference({2,3,4})","{1, 4}","Same as the `^` operator.","https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference"],
+["symmetric_difference_update()","Update the set with the symmetric difference, in place.","s.symmetric_difference_update(other)","other — iterable","s = {1,2,3}\ns.symmetric_difference_update({2,3,4})","{1, 4}","In-place version of symmetric_difference(); same as s ^= other.","https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference_update"],
+["union()","All elements from this set and all others combined.","s.union(*others)","one or more iterables","{1,2}.union({2,3})","{1, 2, 3}","Same as the `|` operator; can take multiple sets at once.","https://docs.python.org/3/library/stdtypes.html#frozenset.union"],
+["update()","Add all elements from another iterable, in place.","s.update(*others)","one or more iterables","s = {1,2}\ns.update([2,3,4])","{1, 2, 3, 4}","Same as s |= other; accepts any iterable, not just sets.","https://docs.python.org/3/library/stdtypes.html#frozenset.update"]
+];
+
+const DICT_METHODS = [
+["clear()","Remove all key-value pairs, in place.","d.clear()","none","d = {'a':1}\nd.clear()","{}","Same result as d = {}, but mutates the existing dict object.","https://docs.python.org/3/library/stdtypes.html#dict.clear"],
+["copy()","Return a shallow copy of the dictionary.","d.copy()","none","a = {'x':1}\nb = a.copy()","b is a new, independent top-level dict","Nested mutable values (e.g. a list value) are still shared.","https://docs.python.org/3/library/stdtypes.html#dict.copy"],
+["fromkeys()","Build a new dict from an iterable of keys, sharing one default value.","dict.fromkeys(iterable, value=None)","iterable of keys; value — default for all of them","dict.fromkeys(['a','b'], 0)","{'a': 0, 'b': 0}","Careful with a MUTABLE value= — all keys share the SAME object.","https://docs.python.org/3/library/stdtypes.html#dict.fromkeys"],
+["get()","Look up a key, returning a default instead of raising KeyError.","d.get(key, default=None)","key; default — returned if key is missing","{'a':1}.get('b', 0)","0","The safe alternative to d[key] when a key might not exist.","https://docs.python.org/3/library/stdtypes.html#dict.get"],
+["items()","A view of all (key, value) pairs.","d.items()","none","list({'a':1,'b':2}.items())","[('a', 1), ('b', 2)]","The view stays LIVE — it reflects later changes to the dict.","https://docs.python.org/3/library/stdtypes.html#dict.items"],
+["keys()","A view of all keys.","d.keys()","none","list({'a':1,'b':2}.keys())","['a', 'b']","Supports fast membership tests: 'a' in d.keys() (or just 'a' in d).","https://docs.python.org/3/library/stdtypes.html#dict.keys"],
+["pop()","Remove a key and return its value (with an optional default).","d.pop(key, default)","key; default — avoids KeyError if missing","{'a':1}.pop('a')\n{'a':1}.pop('z', 0)","1\n0","Without default, raises KeyError if the key isn't present.","https://docs.python.org/3/library/stdtypes.html#dict.pop"],
+["popitem()","Remove and return the LAST inserted (key, value) pair.","d.popitem()","none","d = {'a':1,'b':2}\nd.popitem()","('b', 2)","Raises KeyError on an empty dict. Order relies on 3.7+ insertion ordering.","https://docs.python.org/3/library/stdtypes.html#dict.popitem"],
+["setdefault()","Get a key's value, inserting a default if the key is missing.","d.setdefault(key, default=None)","key; default","d = {}\nd.setdefault('count', 0)\nd['count'] += 1","d becomes {'count': 1}","Great for building up counters/groupings without a separate 'if key in d' check.","https://docs.python.org/3/library/stdtypes.html#dict.setdefault"],
+["update()","Merge another dict (or key/value pairs) into this one, in place.","d.update(other=(), **kwargs)","other — dict/iterable of pairs; kwargs","d = {'a':1}\nd.update({'b':2}, c=3)","{'a': 1, 'b': 2, 'c': 3}","Existing keys are overwritten; new keys are added.","https://docs.python.org/3/library/stdtypes.html#dict.update"],
+["values()","A view of all values.","d.values()","none","list({'a':1,'b':2}.values())","[1, 2]","Unlike keys(), not usable as a set (values can repeat/be unhashable).","https://docs.python.org/3/library/stdtypes.html#dict.values"]
+];
+const STDLIB = [
+["math","Core mathematical functions and constants.","import math","sqrt, floor, ceil, gcd, factorial, log, pi, e, sin/cos/tan","math.sqrt(16)\nmath.floor(4.7)\nmath.ceil(4.2)\nmath.gcd(12, 18)\nmath.factorial(5)","4.0\n4\n5\n6\n120","math.pi and math.e are the constants; math.inf is infinity.","https://docs.python.org/3/library/math.html"],
+["statistics","Descriptive statistics on numeric data.","import statistics","mean, median, mode, stdev, variance","data = [2, 4, 4, 6, 8]\nstatistics.mean(data)\nstatistics.median(data)\nstatistics.mode(data)\nstatistics.stdev(data)","4.8\n4\n4\n2.28...","For heavier numeric work, pandas/numpy scale better than this module.","https://docs.python.org/3/library/statistics.html"],
+["random","Pseudo-random number generation.","import random","random, randint, choice, shuffle, sample","random.random()\nrandom.randint(1, 6)\nrandom.choice(['a','b','c'])\nrandom.shuffle(my_list)\nrandom.sample(range(100), 5)","0.0 to 1.0 float\n1 to 6 inclusive\nrandom element\nshuffles in place\n5 unique values","Not cryptographically secure — use the `secrets` module for security-sensitive randomness.","https://docs.python.org/3/library/random.html"],
+["datetime","Dates, times, and time arithmetic.","from datetime import datetime, date, timedelta","datetime.now, date.today, strftime, strptime, timedelta","datetime.now()\ndate.today()\ndatetime.now() + timedelta(days=1)","current datetime\ncurrent date\ntomorrow, same time","Full formatting codes and examples are in the dedicated Date &amp; Time section (19).","https://docs.python.org/3/library/datetime.html"],
+["os","Operating-system interaction: paths, directories, environment.","import os","getcwd, listdir, path.join, environ, makedirs","os.getcwd()\nos.listdir('.')\nos.path.join('data', 'file.csv')\nos.environ.get('HOME')\nos.makedirs('a/b', exist_ok=True)","current working dir\nfiles in that dir\n'data/file.csv'\nhome dir path\ncreates nested dirs","os.path.join() builds paths correctly across Windows and Linux — never hardcode a path separator character.","https://docs.python.org/3/library/os.html"],
+["pathlib","Modern, object-oriented filesystem paths.","from pathlib import Path","Path, /, .exists(), .glob(), .read_text()","p = Path('data') / 'file.csv'\np.exists()\nlist(Path('.').glob('*.py'))\np.read_text()","builds a cross-platform path\nTrue/False\nall .py files here\nfile contents as str","The `/` operator joins path segments — cleaner than os.path.join() for new code.","https://docs.python.org/3/library/pathlib.html"],
+["sys","Interpreter-level info and control.","import sys","argv, exit, path, version","sys.argv\nsys.exit(1)\nsys.path\nsys.version","list of CLI args, argv[0] is the script name\nquits the program with exit code 1\nmodule search path\nPython version string","sys.argv[0] is always the script's own name — real args start at index 1.","https://docs.python.org/3/library/sys.html"],
+["json","Encode/decode JSON data.","import json","dumps, loads, dump, load","json.dumps({'a': 1})\njson.loads('{\"a\": 1}')\nwith open('f.json','w') as f: json.dump(data, f)","'{\"a\": 1}'\n{'a': 1}\nwrites JSON to a file","dumps/loads work on strings; dump/load work directly with a file object.","https://docs.python.org/3/library/json.html"],
+["re","Regular expressions for pattern matching in text.","import re","search, match, findall, sub, compile","re.findall(r'\\d+', 'a1 b22')","['1', '22']","Full pattern syntax, groups, and common patterns are in section 18.","https://docs.python.org/3/library/re.html"],
+["collections","Specialized container datatypes beyond list/dict/set/tuple.","from collections import Counter, defaultdict, deque, namedtuple","Counter, defaultdict, deque, namedtuple","Counter('banana')\nd = defaultdict(list)\nd['x'].append(1)\ndq = deque([1,2,3])\ndq.appendleft(0)\nPoint = namedtuple('Point', ['x','y'])","Counter({'a':3,'n':2,'b':1})\nno KeyError — auto-creates []\ndeque([0,1,2,3]) — fast at both ends\nPoint(x, y) — tuple with named fields","Counter is the fastest way to count occurrences; deque beats list for queue-like use (O(1) at both ends).","https://docs.python.org/3/library/collections.html"],
+["itertools","Fast, memory-efficient iterator building blocks.","import itertools","chain, product, permutations, combinations, count, cycle","list(itertools.chain([1,2],[3,4]))\nlist(itertools.product([1,2],['a','b']))\nlist(itertools.permutations([1,2,3], 2))\nlist(itertools.combinations([1,2,3], 2))","[1, 2, 3, 4]\n[(1,'a'),(1,'b'),(2,'a'),(2,'b')]\n[(1,2),(1,3),(2,1),(2,3),(3,1),(3,2)]\n[(1,2),(1,3),(2,3)]","combinations ignores order, permutations counts order — a common source of confusion.","https://docs.python.org/3/library/itertools.html"],
+["functools","Higher-order functions and function-wrapping tools.","import functools","reduce, partial, lru_cache, wraps","functools.reduce(lambda a,b: a+b, [1,2,3])\ndouble = functools.partial(lambda a,b: a*b, 2)\n@functools.lru_cache\ndef fib(n): ...","6\ndouble(5) -&gt; 10\ncaches return values by argument","lru_cache is an easy way to memoize a slow/recursive function.","https://docs.python.org/3/library/functools.html"],
+["time","Low-level time access and delays.","import time","time, sleep, perf_counter","start = time.perf_counter()\ntime.sleep(1)\nelapsed = time.perf_counter() - start","high-resolution timer\npauses execution for 1 second\nseconds elapsed, as a float","Use perf_counter() (not time.time()) for measuring elapsed durations/benchmarks.","https://docs.python.org/3/library/time.html"],
+["copy","Duplicate objects — shallow or fully independent.","import copy","copy, deepcopy","shallow = copy.copy(nested_list)\ndeep = copy.deepcopy(nested_list)","copies the outer container only\ncopies every nested level too","Use deepcopy() whenever the object contains nested lists/dicts you might mutate later.","https://docs.python.org/3/library/copy.html"],
+["pickle","Serialize Python objects to bytes and back.","import pickle","dump, load, dumps, loads","with open('f.pkl','wb') as f: pickle.dump(obj, f)\nwith open('f.pkl','rb') as f: obj = pickle.load(f)","writes a binary snapshot of obj\nrestores the exact object","NEVER unpickle data from an untrusted source — it can execute arbitrary code on load.","https://docs.python.org/3/library/pickle.html"]
+];
+const PATTERNS = [
+["Swap two variables","a, b = b, a"],
+["Count occurrences","from collections import Counter\nCounter(['a','b','a','c','a'])\n# -> Counter({'a': 3, 'b': 1, 'c': 1})"],
+["Remove duplicates (order not preserved)","unique = list(set([1, 2, 2, 3, 1]))\n# -> [1, 2, 3] (order may change)"],
+["Remove duplicates (order preserved)","unique = list(dict.fromkeys([1, 2, 2, 3, 1]))\n# -> [1, 2, 3] (dicts keep insertion order, 3.7+)"],
+["Find maximum / minimum","max([4, 1, 9, 3])   # 9\nmin([4, 1, 9, 3])   # 1"],
+["Sort ascending / descending","sorted(nums)                 # ascending\nsorted(nums, reverse=True)    # descending"],
+["Sort using a custom key","students = [('Aman', 91), ('Rushit', 82)]\nsorted(students, key=lambda s: s[1], reverse=True)"],
+["Reverse a list / string","nums[::-1]          # reversed list (new list)\n'python'[::-1]      # 'nohtyp' (reversed string)"],
+["Flatten a nested list","grid = [[1,2],[3,4],[5]]\nflat = [n for row in grid for n in row]\n# -> [1, 2, 3, 4, 5]"],
+["Merge dictionaries","merged = {**dict1, **dict2}      # dict2 wins on key conflicts\nmerged = dict1 | dict2            # same result, 3.9+ syntax"],
+["Filter data","adults = [p for p in people if p['age'] >= 18]\nadults = list(filter(lambda p: p['age'] >= 18, people))"],
+["Convert list ↔ tuple ↔ set","tuple([1,2,3])     # (1, 2, 3)\nset([1,2,2,3])      # {1, 2, 3}\nlist((1,2,3))       # [1, 2, 3]"],
+["Convert string ↔ list","list('hello')          # ['h','e','l','l','o']\n''.join(['h','i'])      # 'hi'\n'a,b,c'.split(',')      # ['a','b','c']"],
+["Iterate with index","for i, value in enumerate(['a','b','c']):\n    print(i, value)     # 0 a / 1 b / 2 c"],
+["Iterate over a dictionary","for key, value in my_dict.items():\n    print(key, value)"],
+["Read a CSV file","import csv\nwith open('data.csv') as f:\n    reader = csv.DictReader(f)\n    rows = [row for row in reader]     # each row is a dict"],
+["Read a JSON file","import json\nwith open('data.json') as f:\n    data = json.load(f)"],
+["Basic file processing (line by line)","with open('log.txt') as f:\n    for line in f:                 # memory-efficient — one line at a time\n        process(line.strip())"]
+];
+
+const SYNTAX_GLANCE = [
+["Variables","x = 10\nname: str = 'Rushit'     # optional type hint\na, b = 1, 2"],
+["Conditions","if x > 0:\n    ...\nelif x == 0:\n    ...\nelse:\n    ..."],
+["Loops","for i in range(5):\n    ...\nwhile condition:\n    ..."],
+["Functions","def f(a, b=1, *args, **kwargs) -> int:\n    return a + b"],
+["Lambda","square = lambda x: x ** 2"],
+["Classes","class C:\n    def __init__(self, x):\n        self.x = x"],
+["Inheritance","class Child(Parent):\n    def __init__(self):\n        super().__init__()"],
+["Exception handling","try:\n    risky()\nexcept ValueError as e:\n    handle(e)\nfinally:\n    cleanup()"],
+["File handling","with open('f.txt') as f:\n    data = f.read()"],
+["Context managers","class Ctx:\n    def __enter__(self): return self\n    def __exit__(self, *a): return False"],
+["Comprehensions","[x**2 for x in range(10) if x % 2 == 0]"],
+["Generators","def gen():\n    yield 1\n    yield 2"],
+["Decorators","@decorator\ndef f():\n    ..."],
+["Imports","import module\nfrom module import name\nfrom module import name as alias"],
+["Type hints","def f(x: int) -> list[str]:\n    ...\nval: int | None = None"],
+["Dataclasses","@dataclass\nclass Point:\n    x: int\n    y: int"],
+["Async / await","async def f():\n    await asyncio.sleep(1)\nasyncio.run(f())"]
+];
+
+const MISTAKES = [
+["= vs ==","`=` assigns a value; `==` compares two values for equality.","if x = 5:   # SyntaxError — this is what == is for\nif x == 5:  # correct comparison"],
+["== vs is","`==` checks equal VALUE. `is` checks the SAME OBJECT in memory.","a = [1, 2]\nb = [1, 2]\na == b   # True  (equal contents)\na is b   # False (different objects)"],
+["Mutable default arguments","A mutable default (like []) is created ONCE and shared across every call.","def add(item, bucket=[]):   # BUG: same list reused every call!\n    bucket.append(item)\n    return bucket\n\ndef add(item, bucket=None):  # fix: use None, create fresh inside\n    if bucket is None:\n        bucket = []\n    bucket.append(item)\n    return bucket"],
+["List reference vs copy","Assigning a list doesn't copy it — both names point to the same object.","a = [1, 2]\nb = a          # b IS a, not a copy\nb.append(3)    # a is now [1, 2, 3] too\nc = a.copy()   # use .copy(), a[:], or list(a) for an independent copy"],
+["Shallow copy vs deep copy","A shallow copy doesn't copy nested mutable objects inside it.","import copy\na = [[1, 2]]\nb = copy.copy(a)       # shallow — b[0] is still a's SAME inner list\nc = copy.deepcopy(a)   # deep — fully independent, all levels"],
+["Modifying a list while iterating","Removing/adding items during a `for` loop skips elements or crashes.","for x in nums:\n    if x < 0:\n        nums.remove(x)     # BUG: skips the next element\n\nnums = [x for x in nums if x >= 0]   # fix: build a new list instead"],
+["sort() returning None","`list.sort()` sorts in place and returns None — it is NOT the sorted list.","result = nums.sort()   # BUG: result is None\nresult = sorted(nums)   # fix: sorted() returns the new list"],
+["input() always returning a string","Even if the user types a number, input() gives you a str.","age = input('Age: ')        # '25', a string, not 25\nage = int(input('Age: '))    # convert explicitly if you need a number"],
+["Dictionary KeyError","Accessing a missing key with [] raises KeyError.","d['missing']            # KeyError\nd.get('missing')         # None — no error\nd.get('missing', 0)      # 0 — with a default"],
+["Index errors","Indexing past the last valid position raises IndexError.","nums = [1, 2, 3]\nnums[3]        # IndexError — valid indices are 0, 1, 2\nnums[-1]       # 3 — negative indexing is fine, still in range"],
+["Integer division vs normal division","`/` always gives a float; `//` floors toward negative infinity.","7 / 2     # 3.5\n7 // 2    # 3\n-7 // 2   # -4, NOT -3 — floors toward negative infinity"],
+["Mutable vs immutable objects","Lists/dicts/sets are mutable; strings/tuples/numbers are immutable.","s = 'hi'\ns[0] = 'H'      # TypeError — strings can't be modified in place\ns = 'H' + s[1:]  # must create a new string instead"],
+["Scope problems","Assigning to a name inside a function makes it local, even before the assignment.","count = 0\ndef inc():\n    count += 1   # UnboundLocalError — count is treated as local here\ndef inc():\n    global count  # fix: declare it explicitly\n    count += 1"],
+["Late binding in closures","A loop variable captured in a lambda/closure resolves at CALL time, not creation time.","fns = [lambda: i for i in range(3)]\n[f() for f in fns]                  # [2, 2, 2] — not [0, 1, 2]!\nfns = [lambda i=i: i for i in range(3)]  # fix: bind i as a default arg"],
+["Forgetting return","A function with no `return` implicitly returns None.","def add(a, b):\n    a + b          # BUG: result is discarded\ndef add(a, b):\n    return a + b    # fix"],
+["Forgetting await","Calling an async function without `await` gives you a coroutine object, not the result.","result = fetch_data()          # BUG: result is a coroutine, not the data\nresult = await fetch_data()     # fix — must be inside an async function"]
+];
+
+/* ============================================================
+   THEME (applied immediately, before render, to avoid flashing)
+   ============================================================ */
+function pyrefSetTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  try{ localStorage.setItem('pyref-theme', theme); }catch(e){}
+}
+function pyrefPreferredTheme(){
+  try{
+    const saved = localStorage.getItem('pyref-theme');
+    if(saved) return saved;
+  }catch(e){}
+  return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+}
+pyrefSetTheme(pyrefPreferredTheme());
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function slug(s){
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-+|-+$)/g,'');
+}
+function escapeRegExp(s){
+  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+}
+function escAttr(s){
+  return String(s).replace(/"/g,'&quot;');
+}
+
+/* ============================================================
+   CARD / ITEM RENDERERS
+   item = [name, desc, syntax, params, example, output, note, link]
+   ============================================================ */
+function cardHTML(item, tag, cat){
+  const name=item[0], desc=item[1], syntax=item[2], params=item[3],
+        example=item[4], output=item[5], note=item[6], link=item[7];
+  const blob = (name+' '+desc+' '+syntax+' '+params).toLowerCase();
+  const id = 'card-'+cat+'-'+slug(name);
+  return '<div class="ref-card" data-tag="'+tag+'" data-search="'+escAttr(blob)+'" id="'+id+'">'
+    + '<div class="rc-head"><span class="rc-name">'+name+'</span><span class="rc-tag">'+tag+'</span></div>'
+    + '<p class="rc-desc">'+desc+'</p>'
+    + '<div class="rc-row"><span class="k">Syntax</span><div class="rc-syntax">'+syntax+'</div></div>'
+    + '<div class="rc-row"><span class="k">Parameters</span><div style="font-size:12.5px;color:var(--text-muted);">'+params+'</div></div>'
+    + '<div class="rc-row"><span class="k">Example</span><div class="code-block" style="margin:4px 0 0;"><pre>'+example+'</pre><button class="copy-btn">Copy</button></div></div>'
+    + '<div class="rc-row"><span class="k">Result</span><div class="rc-syntax">'+output+'</div></div>'
+    + '<div class="rc-note"><b>Note:</b> '+note+'</div>'
+    + '<a class="rc-link" href="'+link+'" target="_blank" rel="noopener">Official docs &rarr;</a>'
+    + '</div>';
+}
+
+function patternHTML(item){
+  const title=item[0], code=item[1];
+  const blob=(title+' '+code).toLowerCase();
+  return '<div class="pattern" id="pattern-'+slug(title)+'" data-search="'+escAttr(blob)+'">'
+    + '<div class="p-title">'+title+'</div>'
+    + '<div class="code-block"><pre>'+code+'</pre><button class="copy-btn">Copy</button></div>'
+    + '</div>';
+}
+
+function syntaxHTML(item){
+  const title=item[0], code=item[1];
+  const blob=(title+' '+code).toLowerCase();
+  return '<div class="ref-card" data-tag="keyword" id="syntax-'+slug(title)+'" data-search="'+escAttr(blob)+'">'
+    + '<div class="rc-head"><span class="rc-name">'+title+'</span><span class="rc-tag">syntax</span></div>'
+    + '<div class="code-block" style="margin:8px 0 0;"><pre>'+code+'</pre><button class="copy-btn">Copy</button></div>'
+    + '</div>';
+}
+
+function mistakeHTML(item){
+  const title=item[0], explanation=item[1], code=item[2];
+  const blob=(title+' '+explanation).toLowerCase();
+  return '<div class="mistake" id="mistake-'+slug(title)+'" data-search="'+escAttr(blob)+'">'
+    + '<div class="m-title">'+title+'</div>'
+    + '<p style="font-size:13px;color:var(--text-muted);margin:4px 0 8px;">'+explanation+'</p>'
+    + (code ? '<div class="code-block" style="margin:0;"><pre>'+code+'</pre><button class="copy-btn">Copy</button></div>' : '')
+    + '</div>';
+}
+
+/* ============================================================
+   MOUNT ALL DATA-DRIVEN GRIDS
+   ============================================================ */
+document.getElementById('builtinsGrid').innerHTML = BUILTINS.map(x=>cardHTML(x,'builtin','bi')).join('');
+document.getElementById('stringMethodsGrid').innerHTML = STRING_METHODS.map(x=>cardHTML(x,'method','str')).join('');
+document.getElementById('listMethodsGrid').innerHTML = LIST_METHODS.map(x=>cardHTML(x,'method','list')).join('');
+document.getElementById('setMethodsGrid').innerHTML = SET_METHODS.map(x=>cardHTML(x,'method','set')).join('');
+document.getElementById('dictMethodsGrid').innerHTML = DICT_METHODS.map(x=>cardHTML(x,'method','dict')).join('');
+document.getElementById('stdlibGrid').innerHTML = STDLIB.map(x=>cardHTML(x,'module','mod')).join('');
+document.getElementById('patternsGrid').innerHTML = PATTERNS.map(patternHTML).join('');
+document.getElementById('syntaxGlanceGrid').innerHTML = SYNTAX_GLANCE.map(syntaxHTML).join('');
+document.getElementById('mistakesGrid').innerHTML = MISTAKES.map(mistakeHTML).join('');
+
+/* ============================================================
+   COPY BUTTONS (event delegation — works for static AND rendered blocks)
+   ============================================================ */
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.copy-btn');
+  if(!btn) return;
+  const block = btn.closest('.code-block');
+  const pre = block.querySelector('pre');
+  const text = pre.innerText;
+  const original = btn.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1400);
+  }).catch(()=>{
+    btn.textContent = 'Error';
+    setTimeout(()=>{ btn.textContent = original; }, 1400);
+  });
+});
+
+/* ============================================================
+   COLLAPSE / EXPAND SECTIONS
+   ============================================================ */
+document.querySelectorAll('[data-collapse]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const section = this.closest('section.ref-section');
+    const body = section.querySelector('.section-body');
+    if(!body) return;
+    const collapsed = body.classList.toggle('collapsed');
+    this.textContent = collapsed ? 'expand' : 'collapse';
+  });
+});
+
+/* ============================================================
+   MOBILE SIDEBAR
+   ============================================================ */
+const pyrefSidebar = document.getElementById('sidebar');
+const pyrefOverlay = document.getElementById('overlay');
+document.getElementById('menuBtn').addEventListener('click', function(){
+  pyrefSidebar.classList.add('open');
+  pyrefOverlay.classList.add('open');
+});
+pyrefOverlay.addEventListener('click', function(){
+  pyrefSidebar.classList.remove('open');
+  pyrefOverlay.classList.remove('open');
+});
+pyrefSidebar.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){
+    pyrefSidebar.classList.remove('open');
+    pyrefOverlay.classList.remove('open');
+  });
+});
+
+/* ============================================================
+   ACTIVE SECTION HIGHLIGHT + FADE-IN ON SCROLL
+   ============================================================ */
+const pyrefNavLinks = Array.from(document.querySelectorAll('nav.sidebar a'));
+const pyrefSections = Array.from(document.querySelectorAll('section.ref-section'));
+
+const pyrefActiveObserver = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      pyrefNavLinks.forEach(function(a){
+        a.classList.toggle('active', a.getAttribute('href') === '#'+id);
+      });
+    }
+  });
+}, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+pyrefSections.forEach(function(s){ pyrefActiveObserver.observe(s); });
+
+const pyrefFadeObserver = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      pyrefFadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.001 });
+pyrefSections.forEach(function(s){ pyrefFadeObserver.observe(s); });
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+const pyrefBackBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', function(){
+  pyrefBackBtn.classList.toggle('show', window.scrollY > 600);
+});
+pyrefBackBtn.addEventListener('click', function(){
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ============================================================
+   THEME TOGGLE BUTTON
+   ============================================================ */
+document.getElementById('themeToggle').addEventListener('click', function(){
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  pyrefSetTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+const SECTION_TITLES = {
+  'basics':'Basics','builtins':'Built-in Functions','strings':'Strings','lists':'Lists','tuples':'Tuples',
+  'sets':'Sets','dicts':'Dictionaries','control-flow':'Control Flow','comprehensions':'Comprehensions',
+  'functions':'Functions','lambda-functional':'Lambda & Functional','iterators-generators':'Iterators & Generators',
+  'oop':'OOP','exceptions':'Exceptions','file-handling':'File Handling','modules-imports':'Modules & Imports',
+  'stdlib':'Standard Library','regex':'Regular Expressions','datetime-ref':'Date & Time','patterns':'Data Patterns',
+  'syntax-glance':'Syntax at a Glance','decorators':'Decorators','context-managers':'Context Managers',
+  'type-hints':'Type Hints','dataclasses':'Dataclasses','async':'Async Python','operators':'Special Syntax / Operators',
+  'mistakes':'Common Mistakes'
+};
+
+function buildSearchIndex(){
+  const idx = [];
+  document.querySelectorAll('[data-search]').forEach(function(el){
+    const nameEl = el.querySelector('.rc-name') || el.querySelector('.p-title') || el.querySelector('.m-title');
+    const title = nameEl ? nameEl.textContent : (el.id || 'result');
+    const tagEl = el.querySelector('.rc-tag');
+    const parentSection = el.closest('section.ref-section');
+    const meta = (tagEl ? tagEl.textContent + ' · ' : '') + (parentSection ? (SECTION_TITLES[parentSection.id] || '') : '');
+    idx.push({ el: el, title: title, meta: meta, blob: el.getAttribute('data-search') });
+  });
+  pyrefSections.forEach(function(sec){
+    const h2 = sec.querySelector('.section-head h2');
+    if(!h2) return;
+    const sectionTitle = h2.textContent.replace(/^\s*\d+\s*/,'').trim();
+    const descEl = sec.querySelector('.section-desc');
+    const blob = (sectionTitle + ' ' + (descEl ? descEl.textContent : '')).toLowerCase();
+    idx.push({ el: sec, title: sectionTitle, meta: 'section', blob: blob });
+
+    // also index every sub-heading within the section (e.g. "Walrus operator",
+    // "f-strings", "Closures", dunder-method rows) so concept-level searches
+    // find them even though they aren't standalone cards.
+    sec.querySelectorAll('h3.sub, h4.subtle').forEach(function(h){
+      const subTitle = h.textContent.trim();
+      if(!subTitle) return;
+      idx.push({ el: h, title: subTitle, meta: 'in ' + sectionTitle, blob: subTitle.toLowerCase() });
+    });
+  });
+  return idx;
+}
+let SEARCH_INDEX = buildSearchIndex();
+
+const searchInput = document.getElementById('searchInput');
+const searchPanel = document.getElementById('searchPanel');
+const searchClear = document.getElementById('searchClear');
+const searchCount = document.getElementById('searchCount');
+
+function runSearch(rawQuery){
+  const q = rawQuery.trim().toLowerCase();
+  if(!q){
+    searchPanel.classList.remove('open');
+    searchPanel.innerHTML = '';
+    searchCount.style.display = 'none';
+    searchCount.textContent = '';
+    searchClear.style.display = 'none';
+    return;
+  }
+  searchClear.style.display = 'inline-block';
+  const matches = SEARCH_INDEX.filter(function(item){ return item.blob.indexOf(q) !== -1; });
+  searchCount.style.display = 'inline-block';
+  searchCount.textContent = matches.length + (matches.length === 1 ? ' match' : ' matches');
+  const top = matches.slice(0, 25);
+  if(top.length === 0){
+    searchPanel.innerHTML = '<div class="result-item">No matches — try a different term.</div>';
+  } else {
+    const re = new RegExp('('+escapeRegExp(q)+')', 'ig');
+    searchPanel.innerHTML = top.map(function(m, i){
+      const hi = m.title.replace(re, '<mark>$1</mark>');
+      return '<a href="#" class="result-item" data-idx="'+i+'"><div class="rtitle">'+hi+'</div><div class="rmeta">'+m.meta+'</div></a>';
+    }).join('');
+  }
+  searchPanel.classList.add('open');
+  searchPanel._matches = top;
+}
+
+function navigateToResult(el){
+  searchPanel.classList.remove('open');
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+  el.classList.add('flash-highlight');
+  setTimeout(function(){ el.classList.remove('flash-highlight'); }, 1600);
+  pyrefSidebar.classList.remove('open');
+  pyrefOverlay.classList.remove('open');
+}
+
+searchInput.addEventListener('input', function(e){ runSearch(e.target.value); });
+searchInput.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    searchInput.value = '';
+    runSearch('');
+    searchInput.blur();
+  }
+  if(e.key === 'Enter'){
+    const first = searchPanel.querySelector('.result-item[data-idx]');
+    if(first) first.click();
+  }
+});
+searchClear.addEventListener('click', function(){
+  searchInput.value = '';
+  runSearch('');
+  searchInput.focus();
+});
+searchPanel.addEventListener('click', function(e){
+  const item = e.target.closest('.result-item[data-idx]');
+  if(!item) return;
+  e.preventDefault();
+  const idx = parseInt(item.getAttribute('data-idx'), 10);
+  const m = (this._matches || [])[idx];
+  if(m) navigateToResult(m.el);
+});
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.search-wrap')){
+    searchPanel.classList.remove('open');
+  }
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === '/' ){
+    const tag = document.activeElement.tagName;
+    if(tag !== 'INPUT' && tag !== 'TEXTAREA'){
+      e.preventDefault();
+      searchInput.focus();
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
