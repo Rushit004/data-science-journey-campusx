@@ -44,10 +44,16 @@
 ```
 ---
 ## A few things I found genuinely interesting so far
-- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
 - Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
-- Matplotlib and Seaborn have so many graph types that I kept forgetting syntax mid-project — so I built a **quick-reference cheatsheet** covering the most-used plots in one place. View it 🔗 [Live Preview](https://matplotlib-and-seaborn-graphs.netlify.app/) or browse the [source file](04-Matplotlib/matplotlib_seaborn_graphs.html) in the repo.
-- Python's built-in functions and methods are things I know exist but rarely remember the exact syntax for under pressure — so I built a searchable **Python quick-reference site** covering all 69 built-ins, core methods, and runnable examples in one place. View it 🔗 [Live Preview](https://python-quick-reference.netlify.app/) or browse the [source file](01-python-basics/python-quick-reference.html) in the repo.
+- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
+
+There's a pattern in all three libraries — I know they exist, I use them constantly, and I *still* blank on the exact syntax under pressure. So instead of googling the same thing for the 50th time, I built a searchable quick-reference site for each:
+
+| # | Library | What's inside | Live Preview | Source |
+|---|---|---|---|---|
+| 1 | 🐍 **Python** | All 69 built-ins, core methods, runnable examples | 🔗 [Open](https://python-quick-reference.netlify.app/) | [`.html`](01-python-basics/python-quick-reference.html) |
+| 2 | 🔢 **NumPy** | Array creation, indexing, broadcasting, most-used functions | 🔗 [Open](https://numpy-quick-reference.netlify.app/) | [`.html`](https://github.com/Rushit004/data-science-journey-campusx/blob/main/02-Numpy/numpy-quick-reference.html) |
+| 3 | 📊 **Matplotlib & Seaborn** | Most-used plot types, one-liners for quick recall | 🔗 [Open](https://matplotlib-and-seaborn-graphs.netlify.app/) | [`.html`](04-Matplotlib/matplotlib_seaborn_graphs.html) |
 ---
 ## Environment
 ```
