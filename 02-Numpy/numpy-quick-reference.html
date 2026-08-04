@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumPy Quick Reference — Offline Syntax Helper</title>
+<style>
+:root{
+  --bg:#faf9f6; --surface:#ffffff; --surface-2:#f2f1ec; --ink:#1c1f26; --muted:#5b6470;
+  --border:#e4e2da; --accent:#3651d4; --accent-ink:#ffffff; --accent-soft:#eaedff;
+  --code-bg:#f4f3ee; --code-ink:#22262f; --shadow:0 1px 2px rgba(28,31,38,.06),0 4px 14px rgba(28,31,38,.05);
+  --fn:#3651d4; --meth:#a35a1f; --attr:#1f8f5f; --const:#a02b6f; --mod:#5b6470; --op:#0f7a86; --concept:#6b4fbb;
+  --radius:10px; --mono:ui-monospace,SFMono-Regular,'JetBrains Mono',Consolas,Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0e1015; --surface:#161923; --surface-2:#1d2129; --ink:#e7e9ef; --muted:#8b93a3;
+  --border:#2a2f3a; --accent:#7b93ff; --accent-ink:#0e1015; --accent-soft:#1c2340;
+  --code-bg:#12141b; --code-ink:#dbe0ea; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 18px rgba(0,0,0,.35);
+  --fn:#7b93ff; --meth:#e0a25c; --attr:#4bd694; --const:#e07fc0; --mod:#8b93a3; --op:#4fd0dc; --concept:#b39bff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;font-size:15px}
+code,pre,kbd{font-family:var(--mono)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:var(--accent-soft)}
+
+/* ---------- HEADER ---------- */
+header.top{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.brand .mark{width:34px;height:34px;border-radius:8px;background:var(--accent);color:var(--accent-ink);
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;padding:5px;flex:none}
+.brand .mark i{background:currentColor;opacity:.9;border-radius:2px}
+.brand h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.2px}
+.brand small{display:block;color:var(--muted);font-weight:500;font-size:11px;margin-top:1px}
+.ver-pill{font-family:var(--mono);font-size:11px;background:var(--surface-2);border:1px solid var(--border);
+  color:var(--muted);padding:3px 8px;border-radius:100px;flex:none}
+.searchwrap{flex:1;max-width:640px;position:relative;margin-left:auto}
+#searchInput{width:100%;padding:9px 76px 9px 36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface-2);color:var(--ink);font-size:14px;outline:none}
+#searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.searchwrap svg.icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.kbd-hint{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;gap:4px}
+.kbd-hint kbd{font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);
+  border-radius:5px;padding:2px 5px}
+#resultCount{position:absolute;right:8px;top:-20px;font-size:11px;color:var(--muted);display:none}
+.iconbtn{border:1px solid var(--border);background:var(--surface-2);color:var(--ink);width:36px;height:36px;
+  border-radius:8px;display:grid;place-items:center;cursor:pointer;flex:none}
+.iconbtn:hover{border-color:var(--accent)}
+#menuBtn{display:none}
+
+/* ---------- LAYOUT ---------- */
+.shell{display:flex;max-width:1500px;margin:0 auto}
+nav.sidebar{width:260px;flex:none;position:sticky;top:57px;align-self:flex-start;height:calc(100vh - 57px);
+  overflow-y:auto;padding:16px 10px 40px;border-right:1px solid var(--border)}
+nav.sidebar a{display:flex;gap:8px;align-items:baseline;color:var(--muted);padding:7px 10px;border-radius:7px;
+  font-size:13.5px;font-weight:500}
+nav.sidebar a .n{font-family:var(--mono);font-size:11px;color:var(--muted);opacity:.7;flex:none;width:20px}
+nav.sidebar a:hover{background:var(--surface-2);color:var(--ink);text-decoration:none}
+nav.sidebar a.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
+nav.sidebar a.active .n{color:var(--accent);opacity:1}
+main{flex:1;min-width:0;padding:26px 30px 100px}
+
+/* ---------- SECTION / CARDS ---------- */
+section.sec{margin-bottom:46px;scroll-margin-top:70px}
+section.sec > h2{font-size:20px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+section.sec > h2 .idx{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);
+  padding:2px 8px;border-radius:6px}
+section.sec > p.desc{color:var(--muted);margin:0 0 16px;font-size:13.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;
+  box-shadow:var(--shadow)}
+.card .head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.card .head .name{font-family:var(--mono);font-weight:700;font-size:14.5px}
+.badge{font-size:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:700;padding:2px 7px;border-radius:100px;
+  color:#fff;flex:none}
+.b-function{background:var(--fn)}.b-method{background:var(--meth)}.b-attribute{background:var(--attr)}
+.b-constant{background:var(--const)}.b-module{background:var(--mod)}.b-operator{background:var(--op)}
+.b-concept{background:var(--concept)}
+pre[data-copy]{margin:0;background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:9px 34px 9px 11px;
+  overflow-x:auto;font-size:12.6px;position:relative;border:1px solid var(--border);
+  white-space:pre-wrap;word-break:break-word}
+pre[data-copy] + pre[data-copy]{margin-top:8px}
+.copybtn{position:absolute;top:6px;right:6px;background:var(--surface);border:1px solid var(--border);color:var(--muted);
+  font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer;font-family:var(--sans)}
+.copybtn:hover{color:var(--accent);border-color:var(--accent)}
+.copybtn.copied{color:#1f8f5f;border-color:#1f8f5f}
+.lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin:10px 0 4px}
+.card .params{font-size:12.5px;color:var(--ink)}
+.card .params .p{margin-bottom:2px}
+.card .params .p b{font-family:var(--mono);color:var(--accent);font-weight:700}
+.card .ret,.card .use,.card .note{font-size:12.8px}
+.card .note{background:var(--surface-2);border-left:3px solid var(--accent);padding:6px 9px;border-radius:6px}
+.card .foot{margin-top:10px;font-size:12px}
+mark{background:#ffe27a;color:#1c1f26;padding:0 2px;border-radius:2px}
+[data-theme="dark"] mark{background:#8a6d1f;color:#fff}
+
+/* ---------- TABLE ---------- */
+table.ref{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;font-size:13px}
+table.ref th{background:var(--surface-2);text-align:left;padding:9px 12px;font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border)}
+table.ref td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+table.ref tr:last-child td{border-bottom:none}
+table.ref td code,table.ref td.mono{font-family:var(--mono);font-size:12.5px;color:var(--fn)}
+table.ref{margin-bottom:6px}
+.tablewrap{overflow-x:auto}
+
+/* ---------- SNIPPETS / TEXT ---------- */
+.snip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;
+  box-shadow:var(--shadow)}
+.snip h4{margin:0 0 8px;font-size:13.5px}
+.snip .note{font-size:12px;color:var(--muted);margin-top:6px}
+.prose{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;
+  box-shadow:var(--shadow)}
+.prose h3{font-size:15px;margin:18px 0 8px}
+.prose h3:first-child{margin-top:0}
+.prose ul{margin:6px 0;padding-left:20px;font-size:13.5px}
+.prose li{margin-bottom:6px}
+.prose pre{background:var(--code-bg);border:1px solid var(--border);padding:10px 12px;border-radius:8px;
+  overflow-x:auto;font-size:12.6px;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.diagram{font-family:var(--mono);font-size:12.5px;background:var(--code-bg);border:1px solid var(--border);
+  border-radius:8px;padding:12px;overflow-x:auto;white-space:pre;line-height:1.6}
+.mistake{border-left:3px solid #d4463f;padding:8px 12px;background:var(--surface-2);border-radius:6px;margin-bottom:10px}
+.mistake b{color:#d4463f}
+.tip{border-left:3px solid #1f8f5f;padding:8px 12px;background:var(--surface-2);border-radius:6px;margin-bottom:10px}
+.reslist a{display:block;padding:8px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.reslist a:last-child{border-bottom:none}
+.reslist span{display:block;color:var(--muted);font-size:12px}
+
+/* ---------- MISC ---------- */
+#backTop{position:fixed;bottom:22px;right:22px;width:42px;height:42px;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);border:none;display:none;place-items:center;cursor:pointer;box-shadow:var(--shadow);z-index:40}
+#backTop.show{display:grid}
+.hidden{display:none !important}
+.emptyState{color:var(--muted);font-size:13.5px;padding:30px;text-align:center}
+footer.site{text-align:center;color:var(--muted);font-size:12px;padding:30px;border-top:1px solid var(--border)}
+
+@media (max-width:900px){
+  #menuBtn{display:grid}
+  .searchwrap{max-width:none}
+  .kbd-hint{display:none}
+  nav.sidebar{position:fixed;left:0;top:57px;height:calc(100vh - 57px);width:270px;background:var(--surface);
+    transform:translateX(-105%);transition:transform .2s ease;z-index:60;box-shadow:var(--shadow)}
+  nav.sidebar.open{transform:translateX(0)}
+  main{padding:18px 14px 100px}
+  .brand small{display:none}
+  .ver-pill{display:none}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button id="menuBtn" class="iconbtn" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="brand">
+    <div class="mark"><i></i><i></i><i></i><i></i></div>
+    <div>
+      <h1>NumPy Quick Reference</h1>
+      <small>Offline syntax helper &amp; API cheat sheet</small>
+    </div>
+  </div>
+  <span class="ver-pill">covers v2.5 · py≥3.12</span>
+  <div class="searchwrap">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="searchInput" type="text" placeholder="Search functions, keywords, params… ( / )" autocomplete="off">
+    <div id="resultCount"></div>
+    <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+  </div>
+  <button id="themeBtn" class="iconbtn" aria-label="Toggle theme">
+    <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main id="content"></main>
+</div>
+
+<button id="backTop" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<footer class="site">NumPy Quick Reference · built for fast offline lookup · verified against numpy.org/doc/stable · not affiliated with the NumPy project</footer>
+
+<script>
+/* ============================================================
+   DATA
+   Card item field order:
+   [ name, kind, signature, params, returns, example, output, use, note, docLink, tags ]
+   kind ∈ function | method | attribute | constant | module | operator | concept
+   ============================================================ */
+const NP = "https://numpy.org/doc/stable/reference/generated/numpy.";
+const NPL = "https://numpy.org/doc/stable/reference/generated/numpy.linalg.";
+const NPR = "https://numpy.org/doc/stable/reference/random/generated/numpy.random.";
+
+const SECTIONS = [
+
+{id:"install", num:"01", title:"Installation & Import", type:"html", html:`
+<div class="prose">
+<h3>Install</h3>
+<pre>pip install numpy
+conda install numpy</pre>
+<h3>Import (universal convention)</h3>
+<pre>import numpy as np</pre>
+<h3>Check version</h3>
+<pre>np.__version__
+# e.g. '2.5.1'</pre>
+<p style="font-size:13.5px;color:var(--muted)">This reference covers <b>NumPy 2.5.x</b> (latest stable). NumPy 2.5 requires <b>Python ≥ 3.12</b>. Some names shown as "deprecated" still work but print a warning — prefer the replacement listed.</p>
+</div>`},
+
+{id:"array-creation", num:"02", title:"Array Creation", type:"cards",
+ desc:"Functions that build a new ndarray from scratch, from data, or from another array's shape.",
+ items:[
+["np.array()","function","np.array(object, dtype=None, copy=True, order='K', ndmin=0)",
+ "object: array-like input · dtype: target data-type, inferred if None · copy: always copies by default · order: memory layout · ndmin: minimum number of dimensions",
+ "ndarray","np.array([1, 2, 3])","array([1, 2, 3])",
+ "Build an array from a Python list, tuple, or nested sequence.",
+ "Always copies unless copy=False is set. Nested lists create multi-dimensional arrays.",
+ NP+"array.html","array create list tuple"],
+["np.asarray()","function","np.asarray(a, dtype=None, order=None)",
+ "a: input data · dtype: optional target type · order: 'C' or 'F'",
+ "ndarray (view, no copy when possible)","np.asarray([1, 2, 3])","array([1, 2, 3])",
+ "Convert input to an array without copying when the input is already an ndarray of the right dtype.",
+ "Faster than np.array() inside functions since it avoids redundant copies.",
+ NP+"asarray.html","asarray convert no-copy"],
+["np.zeros()","function","np.zeros(shape, dtype=float, order='C')",
+ "shape: int or tuple of ints · dtype: default float64 · order: 'C' or 'F'",
+ "ndarray filled with 0","np.zeros((2, 3))","array([[0., 0., 0.],\n       [0., 0., 0.]])",
+ "Pre-allocate an array before filling it in a loop.",
+ "Use np.zeros_like(a) to copy another array's shape and dtype.",
+ NP+"zeros.html","zeros allocate init"],
+["np.ones()","function","np.ones(shape, dtype=float, order='C')",
+ "shape: int or tuple of ints · dtype: default float64 · order: 'C' or 'F'",
+ "ndarray filled with 1","np.ones((2, 2))","array([[1., 1.],\n       [1., 1.]])",
+ "Initialize weights, masks or counters.",
+ "Combine with a scalar multiply for a constant-fill array, e.g. np.ones((2,2)) * 5.",
+ NP+"ones.html","ones allocate init"],
+["np.empty()","function","np.empty(shape, dtype=float, order='C')",
+ "shape: int or tuple of ints · dtype: default float64 · order: 'C' or 'F'",
+ "ndarray with uninitialized values","np.empty((2, 2))","array([[?, ?],\n       [?, ?]])  # garbage values",
+ "Fastest allocation when every element will be overwritten immediately.",
+ "Values are whatever was already in memory — never read before writing.",
+ NP+"empty.html","empty allocate uninitialized"],
+["np.full()","function","np.full(shape, fill_value, dtype=None)",
+ "shape: int or tuple of ints · fill_value: scalar to fill · dtype: inferred from fill_value if None",
+ "ndarray filled with fill_value","np.full((2, 2), 7)","array([[7, 7],\n       [7, 7]])",
+ "Create a constant-value matrix in one call.",
+ "dtype is inferred from fill_value unless explicitly given.",
+ NP+"full.html","full constant fill"],
+["np.eye()","function","np.eye(N, M=None, k=0, dtype=float)",
+ "N: number of rows · M: number of columns, defaults to N · k: diagonal offset (0=main) · dtype: default float64",
+ "2-D array with ones on the k-th diagonal","np.eye(3, k=1)","array([[0., 1., 0.],\n       [0., 0., 1.],\n       [0., 0., 0.]])",
+ "Build identity-like or shifted-diagonal matrices.",
+ "Use k to shift the diagonal up (+) or down (−). Use np.identity() for the plain square case.",
+ NP+"eye.html","eye identity diagonal"],
+["np.identity()","function","np.identity(n, dtype=float)",
+ "n: size of the square matrix · dtype: default float64",
+ "n x n identity matrix","np.identity(3)","array([[1., 0., 0.],\n       [0., 1., 0.],\n       [0., 0., 1.]])",
+ "Linear algebra identity matrix for solving systems or resetting transforms.",
+ "Equivalent to np.eye(n) with no offset — identity() is stricter (always square).",
+ NP+"identity.html","identity square matrix"],
+["np.diag()","function","np.diag(v, k=0)",
+ "v: 1-D array (builds a matrix) or 2-D array (extracts a diagonal) · k: diagonal offset",
+ "2-D array or 1-D array, depending on input","np.diag([1, 2, 3])","array([[1, 0, 0],\n       [0, 2, 0],\n       [0, 0, 3]])",
+ "Build a diagonal matrix from a vector, or pull the diagonal out of a matrix.",
+ "Behavior depends entirely on the input's ndim — 1-D builds, 2-D extracts.",
+ NP+"diag.html","diag diagonal matrix"],
+["np.arange()","function","np.arange([start,] stop[, step,], dtype=None)",
+ "start: default 0 · stop: exclusive end · step: default 1 · dtype: inferred if None",
+ "1-D ndarray","np.arange(0, 10, 2)","array([0, 2, 4, 6, 8])",
+ "Generate evenly spaced integers, Python range() with array output.",
+ "stop is excluded. With float steps, rounding error can add an extra element — prefer linspace() for floats.",
+ NP+"arange.html","arange range sequence"],
+["np.linspace()","function","np.linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None)",
+ "start, stop: range bounds · num: number of samples · endpoint: include stop if True · retstep: also return spacing",
+ "1-D ndarray of num evenly spaced floats","np.linspace(0, 1, 5)","array([0.  , 0.25, 0.5 , 0.75, 1.  ])",
+ "Generate a fixed number of evenly spaced points, e.g. for plotting.",
+ "stop IS included by default (endpoint=True) — the opposite convention from arange().",
+ NP+"linspace.html","linspace evenly spaced"],
+["np.logspace()","function","np.logspace(start, stop, num=50, base=10.0)",
+ "start, stop: exponents of base · num: sample count · base: default 10",
+ "1-D ndarray, log-scaled","np.logspace(0, 3, 4)","array([   1.,   10.,  100., 1000.])",
+ "Generate values spaced evenly on a log scale, e.g. learning-rate sweeps.",
+ "start/stop are exponents, not the actual values — that is geomspace() below.",
+ NP+"logspace.html","logspace log scale"],
+["np.geomspace()","function","np.geomspace(start, stop, num=50)",
+ "start, stop: actual endpoint values (not exponents) · num: sample count",
+ "1-D ndarray, geometric progression","np.geomspace(1, 1000, 4)","array([   1.,   10.,  100., 1000.])",
+ "Log-scaled samples when you know the real start/stop values.",
+ "Same result as logspace() here, but you pass real numbers instead of exponents.",
+ NP+"geomspace.html","geomspace geometric"],
+["np.indices()","function","np.indices(dimensions, dtype=int)",
+ "dimensions: shape of the grid · dtype: default int",
+ "array of shape (len(dimensions), *dimensions)","np.indices((2, 2))","array([[[0, 0], [1, 1]],\n       [[0, 1], [0, 1]]])",
+ "Get per-axis index grids for vectorized coordinate math.",
+ "First axis of the result selects which coordinate (row-index grid vs column-index grid).",
+ NP+"indices.html","indices grid coordinates"],
+["np.meshgrid()","function","np.meshgrid(*xi, indexing='xy')",
+ "*xi: 1-D coordinate vectors · indexing: 'xy' (Cartesian, default) or 'ij' (matrix)",
+ "tuple of coordinate matrices","X, Y = np.meshgrid([1,2],[3,4])","X=[[1,2],[1,2]]  Y=[[3,3],[4,4]]",
+ "Build 2-D coordinate grids for surface plots or vectorized functions of (x,y).",
+ "indexing='xy' swaps the first two output dimensions relative to 'ij' — a common source of shape bugs.",
+ NP+"meshgrid.html","meshgrid grid plot"],
+["np.fromfunction()","function","np.fromfunction(function, shape, dtype=float)",
+ "function: callable taking one index array per dimension · shape: output shape · dtype: index dtype",
+ "ndarray","np.fromfunction(lambda i,j: i+j, (2,2))","array([[0., 1.],\n       [1., 2.]])",
+ "Construct an array by evaluating a function over coordinate grids.",
+ "function receives whole index arrays (like meshgrid output), not scalars — write it vectorized.",
+ NP+"fromfunction.html","fromfunction generate"],
+["np.fromiter()","function","np.fromiter(iter, dtype, count=-1)",
+ "iter: any Python iterable/generator · dtype: required · count: expected length for pre-allocation",
+ "1-D ndarray","np.fromiter(range(5), dtype=int)","array([0, 1, 2, 3, 4])",
+ "Materialize a generator into an array without building an intermediate list.",
+ "dtype is mandatory. Passing count avoids repeated resizing and is much faster for large iterables.",
+ NP+"fromiter.html","fromiter generator iterable"],
+["np.frombuffer()","function","np.frombuffer(buffer, dtype=float, count=-1, offset=0)",
+ "buffer: any object exposing the buffer protocol (bytes, bytearray…) · dtype · count: elements to read · offset: start byte",
+ "1-D read-only ndarray view over the buffer","np.frombuffer(b'\\x01\\x00\\x00\\x00', dtype=np.int32)","array([1], dtype=int32)",
+ "Zero-copy interpretation of raw bytes (files, sockets, C buffers) as numbers.",
+ "Returned array is read-only by default since it shares memory with the buffer.",
+ NP+"frombuffer.html","frombuffer bytes buffer"],
+["np.copy()","function","np.copy(a, order='K')",
+ "a: array-like · order: memory layout of the copy",
+ "independent ndarray copy","b = np.copy(a)","# b shares no memory with a",
+ "Force an independent copy so edits to one array never affect the other.",
+ "Equivalent to a.copy(). Default np.array(a) also copies — np.asarray(a) does not.",
+ NP+"copy.html","copy duplicate independent"],
+["np.empty_like()","function","np.empty_like(a, dtype=None, shape=None)",
+ "a: template array · dtype: override, else matches a · shape: override, else matches a",
+ "uninitialized ndarray matching a's shape/dtype","np.empty_like(a)","# same shape & dtype as a, garbage values",
+ "Allocate scratch space shaped like an existing array.",
+ "Fastest of the *_like() family since values are not initialized.",
+ NP+"empty_like.html","empty_like allocate"],
+["np.ones_like()","function","np.ones_like(a, dtype=None, shape=None)",
+ "a: template array · dtype: override · shape: override",
+ "ndarray of ones matching a","np.ones_like(a)","# same shape as a, all 1s",
+ "Create a same-shape mask or multiplier array.",
+ "Shape and dtype default to matching a exactly.",
+ NP+"ones_like.html","ones_like allocate"],
+["np.zeros_like()","function","np.zeros_like(a, dtype=None, shape=None)",
+ "a: template array · dtype: override · shape: override",
+ "ndarray of zeros matching a","np.zeros_like(a)","# same shape as a, all 0s",
+ "Accumulator array shaped like existing data.",
+ "Common pattern before an in-place accumulation loop (though vectorizing is usually better).",
+ NP+"zeros_like.html","zeros_like allocate"],
+["np.full_like()","function","np.full_like(a, fill_value, dtype=None, shape=None)",
+ "a: template array · fill_value: scalar · dtype: override · shape: override",
+ "ndarray filled with fill_value, matching a","np.full_like(a, 9)","# same shape as a, all 9",
+ "Constant-value array matching an existing array's shape.",
+ "Combines np.full() convenience with *_like() shape inference.",
+ NP+"full_like.html","full_like allocate"],
+ ]},
+
+{id:"array-info", num:"03", title:"Array Information (Attributes)", type:"table",
+ desc:"Read-only properties every ndarray exposes — no parentheses, accessed directly.",
+ headers:["Attribute","Kind","Returns","Example","Notes"],
+ rows:[
+["shape","attribute","tuple of ints","a.shape → (3, 4)","Set a.shape = (...) to reshape in place if data allows it."],
+["size","attribute","int","a.size → 12","Total element count = product of shape."],
+["dtype","attribute","dtype object","a.dtype → dtype('float64')","Determines memory use and math precision."],
+["itemsize","attribute","int (bytes)","a.itemsize → 8","Bytes used per single element."],
+["ndim","attribute","int","a.ndim → 2","Number of axes/dimensions."],
+["nbytes","attribute","int (bytes)","a.nbytes → 96","Equals size * itemsize."],
+["flags","attribute","flagsobj","a.flags → C_CONTIGUOUS : True ...","Memory layout info: contiguity, writeability, owndata."],
+["T","attribute","ndarray view","a.T","Transpose; for 1-D arrays it is a no-op."],
+["real","attribute","ndarray","a.real","Real part; equals a itself for real dtypes."],
+["imag","attribute","ndarray","a.imag","Imaginary part; zeros for real dtypes."],
+["base","attribute","ndarray or None","a.base","Non-None means a is a view into another array's memory."],
+["strides","attribute","tuple of ints","a.strides → (32, 8)","Bytes to step to move one index along each axis."],
+ ]},
+
+{id:"dtypes", num:"04", title:"Data Types (dtypes)", type:"mixed",
+ desc:"NumPy's fixed-size, C-style numeric types — pick the smallest type that safely fits your data.",
+ table:{headers:["dtype","Size","Description"],
+ rows:[
+["bool_","1 byte","Boolean, True or False."],
+["int8 / int16 / int32 / int64","1/2/4/8 bytes","Signed integers of the given width."],
+["uint8 / uint16 / uint32 / uint64","1/2/4/8 bytes","Unsigned (non-negative) integers."],
+["float16 / float32 / float64","2/4/8 bytes","IEEE floating point; float64 is the Python float default."],
+["complex64 / complex128","8/16 bytes","Complex numbers built from two float32 / float64."],
+["object_","platform pointer","Boxed arbitrary Python objects — loses vectorized speed."],
+["str_ / bytes_","fixed width","Fixed-length unicode / byte strings."],
+["datetime64","8 bytes + unit","Date-time with a configurable unit, e.g. 'D', 'ns'."],
+["timedelta64","8 bytes + unit","Duration between two datetime64 values."],
+ ]},
+ items:[
+["ndarray.astype()","method","a.astype(dtype, casting='unsafe', copy=True)",
+ "dtype: target type · casting: safety rule · copy: always copies by default",
+ "new ndarray with converted dtype","np.array([1.7, 2.2]).astype(int)","array([1, 2])",
+ "Convert between numeric types, e.g. float results into int labels.",
+ "Truncates (does not round) when going float→int. Returns a copy even if dtype is unchanged unless copy=False.",
+ NP+"ndarray.astype.html","astype convert cast dtype"],
+ ]},
+
+{id:"indexing", num:"05", title:"Indexing & Slicing", type:"cards",
+ desc:"How to pull elements, rows, or sub-arrays out of an ndarray.",
+ items:[
+["Single index","concept","a[0]  ·  a[1, 2]",
+ "One integer per axis",
+ "scalar (or lower-dim array if fewer indices than axes)","a = np.array([10,20,30]); a[1]","20",
+ "Access one element directly.","Negative and multi-axis forms combine freely: a[-1, 0].",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","index single element"],
+["Negative index","concept","a[-1]  ·  a[-2]",
+ "-1 = last element, -2 = second-to-last, etc.",
+ "scalar or sub-array","a = np.array([1,2,3]); a[-1]","3",
+ "Access elements from the end without knowing the length.","Works on every axis: a[:, -1] gets the last column.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","negative index last"],
+["Slice","concept","a[start:stop]  ·  a[start:stop:step]",
+ "start: default 0 · stop: exclusive, default end · step: default 1",
+ "a VIEW sharing memory with a","a = np.arange(6); a[1:4]","array([1, 2, 3])",
+ "Extract a contiguous range without copying.","Basic slices are views — modifying the slice modifies the original array.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","slice range view"],
+["Step","concept","a[::2]  ·  a[::-1]",
+ "step controls the stride; negative step reverses direction",
+ "view (when possible)","a = np.arange(6); a[::-1]","array([5, 4, 3, 2, 1, 0])",
+ "Take every Nth element, or reverse an array.","a[::-1] is the idiomatic way to reverse any axis.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","step stride reverse"],
+["Boolean indexing","concept","a[condition]",
+ "condition: boolean array, same shape as a (or broadcastable)",
+ "1-D COPY containing only True positions","a = np.array([1,5,2,8]); a[a > 3]","array([5, 8])",
+ "Filter elements matching a condition.","Always returns a copy, never a view. Combine conditions with & | ~ and parentheses (not and/or/not).",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","boolean mask filter"],
+["Fancy indexing","concept","a[[0, 2, 4]]  ·  a[idx_array]",
+ "idx_array: integer array/list of positions, any order, repeats allowed",
+ "COPY, shaped like the index array","a = np.array([10,20,30,40]); a[[3,0,0]]","array([40, 10, 10])",
+ "Reorder, repeat, or gather arbitrary elements in one call.","Unlike slicing, this always copies — edits do not affect the original array.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","fancy gather reorder"],
+["Integer array indexing (multi-dim)","concept","a[[0,1],[1,2]]",
+ "One index array per axis; they are paired element-wise, not as a grid",
+ "1-D array of the paired-up elements","a = np.arange(9).reshape(3,3); a[[0,1],[1,2]]","array([1, 5])",
+ "Pick out specific (row, col) coordinate pairs at once.","Pairs elements positionally — use np.ix_() for a full grid combination instead.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","integer indexing coordinates"],
+["Ellipsis ( ... )","concept","a[..., 0]  ·  a[0, ...]",
+ "... expands to as many full slices (:) as needed to fill remaining axes",
+ "sub-array","a = np.zeros((2,3,4)); a[..., 0].shape","(2, 3)",
+ "Index the first/last axis of an array with unknown or variable dimensionality.","Only one ellipsis is allowed per indexing expression.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","ellipsis dots"],
+["np.newaxis","concept","a[:, np.newaxis]  ·  a[np.newaxis, :]",
+ "newaxis is an alias for None; inserts a size-1 axis at that position",
+ "view with one more dimension","a = np.array([1,2,3]); a[:, np.newaxis].shape","(3, 1)",
+ "Turn a 1-D array into a column or row vector for broadcasting.","Equivalent to np.expand_dims(a, axis) but usable inline in an indexing expression.",
+ NP+"newaxis.html","newaxis expand dims none"],
+["Masking (combined conditions)","concept","a[(a>0) & (a<10)]",
+ "Combine boolean arrays with & (and), | (or), ~ (not) — always parenthesized",
+ "1-D copy of matching elements","a=np.arange(-2,5); a[(a>0)&(a<3)]","array([1, 2])",
+ "Filter on multiple criteria at once.","Python's and/or/not do not work element-wise on arrays — using them raises an error or gives wrong results.",
+ "https://numpy.org/doc/stable/user/basics.indexing.html","masking combine conditions"],
+["Views vs Copies","concept","a.base is not None  →  view",
+ "Basic slicing → view (shares memory). Boolean/fancy indexing → copy (independent memory)",
+ "—","v = a[1:3]; v.base is a","True",
+ "Know when editing a slice will silently change the original array.","Check with arr.base or np.shares_memory(a, b) if unsure; use .copy() to force independence.",
+ "https://numpy.org/doc/stable/user/basics.copies.html","view copy memory shares_memory"],
+ ]},
+
+{id:"reshaping", num:"06", title:"Reshaping Arrays", type:"cards",
+ desc:"Change an array's shape, axis order, or dimensionality without altering its data.",
+ items:[
+["np.reshape() / a.reshape()","function","np.reshape(a, newshape, order='C')",
+ "a: input array · newshape: new shape tuple, one dim may be -1 to infer · order: 'C' or 'F' traversal",
+ "ndarray — view when possible, else a copy","np.arange(6).reshape(2, 3)","array([[0, 1, 2],\n       [3, 4, 5]])",
+ "Change dimensions before feeding data into a model.","Total element count must stay the same; -1 lets NumPy compute one dimension automatically.",
+ NP+"reshape.html","reshape shape dims"],
+["a.flatten()","method","a.flatten(order='C')",
+ "order: traversal order for reading elements",
+ "1-D ndarray, ALWAYS a copy","np.array([[1,2],[3,4]]).flatten()","array([1, 2, 3, 4])",
+ "Get a safe, independent 1-D version of a multi-dim array.","Always copies — safe to mutate without touching the original.",
+ NP+"ndarray.flatten.html","flatten 1d copy"],
+["np.ravel() / a.ravel()","function","np.ravel(a, order='C')",
+ "a: input array · order: traversal order",
+ "1-D array, VIEW when possible","np.ravel([[1,2],[3,4]])","array([1, 2, 3, 4])",
+ "Fast 1-D flattening when you do not need an independent copy.",
+ "Returns a view whenever the memory layout allows it — faster than flatten() but can alias the original.",
+ NP+"ravel.html","ravel flatten view"],
+["a.resize()","method","a.resize(new_shape, refcheck=True)",
+ "new_shape: target shape · refcheck: safety check for other references",
+ "None — modifies a IN PLACE","a=np.array([1,2,3]); a.resize(2,2)","a → [[1,2],[3,0]]  # padded with 0",
+ "Change size in place, padding with zeros or truncating.",
+ "np.resize(a, shape) (function form) instead REPEATS data to fill the new size and returns a new array.",
+ NP+"ndarray.resize.html","resize inplace pad"],
+["np.transpose() / a.T","function","np.transpose(a, axes=None)",
+ "a: input array · axes: new axis order, default reverses all axes",
+ "ndarray view with permuted axes","np.transpose(np.ones((2,3))).shape","(3, 2)",
+ "Swap rows/columns, or reorder axes for tensors.","a.T is shorthand only for the default (fully reversed) axis order.",
+ NP+"transpose.html","transpose axes swap"],
+["np.swapaxes()","function","np.swapaxes(a, axis1, axis2)",
+ "a: input array · axis1, axis2: the two axes to swap",
+ "ndarray view","np.swapaxes(np.zeros((2,3,4)), 0, 2).shape","(4, 3, 2)",
+ "Swap exactly two specific axes in an n-dimensional array.","Simpler than transpose() when only two axes need to move.",
+ NP+"swapaxes.html","swapaxes axes"],
+["np.moveaxis()","function","np.moveaxis(a, source, destination)",
+ "source: axis index(es) to move · destination: where they should end up",
+ "ndarray view","np.moveaxis(np.zeros((2,3,4)), 0, -1).shape","(3, 4, 2)",
+ "Reposition one or more axes, e.g. moving a channel axis for image libraries.","More readable than transpose() when you only want to relocate a couple of axes.",
+ NP+"moveaxis.html","moveaxis axis order"],
+["np.expand_dims()","function","np.expand_dims(a, axis)",
+ "a: input array · axis: position(s) where new size-1 axis is inserted",
+ "ndarray view with one/more extra dims","np.expand_dims(np.array([1,2,3]), axis=0).shape","(1, 3)",
+ "Add a batch or channel dimension for broadcasting/ML frameworks.","Equivalent to a[:, np.newaxis] style indexing.",
+ NP+"expand_dims.html","expand_dims newaxis"],
+["np.squeeze() / a.squeeze()","function","np.squeeze(a, axis=None)",
+ "a: input array · axis: specific size-1 axis to remove; all size-1 axes if None",
+ "ndarray view with size-1 axes removed","np.zeros((1,3,1)).squeeze().shape","(3,)",
+ "Drop leftover singleton dimensions after reductions.","Raises an error if you name an axis whose size is not 1.",
+ NP+"squeeze.html","squeeze remove dims"],
+["np.broadcast_to()","function","np.broadcast_to(array, shape)",
+ "array: input · shape: target broadcast shape",
+ "READ-ONLY view repeating array to shape","np.broadcast_to([1,2,3], (2,3))","array([[1,2,3],[1,2,3]])",
+ "Preview or reuse a broadcasted shape without allocating new memory.","Result is read-only since it aliases the same underlying data repeatedly.",
+ NP+"broadcast_to.html","broadcast_to expand"],
+["np.repeat()","function","np.repeat(a, repeats, axis=None)",
+ "a: input array · repeats: int or array of ints per element · axis: axis to repeat along; flattens if None",
+ "ndarray (copy)","np.repeat([1,2], 3)","array([1, 1, 1, 2, 2, 2])",
+ "Repeat individual elements, e.g. upsampling labels.","Repeats each ELEMENT — contrast with tile(), which repeats the whole array.",
+ NP+"repeat.html","repeat elements"],
+["np.tile()","function","np.tile(A, reps)",
+ "A: input array · reps: number of repetitions per axis (int or tuple)",
+ "ndarray (copy)","np.tile([1,2], 2)","array([1, 2, 1, 2])",
+ "Repeat a whole array/pattern, e.g. tiling a small image.","Repeats the WHOLE array as a block — contrast with repeat().",
+ NP+"tile.html","tile pattern repeat whole"],
+ ]},
+
+{id:"joining-splitting", num:"07", title:"Joining & Splitting", type:"cards",
+ desc:"Combine multiple arrays into one, or break one array into several.",
+ items:[
+["np.concatenate()","function","np.concatenate((a1, a2, ...), axis=0)",
+ "sequence of arrays with matching shape except along axis · axis: join axis",
+ "ndarray","np.concatenate(([1,2],[3,4]))","array([1, 2, 3, 4])",
+ "General-purpose join along any existing axis.","Does NOT create a new axis — arrays must already have matching ndim.",
+ NP+"concatenate.html","concatenate join combine"],
+["np.stack()","function","np.stack(arrays, axis=0)",
+ "arrays: sequence with IDENTICAL shape · axis: where the new axis is inserted",
+ "ndarray with one MORE dimension than inputs","np.stack(([1,2],[3,4]))","array([[1, 2],\n       [3, 4]])",
+ "Combine equal-shaped arrays into a new batch dimension.","Unlike concatenate(), stack() adds a brand-new axis, so all inputs must match exactly.",
+ NP+"stack.html","stack new-axis batch"],
+["np.hstack()","function","np.hstack(tup)",
+ "tup: sequence of arrays",
+ "ndarray joined horizontally (axis 1, or axis 0 for 1-D)","np.hstack(([1,2],[3,4]))","array([1, 2, 3, 4])",
+ "Concatenate side-by-side, e.g. adding feature columns.","For 1-D inputs behaves like concatenate along axis 0.",
+ NP+"hstack.html","hstack horizontal"],
+["np.vstack()","function","np.vstack(tup)",
+ "tup: sequence of arrays",
+ "ndarray joined vertically, at least 2-D","np.vstack(([1,2],[3,4]))","array([[1, 2],\n       [3, 4]])",
+ "Stack rows on top of each other, e.g. adding samples.","1-D inputs are first promoted to rows before stacking.",
+ NP+"vstack.html","vstack vertical rows"],
+["np.dstack()","function","np.dstack(tup)",
+ "tup: sequence of arrays",
+ "ndarray joined along the 3rd axis (depth)","np.dstack(([1,2],[3,4])).shape","(1, 2, 2)",
+ "Combine 2-D arrays into a multi-channel volume, e.g. image channels.","Inputs are promoted to at least 3-D before stacking depth-wise.",
+ NP+"dstack.html","dstack depth channels"],
+["np.column_stack()","function","np.column_stack(tup)",
+ "tup: sequence of 1-D or 2-D arrays",
+ "2-D ndarray with inputs as columns","np.column_stack(([1,2],[3,4]))","array([[1, 3],\n       [2, 4]])",
+ "Turn several 1-D vectors into a table of columns.","For 1-D inputs, equivalent to hstack after adding a column axis to each.",
+ NP+"column_stack.html","column_stack table columns"],
+["np.row_stack()  (deprecated)","function","np.row_stack(tup)  — use np.vstack(tup) instead",
+ "Same signature as vstack",
+ "same as vstack","np.vstack(([1,2],[3,4]))","array([[1, 2],\n       [3, 4]])",
+ "Legacy alias — was identical to vstack.","Deprecated since NumPy 2.0; call np.vstack() directly in new code.",
+ NP+"vstack.html","row_stack deprecated vstack"],
+["np.split()","function","np.split(ary, indices_or_sections, axis=0)",
+ "ary: input array · indices_or_sections: int (equal parts) or list of split points · axis: split axis",
+ "list of sub-arrays","np.split(np.arange(6), 3)","[array([0,1]), array([2,3]), array([4,5])]",
+ "Divide an array into equal chunks, e.g. batching.","Raises an error if an integer count does not divide evenly — use array_split() for uneven splits.",
+ NP+"split.html","split divide chunks"],
+["np.array_split()","function","np.array_split(ary, indices_or_sections, axis=0)",
+ "Same as split(), but tolerates uneven sizes",
+ "list of sub-arrays, sizes may differ by 1","np.array_split(np.arange(7), 3)","[array([0,1,2]), array([3,4]), array([5,6])]",
+ "Chunk data into N roughly-equal groups, e.g. K folds.","Never raises for uneven division — extra elements go to the first chunks.",
+ NP+"array_split.html","array_split uneven chunks"],
+["np.vsplit()","function","np.vsplit(ary, indices_or_sections)",
+ "Splits vertically (along axis 0)",
+ "list of sub-arrays","np.vsplit(np.arange(4).reshape(2,2), 2)","[array([[0,1]]), array([[2,3]])]",
+ "Split a matrix into row groups.","Shorthand for split(..., axis=0); requires at least 2-D input.",
+ NP+"vsplit.html","vsplit rows"],
+["np.hsplit()","function","np.hsplit(ary, indices_or_sections)",
+ "Splits horizontally (along axis 1, or axis 0 for 1-D)",
+ "list of sub-arrays","np.hsplit(np.arange(4).reshape(2,2), 2)","[array([[0],[2]]), array([[1],[3]])]",
+ "Split a matrix into column groups, e.g. features vs label.","Shorthand for split(..., axis=1).",
+ NP+"hsplit.html","hsplit columns"],
+["np.dsplit()","function","np.dsplit(ary, indices_or_sections)",
+ "Splits along the 3rd axis (depth); requires at least 3-D input",
+ "list of sub-arrays","np.dsplit(np.zeros((2,2,4)), 2)[0].shape","(2, 2, 2)",
+ "Split a multi-channel volume into channel groups.","Shorthand for split(..., axis=2).",
+ NP+"dsplit.html","dsplit depth channels"],
+ ]},
+
+{id:"math-ops", num:"08", title:"Mathematical Operations", type:"mixed",
+ desc:"Elementwise arithmetic operators and universal functions (ufuncs) — all broadcast automatically.",
+ table:{headers:["Operator","Ufunc equivalent","Description","Example → Result"],
+ rows:[
+["+","np.add(a,b)","Elementwise addition","np.array([1,2])+[3,4] → array([4, 6])"],
+["-","np.subtract(a,b)","Elementwise subtraction","[5,5]-[1,2] → array([4, 3])"],
+["*","np.multiply(a,b)","Elementwise multiply (NOT matrix mult)","[1,2]*[3,4] → array([3, 8])"],
+["/","np.divide(a,b)","True division, always float result","[3,4]/2 → array([1.5, 2. ])"],
+["//","np.floor_divide(a,b)","Floor (integer) division","[7,8]//2 → array([3, 4])"],
+["%","np.mod(a,b)","Elementwise remainder","[7,8]%3 → array([1, 2])"],
+["**","np.power(a,b)","Elementwise exponent","[2,3]**2 → array([4, 9])"],
+["@","np.matmul(a,b)","Matrix multiplication","see Linear Algebra section"],
+ ]},
+ items:[
+["np.sqrt() / square() / power()","function","np.sqrt(x)  np.square(x)  np.power(x, p)",
+ "x: input array · p (power only): exponent, scalar or array",
+ "ndarray, elementwise result","np.sqrt([4, 9])","array([2., 3.])",
+ "Root, square, and general exponent operations.","sqrt() of a negative number returns nan for real dtypes — cast to complex first if needed.",
+ NP+"sqrt.html","sqrt square power exponent"],
+["np.exp() / log() / log10() / log2()","function","np.exp(x)  np.log(x)  np.log10(x)  np.log2(x)",
+ "x: input array",
+ "ndarray, elementwise result","np.log([1, np.e, np.e**2])","array([0., 1., 2.])",
+ "Exponential and logarithms in base e, 10, and 2.","log(0) gives -inf with a RuntimeWarning rather than raising.",
+ NP+"log.html","exp log logarithm natural"],
+["np.sin() / cos() / tan()","function","np.sin(x)  np.cos(x)  np.tan(x)",
+ "x: angle in RADIANS",
+ "ndarray, elementwise result","np.sin(np.pi/2)","1.0",
+ "Standard trig functions.","Inputs are radians, not degrees — convert with np.radians() first.",
+ NP+"sin.html","sin cos tan trig"],
+["np.arcsin() / arccos() / arctan()","function","np.arcsin(x)  np.arccos(x)  np.arctan(x)",
+ "x: value in [-1, 1] for arcsin/arccos",
+ "ndarray, angle in radians","np.arcsin(1.0)","1.5707963267948966",
+ "Inverse trig functions.","Use np.arctan2(y, x) instead of arctan(y/x) to correctly handle all quadrants.",
+ NP+"arcsin.html","arcsin arccos arctan inverse"],
+["np.degrees() / np.radians()","function","np.degrees(x)  np.radians(x)",
+ "x: angle array to convert",
+ "ndarray, converted angle","np.degrees(np.pi)","180.0",
+ "Convert between radians and degrees.","Trig ufuncs always expect/return radians internally.",
+ NP+"degrees.html","degrees radians convert angle"],
+["np.ceil() / floor() / round() / trunc()","function","np.ceil(x)  np.floor(x)  np.round(x, decimals=0)  np.trunc(x)",
+ "x: input array · decimals (round only): digits to round to",
+ "ndarray, elementwise result","np.round(2.675, 2)","2.67  # float rounding artifact",
+ "Rounding towards +inf, -inf, nearest, or zero.","np.round uses banker's rounding (round-half-to-even), which can surprise on .5 values.",
+ NP+"round.html","ceil floor round trunc rounding"],
+["np.clip()","function","np.clip(a, a_min, a_max)",
+ "a: input array · a_min, a_max: bounds (None disables one side)",
+ "ndarray with values clamped to range","np.clip([1, 5, 10], 2, 8)","array([2, 5, 8])",
+ "Cap outliers or enforce valid ranges, e.g. probability values.","Either a_min or a_max may be None to clip on only one side.",
+ NP+"clip.html","clip clamp bound"],
+["np.absolute() / fabs() / sign()","function","np.absolute(x)  np.fabs(x)  np.sign(x)",
+ "x: input array",
+ "ndarray, elementwise result","np.sign([-5, 0, 5])","array([-1,  0,  1])",
+ "Magnitude and sign extraction.","fabs() always returns float and does not support complex input; absolute() (abs()) does.",
+ NP+"absolute.html","abs absolute fabs sign"],
+ ]},
+
+{id:"statistics", num:"09", title:"Statistics", type:"cards",
+ desc:"Aggregate values across a whole array or along a chosen axis.",
+ items:[
+["np.sum()","function","np.sum(a, axis=None, keepdims=False)",
+ "a: input · axis: axis/axes to reduce, all if None · keepdims: keep reduced axis as size 1",
+ "scalar or ndarray","np.sum([[1,2],[3,4]], axis=0)","array([4, 6])",
+ "Total across an array or per row/column.","axis=0 reduces down columns, axis=1 reduces across rows.",
+ NP+"sum.html","sum total add axis"],
+["np.mean()","function","np.mean(a, axis=None)",
+ "a: input · axis: axis to average over",
+ "scalar or ndarray (float)","np.mean([1,2,3,4])","2.5",
+ "Simple (unweighted) average.","Always returns float, even for integer input arrays.",
+ NP+"mean.html","mean average"],
+["np.median()","function","np.median(a, axis=None)",
+ "a: input · axis: axis to compute along",
+ "scalar or ndarray","np.median([1,3,2,4])","2.5",
+ "Middle value — robust to outliers, unlike mean.","Averages the two middle values when length is even.",
+ NP+"median.html","median middle robust"],
+["np.std() / np.var()","function","np.std(a, axis=None, ddof=0)  np.var(a, axis=None, ddof=0)",
+ "a: input · axis: axis to compute along · ddof: delta degrees of freedom (use 1 for sample stats)",
+ "scalar or ndarray","np.std([1,2,3,4])","1.118033988749895",
+ "Spread of the data (variance and its square root).","ddof=0 is population statistics (default); use ddof=1 for an unbiased sample estimate.",
+ NP+"std.html","std var standard deviation variance"],
+["np.min() / np.max()","function","np.min(a, axis=None)  np.max(a, axis=None)",
+ "a: input · axis: axis to reduce",
+ "scalar or ndarray","np.max([[1,5],[3,2]], axis=1)","array([5, 3])",
+ "Extremes of the data, overall or per axis.","a.min()/a.max() methods do the same thing as np.min(a)/np.max(a).",
+ NP+"amax.html","min max extremes"],
+["np.argmin() / np.argmax()","function","np.argmin(a, axis=None)  np.argmax(a, axis=None)",
+ "a: input · axis: axis to search",
+ "int or ndarray of INDICES (not values)","np.argmax([3,7,2])","1",
+ "Find the position of the smallest/largest value.","Without axis, returns the index into the FLATTENED array — use np.unravel_index() to convert.",
+ NP+"argmax.html","argmin argmax index position"],
+["np.ptp()","function","np.ptp(a, axis=None)",
+ "a: input · axis: axis to compute range over",
+ "scalar or ndarray (max - min)","np.ptp([1,5,2,8])","7",
+ "Range (peak-to-peak spread) of the data.","Call it as np.ptp(a) — the a.ptp() ndarray method was removed in NumPy 2.0.",
+ NP+"ptp.html","ptp range peak-to-peak"],
+["np.percentile() / np.quantile()","function","np.percentile(a, q, axis=None)  np.quantile(a, q, axis=None)",
+ "a: input · q: percentile 0-100 (percentile) or 0-1 (quantile)",
+ "scalar or ndarray","np.percentile([1,2,3,4], 50)","2.5",
+ "Value below which a given percentage of data falls, e.g. median = 50th percentile.","percentile() takes 0-100; quantile() takes the equivalent 0-1 fraction — otherwise identical.",
+ NP+"percentile.html","percentile quantile median"],
+["np.average()","function","np.average(a, axis=None, weights=None)",
+ "a: input · axis: axis to average over · weights: same-shape weight array",
+ "scalar or ndarray","np.average([1,2,3], weights=[1,1,2])","2.25",
+ "Weighted mean, e.g. weighting recent data more heavily.","Unlike mean(), average() supports the weights argument.",
+ NP+"average.html","average weighted mean"],
+["np.count_nonzero()","function","np.count_nonzero(a, axis=None)",
+ "a: input · axis: axis to count along",
+ "int or ndarray of counts","np.count_nonzero([0,3,0,5])","2",
+ "Count matches for a condition, e.g. np.count_nonzero(a > 5).","False and 0 both count as zero — handy directly on boolean masks.",
+ NP+"count_nonzero.html","count_nonzero nonzero true"],
+["np.unique()","function","np.unique(a, return_counts=False, return_index=False, axis=None)",
+ "a: input · return_counts: also return occurrence counts · return_index: also return first-occurrence indices",
+ "sorted 1-D array (plus optional extra arrays)","np.unique([3,1,2,1,3])","array([1, 2, 3])",
+ "Get distinct values, or find duplicates via return_counts.","Output is always sorted; combine with return_counts to spot duplicates (count > 1).",
+ NP+"unique.html","unique distinct duplicates"],
+["np.bincount()","function","np.bincount(x, weights=None, minlength=0)",
+ "x: 1-D array of NON-NEGATIVE ints · weights: optional per-element weight · minlength: minimum output length",
+ "1-D array of counts per integer value","np.bincount([0,1,1,3])","array([1, 2, 0, 1])",
+ "Fast frequency count for small non-negative integer labels.","Only works on non-negative integers — use unique(return_counts=True) for general values.",
+ NP+"bincount.html","bincount frequency count"],
+["np.histogram()","function","np.histogram(a, bins=10, range=None)",
+ "a: input · bins: int or bin-edge array · range: (min, max) bounds",
+ "tuple (counts, bin_edges)","np.histogram([1,2,1,3], bins=3)","(array([2,1,1]), array([1.,1.67,2.33,3.]))",
+ "Bucket continuous data into bins for distribution analysis/plots.","Returns edges of length bins+1, not bin centers.",
+ NP+"histogram.html","histogram bins distribution"],
+ ]},
+
+{id:"sorting-searching", num:"10", title:"Sorting & Searching", type:"cards",
+ desc:"Order arrays, find positions, and compare sets of values.",
+ items:[
+["np.sort() / a.sort()","function","np.sort(a, axis=-1, kind=None)",
+ "a: input · axis: axis to sort, -1 = last · kind: 'quicksort'/'mergesort'/'stable' etc.",
+ "np.sort(): new sorted array. a.sort(): sorts IN PLACE, returns None","np.sort([3,1,2])","array([1, 2, 3])",
+ "Order values ascending along an axis.","a.sort() mutates and returns None; np.sort(a) leaves a untouched and returns a new array.",
+ NP+"sort.html","sort order ascending"],
+["np.argsort()","function","np.argsort(a, axis=-1)",
+ "a: input · axis: axis to sort along",
+ "ndarray of indices that would sort a","np.argsort([3,1,2])","array([1, 2, 0])",
+ "Get sort order without moving the data, e.g. to sort a companion array too.","a[np.argsort(a)] reproduces np.sort(a).",
+ NP+"argsort.html","argsort indices order"],
+["np.lexsort()","function","np.lexsort(keys)",
+ "keys: sequence of arrays; the LAST key is the primary sort key",
+ "ndarray of indices","np.lexsort(([9,1],[0,0]))","array([1, 0])",
+ "Sort by multiple columns, e.g. surname then first name.","Key order is reversed from what most people expect — last array given is the primary key.",
+ NP+"lexsort.html","lexsort multi-column"],
+["np.searchsorted()","function","np.searchsorted(a, v, side='left')",
+ "a: SORTED input array · v: value(s) to insert · side: 'left' or 'right'",
+ "int or ndarray of insertion indices","np.searchsorted([1,3,5,7], 4)","2",
+ "Binary-search insertion point to keep a sorted array sorted.","a MUST already be sorted — results are meaningless otherwise.",
+ NP+"searchsorted.html","searchsorted binary search insert"],
+["np.where()","function","np.where(condition, x, y)",
+ "condition: boolean array · x, y: values to choose from (broadcastable)",
+ "ndarray choosing x where True, y where False","np.where([True,False], 1, 0)","array([1, 0])",
+ "Vectorized if/else across an array.","np.where(condition) with only one argument returns index tuples, same as nonzero().",
+ NP+"where.html","where condition if-else"],
+["np.argwhere()","function","np.argwhere(a)",
+ "a: input array or condition",
+ "2-D array of index tuples, one row per match","np.argwhere([1,0,1])","array([[0],[2]])",
+ "List the coordinates of every nonzero/true element.","Grouped by element (rows) — contrast with nonzero(), which groups by axis.",
+ NP+"argwhere.html","argwhere find indices"],
+["np.nonzero()","function","np.nonzero(a)",
+ "a: input array",
+ "tuple of 1-D arrays, one per dimension","np.nonzero([1,0,3])","(array([0, 2]),)",
+ "Get index arrays of all nonzero elements, usable directly as a[nonzero(a)].",
+ "Grouped by axis (tuple of arrays) — contrast with argwhere() (array of coordinate rows).",
+ NP+"nonzero.html","nonzero find indices"],
+["np.extract()","function","np.extract(condition, arr)",
+ "condition: boolean array · arr: same-shape source array",
+ "1-D array of matching elements","np.extract([1,0,1], [10,20,30])","array([10, 30])",
+ "Alternative spelling of boolean indexing: arr[condition.astype(bool)].","Functionally equivalent to arr[condition] — arr[condition] is usually preferred.",
+ NP+"extract.html","extract condition filter"],
+["np.isin()","function","np.isin(element, test_elements)",
+ "element: array to test · test_elements: values to test membership against",
+ "boolean array, same shape as element","np.isin([1,2,3], [2,3])","array([False, True, True])",
+ "Vectorized membership test, e.g. filtering rows whose id is in a list.","Replaces the deprecated in1d() and works on n-dimensional element arrays.",
+ NP+"isin.html","isin membership contains"],
+["np.in1d()  (deprecated)","function","np.in1d(ar1, ar2)  — use np.isin(ar1, ar2) instead",
+ "Same idea as isin(), 1-D only",
+ "boolean array","np.isin([1,2,3], [2,3])","array([False, True, True])",
+ "Legacy membership test.","Deprecated since NumPy 2.0 — isin() is the direct, more general replacement.",
+ NP+"isin.html","in1d deprecated isin"],
+["np.intersect1d()","function","np.intersect1d(ar1, ar2)",
+ "ar1, ar2: input arrays",
+ "sorted 1-D array of common values","np.intersect1d([1,2,3],[2,3,4])","array([2, 3])",
+ "Values present in both arrays.","Result is sorted and de-duplicated regardless of input order.",
+ NP+"intersect1d.html","intersect1d common set"],
+["np.union1d()","function","np.union1d(ar1, ar2)",
+ "ar1, ar2: input arrays",
+ "sorted 1-D array of all unique values from both","np.union1d([1,2],[2,3])","array([1, 2, 3])",
+ "Combine two sets of values, de-duplicated.","Equivalent to np.unique(np.concatenate([ar1, ar2])).",
+ NP+"union1d.html","union1d combine set"],
+["np.setdiff1d()","function","np.setdiff1d(ar1, ar2)",
+ "ar1, ar2: input arrays",
+ "sorted 1-D array of values in ar1 but NOT ar2","np.setdiff1d([1,2,3],[2])","array([1, 3])",
+ "Find elements unique to one array, e.g. new IDs not seen before.","Order matters — setdiff1d(a,b) differs from setdiff1d(b,a).",
+ NP+"setdiff1d.html","setdiff1d difference set"],
+ ]},
+
+{id:"linalg", num:"11", title:"Linear Algebra", type:"cards",
+ desc:"Matrix and vector operations, mostly under the np.linalg submodule.",
+ items:[
+["np.dot()","function","np.dot(a, b)",
+ "a, b: arrays — vectors, matrices, or higher-dim",
+ "scalar (1-D·1-D) or ndarray","np.dot([1,2],[3,4])","11",
+ "General dot/matrix product; the original, most flexible multiply.","For 2-D inputs behaves like matrix multiplication; prefer @ / matmul() for clearer intent.",
+ NP+"dot.html","dot product multiply"],
+["np.matmul() / @","function","np.matmul(a, b)  ==  a @ b",
+ "a, b: arrays, last two axes must be matrix-compatible",
+ "ndarray matrix product","np.array([[1,2],[3,4]]) @ np.array([[5,6],[7,8]])","array([[19, 22],\n       [43, 50]])",
+ "The standard way to multiply matrices in modern NumPy code.","Unlike dot(), matmul() broadcasts leading batch dimensions and rejects scalar operands.",
+ NP+"matmul.html","matmul matrix multiply @"],
+["np.inner() / np.outer()","function","np.inner(a, b)   np.outer(a, b)",
+ "a, b: input arrays (outer() flattens inputs first)",
+ "inner: scalar/ndarray. outer: 2-D ndarray","np.outer([1,2],[3,4])","array([[3, 4],\n       [6, 8]])",
+ "Inner: sum-product over last axes. Outer: all pairwise products.","outer() always returns a 2-D array regardless of input shape.",
+ NP+"inner.html","inner outer product"],
+["np.cross()","function","np.cross(a, b)",
+ "a, b: 3-element vectors (2-element input is deprecated)",
+ "ndarray, the cross product vector","np.cross([1,0,0],[0,1,0])","array([0, 0, 1])",
+ "Compute a vector perpendicular to two others, e.g. surface normals.","2-D vector inputs are deprecated — pad to 3-D with a zero z-component.",
+ NP+"cross.html","cross product vector"],
+["np.trace()","function","np.trace(a, offset=0)",
+ "a: 2-D (or batched) array · offset: diagonal offset",
+ "scalar or ndarray (sum of the diagonal)","np.trace(np.eye(3)*2)","6.0",
+ "Sum of diagonal elements, used in many matrix formulas.","Equivalent to np.sum(np.diagonal(a)).",
+ NP+"trace.html","trace diagonal sum"],
+["np.linalg.det()","function","np.linalg.det(a)",
+ "a: square matrix (or stack of square matrices)",
+ "scalar or ndarray","np.linalg.det([[1,2],[3,4]])","-2.0",
+ "Determinant — zero means the matrix is singular (non-invertible).","Numerically unstable for large/ill-conditioned matrices — consider slogdet() for extreme values.",
+ NPL+"det.html","det determinant"],
+["np.linalg.inv()","function","np.linalg.inv(a)",
+ "a: square, NON-singular matrix",
+ "ndarray, the matrix inverse","np.linalg.inv([[1,2],[3,4]])","array([[-2. ,  1. ],\n       [ 1.5, -0.5]])",
+ "Solve systems or reverse a linear transform.","Raises LinAlgError if the matrix is singular; prefer solve() over inv() @ b for solving equations.",
+ NPL+"inv.html","inv inverse matrix"],
+["np.linalg.pinv()","function","np.linalg.pinv(a)",
+ "a: any m x n matrix, need not be square",
+ "ndarray, Moore-Penrose pseudo-inverse","np.linalg.pinv(np.ones((3,2))).shape","(2, 3)",
+ "Best-fit inverse for non-square or singular matrices, e.g. least-squares problems.","Works even when inv() would raise an error.",
+ NPL+"pinv.html","pinv pseudo-inverse"],
+["np.linalg.eig()","function","np.linalg.eig(a)",
+ "a: square matrix",
+ "tuple (eigenvalues, eigenvectors as columns)","w, v = np.linalg.eig(np.eye(2)*3)","w → array([3., 3.])",
+ "General eigen-decomposition for any square matrix.","Can return complex values even for real input — use eigh() if the matrix is symmetric.",
+ NPL+"eig.html","eig eigenvalues eigenvectors"],
+["np.linalg.eigh()","function","np.linalg.eigh(a)",
+ "a: SYMMETRIC or Hermitian matrix",
+ "tuple (real eigenvalues, orthonormal eigenvectors)","w, v = np.linalg.eigh(np.eye(2)*3)","w → array([3., 3.])",
+ "Faster, numerically stable eigen-decomposition for symmetric matrices, e.g. covariance matrices.","Always returns real eigenvalues; use for symmetric/Hermitian input only.",
+ NPL+"eigh.html","eigh symmetric eigenvalues"],
+["np.linalg.svd()","function","np.linalg.svd(a, full_matrices=True)",
+ "a: any m x n matrix · full_matrices: shape of U/Vh output",
+ "tuple (U, S, Vh)","U, S, Vh = np.linalg.svd(np.eye(2))","S → array([1., 1.])",
+ "Singular value decomposition — dimensionality reduction, pseudo-inverse, PCA.","S is returned as a 1-D array of singular values, not a diagonal matrix.",
+ NPL+"svd.html","svd singular value decomposition"],
+["np.linalg.norm()","function","np.linalg.norm(x, ord=None, axis=None)",
+ "x: input array · ord: norm type (None=Frobenius/2-norm, 1, np.inf, ...) · axis: axis to reduce",
+ "scalar or ndarray","np.linalg.norm([3,4])","5.0",
+ "Vector length or matrix norm, e.g. normalizing feature vectors.","Default ord differs for vectors (2-norm) vs matrices (Frobenius norm) — check docs when in doubt.",
+ NPL+"norm.html","norm magnitude length"],
+["np.linalg.solve()","function","np.linalg.solve(a, b)",
+ "a: square coefficient matrix · b: right-hand side",
+ "ndarray solution x, where a @ x == b","np.linalg.solve([[3,1],[1,2]], [9,8])","array([2., 3.])",
+ "Solve a linear system directly — the correct, stable alternative to inv(a) @ b.","Requires a to be square and non-singular; use lstsq() otherwise.",
+ NPL+"solve.html","solve linear system equations"],
+["np.linalg.lstsq()","function","np.linalg.lstsq(a, b, rcond=None)",
+ "a: coefficient matrix (any shape) · b: right-hand side · rcond: cutoff for small singular values",
+ "tuple (solution, residuals, rank, singular values)","x, *_ = np.linalg.lstsq(a, b, rcond=None)","x → best-fit solution",
+ "Best-fit solution for over/under-determined systems, e.g. linear regression.","Always pass rcond=None explicitly to silence a future-default warning and get consistent results.",
+ NPL+"lstsq.html","lstsq least squares regression"],
+["np.linalg.qr()","function","np.linalg.qr(a, mode='reduced')",
+ "a: m x n matrix · mode: 'reduced', 'complete', 'r', 'raw'",
+ "tuple (Q orthogonal, R upper-triangular)","Q, R = np.linalg.qr(np.eye(2))","Q,R → identity matrices",
+ "Decompose a matrix for stable solving and least-squares problems.","Q is orthogonal (Q.T @ Q ≈ I); R is upper triangular.",
+ NPL+"qr.html","qr decomposition orthogonal"],
+["np.linalg.matrix_rank()","function","np.linalg.matrix_rank(a)",
+ "a: input matrix",
+ "int, the numerical rank","np.linalg.matrix_rank(np.eye(3))","3",
+ "Number of linearly independent rows/columns, e.g. detecting redundant features.","Uses an SVD-based tolerance internally, so near-singular matrices may report a lower rank than expected.",
+ NPL+"matrix_rank.html","matrix_rank rank"],
+ ]},
+
+{id:"random", num:"12", title:"Random Module", type:"cards",
+ desc:"Modern Generator API (recommended since NumPy 1.17). Always start from np.random.default_rng().",
+ items:[
+["np.random.default_rng()","function","np.random.default_rng(seed=None)",
+ "seed: int or None for unpredictable seeding",
+ "a Generator object","rng = np.random.default_rng(42)","# rng ready for use",
+ "Entry point for all modern random generation — create one Generator and reuse it.","Prefer this over the legacy global np.random.seed()/np.random.rand() functions in new code.",
+ NPR+"default_rng.html","default_rng generator seed"],
+["Generator.integers()","method","rng.integers(low, high=None, size=None, endpoint=False)",
+ "low, high: range bounds · size: output shape · endpoint: include high if True",
+ "ndarray or scalar of ints","rng.integers(0, 10, size=3)","array([6, 3, 8])  # example output",
+ "Random integer sampling, e.g. simulating dice or shuffling indices.","high is EXCLUSIVE by default — pass endpoint=True to include it.",
+ NPR+"Generator.integers.html","integers randint random int"],
+["Generator.random()","method","rng.random(size=None)",
+ "size: output shape",
+ "ndarray of floats in [0.0, 1.0)","rng.random(2)","array([0.63, 0.02])  # example output",
+ "Uniform floats for probabilities, dropout masks, etc.","Range is always [0, 1) — scale/shift for other ranges, or use uniform().",
+ NPR+"Generator.random.html","random uniform float"],
+["Generator.choice()","method","rng.choice(a, size=None, replace=True, p=None)",
+ "a: array or int (treated as arange(a)) · size: output shape · replace: with/without replacement · p: probability weights",
+ "ndarray sample","rng.choice(5, size=3, replace=False)","array([4, 0, 2])  # example output",
+ "Random sampling, e.g. train/test splits or weighted lottery draws.","Set replace=False for sampling without repetition; p must sum to 1.",
+ NPR+"Generator.choice.html","choice sample pick"],
+["Generator.shuffle()","method","rng.shuffle(x, axis=0)",
+ "x: array to shuffle · axis: axis to shuffle along",
+ "None — shuffles x IN PLACE","x=np.arange(5); rng.shuffle(x)","x is now reordered in place",
+ "Randomize row/element order, e.g. shuffling a dataset each epoch.","Mutates x directly and returns None — use permutation() if you need a new array instead.",
+ NPR+"Generator.shuffle.html","shuffle inplace randomize"],
+["Generator.permutation()","method","rng.permutation(x)",
+ "x: array or int (treated as arange(x))",
+ "NEW shuffled array/copy","rng.permutation(5)","array([2, 0, 4, 1, 3])  # example output",
+ "Get a randomized order without touching the original array.","Unlike shuffle(), leaves the input unmodified and returns a new array.",
+ NPR+"Generator.permutation.html","permutation shuffle copy"],
+["Generator.normal()","method","rng.normal(loc=0.0, scale=1.0, size=None)",
+ "loc: mean · scale: standard deviation · size: output shape",
+ "ndarray, Gaussian-distributed floats","rng.normal(0, 1, size=3)","array([0.31, -1.2, 0.05])  # example output",
+ "Sample from a Gaussian distribution, e.g. initializing neural network weights.","scale is standard deviation, not variance.",
+ NPR+"Generator.normal.html","normal gaussian distribution"],
+["Generator.uniform()","method","rng.uniform(low=0.0, high=1.0, size=None)",
+ "low, high: range bounds · size: output shape",
+ "ndarray of floats in [low, high)","rng.uniform(5, 10, size=2)","array([7.1, 8.4])  # example output",
+ "Uniform sampling over an arbitrary custom range.","high is excluded, matching Python convention.",
+ NPR+"Generator.uniform.html","uniform range distribution"],
+["Generator.binomial()","method","rng.binomial(n, p, size=None)",
+ "n: number of trials · p: success probability · size: output shape",
+ "ndarray of ints, successes per trial batch","rng.binomial(10, 0.5, size=3)","array([4, 6, 5])  # example output",
+ "Simulate counts of successes, e.g. A/B test conversions.","Mean of the distribution is n*p.",
+ NPR+"Generator.binomial.html","binomial distribution trials"],
+["Generator.poisson()","method","rng.poisson(lam=1.0, size=None)",
+ "lam: expected rate (mean events) · size: output shape",
+ "ndarray of non-negative ints","rng.poisson(3, size=3)","array([2, 4, 3])  # example output",
+ "Simulate event counts over fixed intervals, e.g. arrivals per hour.","Mean and variance of the distribution both equal lam.",
+ NPR+"Generator.poisson.html","poisson distribution events"],
+["Generator.multivariate_normal()","method","rng.multivariate_normal(mean, cov, size=None)",
+ "mean: 1-D array of means · cov: covariance matrix · size: number of samples",
+ "ndarray of shape (size, len(mean))","rng.multivariate_normal([0,0], np.eye(2), size=2)","array([[0.4,-0.2],[1.1,0.3]])  # example",
+ "Sample correlated multi-dimensional Gaussian data, e.g. synthetic feature sets.","cov must be symmetric positive semi-definite or results are meaningless.",
+ NPR+"Generator.multivariate_normal.html","multivariate_normal gaussian correlated"],
+["np.random.seed()  (legacy)","function","np.random.seed(seed)",
+ "seed: int, sets the GLOBAL legacy random state",
+ "None","np.random.seed(0)","# affects only legacy np.random.* functions",
+ "Old-style global seeding for reproducibility.","Only affects the legacy RandomState API, not Generator — use default_rng(seed) for new code instead.",
+ NP+"random.seed.html","seed legacy reproducibility"],
+ ]},
+
+{id:"broadcasting", num:"13", title:"Broadcasting", type:"html", html:`
+<div class="prose">
+<p>Broadcasting lets NumPy apply elementwise operations to arrays of <b>different but compatible</b> shapes without copying data.</p>
+<h3>The rules</h3>
+<ul>
+<li>Compare shapes starting from the <b>trailing</b> (rightmost) dimension.</li>
+<li>Two dimensions are compatible if they are <b>equal</b>, or one of them is <b>1</b>.</li>
+<li>Missing leading dimensions are treated as size 1 (arrays are right-aligned).</li>
+<li>If any pair of dimensions is unequal and neither is 1, broadcasting <b>fails</b> with a ValueError.</li>
+</ul>
+<h3>Compatible shapes</h3>
+<div class="diagram">A: (3, 4)          B: (4,)   → treated as (1, 4)
+      3 x 4              1 x 4
+      -------- aligns trailing dim: 4 == 4, other dim 1 stretches to 3
+Result: (3, 4)  ✓
+
+A: (8, 1, 6, 1)    B: (7, 1, 5)  → treated as (1, 7, 1, 5)
+Result: (8, 7, 6, 5)  ✓  (each axis takes the larger of the two, 1s stretch)</div>
+<h3>Incompatible shapes</h3>
+<div class="diagram">A: (3, 4)          B: (3,)  → treated as (1, 3)
+      3 x 4              1 x 3
+      -------- trailing dims: 4 vs 3 → NOT equal, neither is 1
+ValueError: operands could not be broadcast together with shapes (3,4) (3,)</div>
+<h3>Example</h3>
+<pre>a = np.ones((3, 4))
+b = np.array([1, 2, 3, 4])   # shape (4,)
+a + b                        # b is broadcast across all 3 rows</pre>
+<h3>Common errors</h3>
+<ul>
+<li>Mixing up which axis needs the size-1 placeholder — fix with a[:, np.newaxis] or reshape(-1,1).</li>
+<li>Assuming length-N vectors always broadcast against length-N columns — orientation (row vs column) matters.</li>
+<li>Silent bugs when a "compatible by coincidence" shape (e.g. both length 3) broadcasts against the wrong axis.</li>
+</ul>
+</div>`},
+
+{id:"boolean-ops", num:"14", title:"Boolean Operations", type:"cards",
+ desc:"Elementwise logic and vectorized conditionals across whole arrays.",
+ items:[
+["np.logical_and() / logical_or()","function","np.logical_and(x1, x2)  np.logical_or(x1, x2)",
+ "x1, x2: boolean-like arrays",
+ "boolean ndarray","np.logical_and([True,False],[True,True])","array([ True, False])",
+ "Combine two conditions elementwise (equivalent to & and | for boolean arrays).","Prefer & and | on boolean ndarrays directly — these functions matter mainly for non-array-like inputs.",
+ NP+"logical_and.html","logical_and logical_or combine"],
+["np.logical_not() / logical_xor()","function","np.logical_not(x)  np.logical_xor(x1, x2)",
+ "x, x1, x2: boolean-like arrays",
+ "boolean ndarray","np.logical_xor([True,True],[True,False])","array([False,  True])",
+ "Negate a condition, or find where exactly one of two conditions is true.","logical_not(x) is equivalent to ~x for boolean arrays.",
+ NP+"logical_not.html","logical_not logical_xor negate"],
+["np.all()","function","np.all(a, axis=None)",
+ "a: input array/condition · axis: axis to reduce",
+ "bool or boolean ndarray","np.all([True, True, False])","False",
+ "Check whether EVERY element satisfies a condition.","Returns a per-axis array of results if axis is given instead of reducing fully.",
+ NP+"all.html","all every condition"],
+["np.any()","function","np.any(a, axis=None)",
+ "a: input array/condition · axis: axis to reduce",
+ "bool or boolean ndarray","np.any([False, False, True])","True",
+ "Check whether AT LEAST ONE element satisfies a condition.","Common guard: if np.any(np.isnan(a)): handle missing data.",
+ NP+"any.html","any some condition"],
+["np.where()  (see Sorting & Searching)","function","np.where(condition, x, y)",
+ "Full details in the Sorting & Searching section",
+ "ndarray","np.where([True,False],1,0)","array([1, 0])",
+ "Vectorized if/else, cross-referenced here for boolean workflows.","See section 10 for the complete reference card.",
+ NP+"where.html","where if-else condition"],
+["np.select()  (see Useful Utilities)","function","np.select(condlist, choicelist, default=0)",
+ "Full details in the Useful Utilities section",
+ "ndarray","np.select([a<0,a>0],['neg','pos'],'zero')","choices per condition",
+ "Vectorized multi-branch if/elif/else, cross-referenced here.","See section 17 for the complete reference card.",
+ NP+"select.html","select multi-condition elif"],
+ ]},
+
+{id:"missing-values", num:"15", title:"Missing Values (NaN / Inf)", type:"cards",
+ desc:"Detecting and safely aggregating over missing or infinite floating-point values.",
+ items:[
+["NaN","constant","np.nan","Float constant meaning Not-a-Number","float",
+ "np.nan == np.nan","False",
+ "Represents missing/undefined numeric data.","NaN is never equal to itself — always test with np.isnan(), never ==.",
+ NP+"nan.html","nan missing undefined"],
+["Inf","constant","np.inf  ·  -np.inf","Float constant for (positive/negative) infinity","float",
+ "1 / 0.0","inf  # with a RuntimeWarning for the division",
+ "Represents overflow or division-by-zero results.","Test with np.isinf(); inf == inf is True, unlike NaN.",
+ NP+"inf.html","inf infinity overflow"],
+["np.isnan()","function","np.isnan(x)","x: input array","boolean ndarray",
+ "np.isnan([1, np.nan, 3])","array([False,  True, False])",
+ "Detect missing values before filtering or imputing.","The only reliable way to test for NaN — never use == np.nan.",
+ NP+"isnan.html","isnan missing detect"],
+["np.isfinite()","function","np.isfinite(x)","x: input array","boolean ndarray",
+ "np.isfinite([1, np.inf, np.nan])","array([ True, False, False])",
+ "Single check that excludes both NaN and ±Inf at once.","True only for ordinary finite numbers.",
+ NP+"isfinite.html","isfinite finite valid"],
+["np.isinf()","function","np.isinf(x)","x: input array","boolean ndarray",
+ "np.isinf([1, np.inf, -np.inf])","array([False,  True,  True])",
+ "Detect overflow results or explicit infinities.","Matches both +inf and -inf.",
+ NP+"isinf.html","isinf infinity detect"],
+["np.nanmean() / nanmedian()","function","np.nanmean(a, axis=None)  np.nanmedian(a, axis=None)",
+ "a: input, may contain NaN · axis: axis to reduce",
+ "scalar or ndarray, NaNs ignored","np.nanmean([1, np.nan, 3])","2.0",
+ "Compute statistics while skipping missing values.","Returns NaN (with a warning) if an entire axis/slice is all-NaN.",
+ NP+"nanmean.html","nanmean nanmedian skip missing"],
+["np.nansum() / nanstd()","function","np.nansum(a, axis=None)  np.nanstd(a, axis=None)",
+ "a: input, may contain NaN · axis: axis to reduce",
+ "scalar or ndarray, NaNs treated as 0 (sum) or ignored (std)","np.nansum([1, np.nan, 3])","4.0",
+ "Sum/spread ignoring missing entries, e.g. incomplete sensor readings.","nansum() treats NaN as 0 — different from simply dropping the values in a mean.",
+ NP+"nansum.html","nansum nanstd skip missing"],
+ ]},
+
+{id:"file-io", num:"16", title:"File Input / Output", type:"cards",
+ desc:"Persist arrays to disk in NumPy's binary format or plain text.",
+ items:[
+["np.save()","function","np.save(file, arr)",
+ "file: filename or file-like, .npy appended if missing · arr: array to save",
+ "None — writes a .npy file","np.save('data.npy', np.arange(5))","# writes data.npy",
+ "Save a single array in NumPy's fast binary format.","Preserves dtype and shape exactly — the standard choice over text formats.",
+ NP+"save.html","save npy binary"],
+["np.load()","function","np.load(file, allow_pickle=False)",
+ "file: path to .npy/.npz · allow_pickle: required for object arrays",
+ "ndarray (.npy) or NpzFile (.npz, dict-like)","np.load('data.npy')","array([0, 1, 2, 3, 4])",
+ "Load a previously saved array or archive back into memory.","allow_pickle=False by default for security — enable only for trusted files containing object arrays.",
+ NP+"load.html","load npy npz read"],
+["np.savez()","function","np.savez(file, *args, **kwds)",
+ "file: filename, .npz appended · args/kwds: arrays to bundle, kwds set custom names",
+ "None — writes an uncompressed .npz archive","np.savez('bundle.npz', a=arr1, b=arr2)","# writes bundle.npz",
+ "Save multiple named arrays together in one file.","Load back with np.load(...) and access arrays by name, e.g. data['a'].",
+ NP+"savez.html","savez multiple archive"],
+["np.savez_compressed()","function","np.savez_compressed(file, *args, **kwds)",
+ "Same as savez() but applies zip compression",
+ "None — writes a compressed .npz archive","np.savez_compressed('bundle.npz', a=arr1)","# smaller file than savez()",
+ "Save multiple arrays with reduced disk usage for large datasets.","Slower to write/read than savez() due to compression overhead.",
+ NP+"savez_compressed.html","savez_compressed compression archive"],
+["np.savetxt()","function","np.savetxt(fname, X, fmt='%.18e', delimiter=' ')",
+ "fname: filename · X: 1-D or 2-D array · fmt: number format · delimiter: column separator",
+ "None — writes a plain text file","np.savetxt('out.csv', arr, delimiter=',')","# writes out.csv",
+ "Export to a human-readable / spreadsheet-friendly text or CSV file.","Only supports 1-D/2-D arrays and loses exact dtype — use save() to round-trip data perfectly.",
+ NP+"savetxt.html","savetxt text csv export"],
+["np.loadtxt()","function","np.loadtxt(fname, dtype=float, delimiter=None)",
+ "fname: filename · dtype: target type · delimiter: column separator",
+ "ndarray","np.loadtxt('out.csv', delimiter=',')","array([[...]])",
+ "Fast, simple loader for clean, complete numeric text data.","Fails on missing values or ragged rows — use genfromtxt() for messier files.",
+ NP+"loadtxt.html","loadtxt text read csv"],
+["np.genfromtxt()","function","np.genfromtxt(fname, delimiter=None, dtype=float, missing_values=None, filling_values=None)",
+ "fname: filename · delimiter: column separator · missing_values/filling_values: handle gaps",
+ "ndarray, with NaN or fill values for gaps","np.genfromtxt('messy.csv', delimiter=',')","array([[..., nan, ...]])",
+ "Robust CSV loading when data may have missing fields or mixed types.","Slower than loadtxt() but tolerates missing values instead of raising an error.",
+ NP+"genfromtxt.html","genfromtxt robust missing csv"],
+ ]},
+
+{id:"utilities", num:"17", title:"Useful Utilities", type:"cards",
+ desc:"General-purpose helper functions that do not fit neatly into one category above.",
+ items:[
+["a.copy()","method","a.copy(order='K')",
+ "order: memory layout of the result",
+ "independent ndarray copy","b = a.copy()","# edits to b never affect a",
+ "Force a true, independent duplicate of an array.","Equivalent to np.copy(a) — use whenever you need to mutate without side effects.",
+ NP+"ndarray.copy.html","copy duplicate independent"],
+["a.view()","method","a.view(dtype=None, type=None)",
+ "dtype: reinterpret the SAME memory as a different type · type: subclass to view as",
+ "ndarray sharing memory with a","np.array([1], dtype=np.int32).view(np.float32)","array([1.4e-45], dtype=float32)",
+ "Reinterpret raw bytes as a different dtype with zero copying, e.g. low-level bit tricks.","Changing values in a view() result also changes the original array's underlying bytes.",
+ NP+"ndarray.view.html","view reinterpret bytes"],
+["np.vectorize()","function","np.vectorize(pyfunc)",
+ "pyfunc: a plain Python scalar function",
+ "callable that broadcasts pyfunc over arrays","f = np.vectorize(lambda x: x**2 if x>0 else 0); f([-1,2,3])","array([0, 4, 9])",
+ "Quickly apply arbitrary Python logic elementwise for prototyping.","Convenience only — internally loops in Python, so it is not actually faster than a manual loop.",
+ NP+"vectorize.html","vectorize apply elementwise"],
+["np.apply_along_axis()","function","np.apply_along_axis(func1d, axis, arr)",
+ "func1d: function taking a 1-D slice · axis: axis to slice along · arr: input array",
+ "ndarray of results","np.apply_along_axis(np.sum, 1, [[1,2],[3,4]])","array([3, 7])",
+ "Apply a custom reduction along one axis when no built-in ufunc exists.","Slower than a native vectorized ufunc — use only when necessary.",
+ NP+"apply_along_axis.html","apply_along_axis custom reduce"],
+["np.apply_over_axes()","function","np.apply_over_axes(func, a, axes)",
+ "func: reduction function like np.sum · a: input array · axes: list of axes to apply over",
+ "ndarray with reduced axes kept as size 1","np.apply_over_axes(np.sum, np.ones((2,3)), [1])","array([[3.],[3.]])",
+ "Apply the same reduction across several axes in sequence.","Keeps dimensions (size 1) rather than dropping them, unlike calling sum(axis=...) directly.",
+ NP+"apply_over_axes.html","apply_over_axes multi-axis reduce"],
+["np.piecewise()","function","np.piecewise(x, condlist, funclist)",
+ "x: input array · condlist: list of boolean conditions · funclist: matching functions/scalars",
+ "ndarray built from whichever function/value matches each element","np.piecewise(np.array([-1,0,1]), [x<0 for x in [0]] or None, [])","# see docs for full example",
+ "Define a mathematical piecewise function, e.g. ReLU or step functions.","condlist and funclist must be matched in the same order; the last item can act as a default.",
+ NP+"piecewise.html","piecewise conditional function"],
+["np.select()","function","np.select(condlist, choicelist, default=0)",
+ "condlist: list of boolean arrays · choicelist: matching output values/arrays · default: fallback value",
+ "ndarray","np.select([np.array([1,-2,3])<0, np.array([1,-2,3])>0], ['neg','pos'], 'zero')","array(['pos','neg','pos'])",
+ "Vectorized multi-branch if/elif/else across an array.","Conditions are checked in order — the first True condition per element wins.",
+ NP+"select.html","select multi-condition elif"],
+["np.choose()","function","np.choose(a, choices)",
+ "a: integer index array · choices: list/array of arrays to pick from",
+ "ndarray built by selecting from choices using a as an index","np.choose([0,1,0],[[1,1,1],[2,2,2]])","array([1, 2, 1])",
+ "Build an array by selecting per-element from several source arrays.","Each value in a selects which choices[i] array supplies that position.",
+ NP+"choose.html","choose select index"],
+["np.diag_indices()","function","np.diag_indices(n, ndim=2)",
+ "n: size of the square array · ndim: number of dimensions",
+ "tuple of index arrays for the main diagonal","np.diag_indices(3)","(array([0,1,2]), array([0,1,2]))",
+ "Directly index or assign to the diagonal of a square array.","Combine with fancy indexing: a[np.diag_indices(3)] = 0.",
+ NP+"diag_indices.html","diag_indices diagonal index"],
+["np.triu() / np.tril()","function","np.triu(m, k=0)  np.tril(m, k=0)",
+ "m: input matrix · k: diagonal offset",
+ "ndarray, upper (triu) or lower (tril) triangle, rest zeroed","np.triu(np.ones((3,3)))","array([[1,1,1],[0,1,1],[0,0,1]])",
+ "Extract triangular parts, e.g. building masks for attention mechanisms.","k shifts which diagonal is the cutoff, same convention as np.eye().",
+ NP+"triu.html","triu tril triangle mask"],
+["np.fill_diagonal()","function","np.fill_diagonal(a, val)",
+ "a: array to modify · val: scalar or array of diagonal values",
+ "None — modifies a IN PLACE","a=np.zeros((3,3)); np.fill_diagonal(a,1)","a becomes the 3x3 identity",
+ "Set the main diagonal directly and efficiently.","Mutates the array in place and returns None — unlike np.diag(), which builds a new matrix.",
+ NP+"fill_diagonal.html","fill_diagonal diagonal inplace"],
+ ]},
+
+{id:"constants", num:"18", title:"NumPy Constants", type:"table",
+ desc:"Predefined values available directly under the np namespace.",
+ headers:["Constant","Kind","Value / Meaning","Notes"],
+ rows:[
+["np.pi","constant","3.141592653589793","Standard math constant π."],
+["np.e","constant","2.718281828459045","Euler's number, base of natural log."],
+["np.inf","constant","IEEE 754 positive infinity","-np.inf gives negative infinity; test with np.isinf()."],
+["np.nan","constant","IEEE 754 Not-a-Number","Never equal to itself; test with np.isnan(), not ==."],
+["np.newaxis","constant","Alias for Python's None","Used inside indexing to insert a new size-1 axis, e.g. a[:, np.newaxis]."],
+ ]},
+
+{id:"patterns", num:"19", title:"Common Coding Patterns", type:"snippets",
+ desc:"Copy-paste solutions to everyday NumPy tasks.",
+ items:[
+["Create an identity matrix","np.eye(4)","4x4 identity matrix for linear algebra or resetting a transform."],
+["Random matrix","rng = np.random.default_rng()\nrng.normal(size=(3, 3))","Use the Generator API, not the legacy np.random.rand()."],
+["Reshape a matrix","a.reshape(-1, 1)      # column vector\na.reshape(2, -1)     # infer the second dimension","-1 tells NumPy to compute that dimension automatically."],
+["Normalize a vector (unit length)","x / np.linalg.norm(x)","Scales x so its Euclidean length becomes 1 — direction is preserved."],
+["Min-max scale to [0, 1]","(x - x.min()) / (x.max() - x.min())","Different from unit-norm normalization above — rescales to a fixed range instead."],
+["Standardize (z-score)","(x - x.mean()) / x.std()","Centers data to mean 0, std 1 — common before machine learning models."],
+["Find duplicate values","vals, counts = np.unique(x, return_counts=True)\nvals[counts > 1]","Lists every value that appears more than once."],
+["Filter rows by a column condition","x[x[:, 0] > 5]","Keeps only rows where the first column exceeds 5."],
+["Replace values matching a condition","x[x == old] = new\n# or, without mutating:\ny = np.where(x == old, new, x)","np.where() returns a new array; direct assignment mutates x in place."],
+["One-hot encode integer labels","np.eye(num_classes)[labels]","Uses fancy indexing on an identity matrix — a classic one-liner."],
+["Matrix multiplication","A @ B","Prefer @ / np.matmul() over * (which multiplies elementwise, not as matrices)."],
+["Flatten an image array to a vector","img.reshape(-1)      # img shape e.g. (H, W, C)","Common before feeding pixels into a fully-connected layer."],
+["Convert a Python list to an array","np.array(my_list)","Nested lists become multi-dimensional arrays automatically."],
+["Convert an array back to a Python list","arr.tolist()","Returns native Python ints/floats, not NumPy scalar types."],
+ ]},
+
+{id:"syntax-glance", num:"20", title:"NumPy Syntax at a Glance", type:"html", html:`
+<div class="prose">
+<h3>Array creation</h3>
+<pre>np.array([1,2,3]); np.zeros((r,c)); np.ones((r,c)); np.arange(0,10,2); np.linspace(0,1,5); np.eye(n)</pre>
+<h3>Indexing</h3>
+<pre>a[0]; a[-1]; a[1:4]; a[::-1]; a[a>0]; a[[0,2]]; a[:, np.newaxis]; a[..., 0]</pre>
+<h3>Broadcasting</h3>
+<pre>a + b            # shapes align from the right, size-1 dims stretch
+a[:, None] + b[None, :]   # classic outer-broadcast trick</pre>
+<h3>Reshaping</h3>
+<pre>a.reshape(2,-1); a.ravel(); a.T; np.expand_dims(a,0); np.squeeze(a); np.concatenate([a,b])</pre>
+<h3>Aggregation</h3>
+<pre>a.sum(axis=0); a.mean(); a.std(ddof=1); a.min(axis=1); np.unique(a, return_counts=True)</pre>
+<h3>Random</h3>
+<pre>rng = np.random.default_rng(seed)
+rng.integers(0,10,size=5); rng.random(5); rng.normal(0,1,size=5); rng.choice(a, size=3)</pre>
+<h3>Linear algebra</h3>
+<pre>A @ B; np.linalg.inv(A); np.linalg.solve(A,b); np.linalg.norm(v); np.linalg.eig(A)</pre>
+<h3>Saving files</h3>
+<pre>np.save('a.npy', a); np.load('a.npy'); np.savez('bundle.npz', a=a, b=b); np.savetxt('a.csv', a, delimiter=',')</pre>
+</div>`},
+
+{id:"mistakes", num:"21", title:"Common Mistakes", type:"html", html:`
+<div class="prose">
+<div class="mistake"><b>Views vs copies —</b> basic slices share memory with the original array; editing the slice edits the source too. Use .copy() when you need independence.</div>
+<div class="mistake"><b>Broadcasting errors —</b> shapes are compared from the right; a "coincidentally matching" length can silently broadcast on the wrong axis instead of raising an error.</div>
+<div class="mistake"><b>Shape mismatch —</b> concatenate()/stack() require compatible shapes on all axes except the join axis — check .shape before combining arrays.</div>
+<div class="mistake"><b>dtype conversion —</b> astype(int) truncates rather than rounds; integer division of ints stays int and can silently lose precision.</div>
+<div class="mistake"><b>Axis confusion —</b> axis=0 reduces DOWN rows (column-wise result); axis=1 reduces ACROSS columns (row-wise result) — easy to swap by mistake.</div>
+<div class="mistake"><b>flatten() vs ravel() —</b> flatten() always copies; ravel() returns a view when possible — mutating a ravel() result can unexpectedly change the source array.</div>
+<div class="mistake"><b>np.append() in a loop —</b> append() always allocates a brand-new array; calling it repeatedly in a loop is O(n²). Build a Python list and convert once, or pre-allocate.</div>
+<div class="mistake"><b>np.matrix vs ndarray —</b> np.matrix is deprecated/legacy and forces 2-D, operator-overloaded matrix math; use plain ndarray with @ instead.</div>
+<div class="mistake"><b>Python loops instead of vectorization —</b> looping element-by-element in Python is far slower than an equivalent ufunc/broadcast expression — vectorize whenever possible.</div>
+</div>`},
+
+{id:"performance", num:"22", title:"Performance Tips", type:"html", html:`
+<div class="prose">
+<div class="tip"><b>Vectorize —</b> replace explicit for-loops with array expressions and ufuncs; NumPy's C loops are dramatically faster than Python-level iteration.</div>
+<div class="tip"><b>Avoid Python-level loops over elements —</b> even list comprehensions over array elements lose most of NumPy's speed advantage.</div>
+<div class="tip"><b>Choose the smallest safe dtype —</b> float32/int32 halve memory versus float64/int64 when the extra precision/range is not needed.</div>
+<div class="tip"><b>Prefer views over copies —</b> slicing, ravel(), and reshape() often avoid copying — check a.base or np.shares_memory() to confirm.</div>
+<div class="tip"><b>Let broadcasting do the work —</b> broadcasting avoids materializing repeated data in memory compared to manually tiling arrays.</div>
+<div class="tip"><b>Avoid unnecessary .copy() calls —</b> only copy when you truly need independent memory; each copy costs both time and RAM.</div>
+<div class="tip"><b>Pre-allocate output arrays —</b> use np.empty()/np.zeros() once instead of growing an array with concatenate()/append() in a loop.</div>
+<div class="tip"><b>Keep dtypes uniform —</b> object-dtype arrays (mixed Python types) fall back to slow, unvectorized Python-level operations.</div>
+</div>`},
+
+{id:"data-science", num:"23", title:"NumPy for Data Science", type:"snippets",
+ desc:"How NumPy arrays interoperate with the rest of the Python data/ML stack.",
+ items:[
+["Pandas","df.to_numpy()          # DataFrame/Series → ndarray\npd.DataFrame(my_array)  # ndarray → DataFrame","Pandas is built on top of NumPy arrays internally for numeric columns."],
+["Matplotlib","import matplotlib.pyplot as plt\nplt.plot(np.linspace(0,10,100), np.sin(x))","Matplotlib accepts ndarrays directly as x/y data for plotting."],
+["Scikit-learn","X = np.array(features)   # shape (n_samples, n_features)\nmodel.fit(X, y)","Scikit-learn's estimators expect 2-D ndarrays: rows = samples, columns = features."],
+["OpenCV","img = cv2.imread('photo.jpg')   # returns an ndarray, shape (H, W, 3), BGR order","OpenCV images ARE NumPy arrays — every NumPy slicing/indexing trick applies directly."],
+["TensorFlow","tf.convert_to_tensor(my_array)   # ndarray → Tensor\ntensor.numpy()                  # Tensor → ndarray","TensorFlow tensors interoperate closely with NumPy but are a distinct type."],
+["PyTorch","torch.from_numpy(my_array)   # ndarray → Tensor, SHARES memory\ntensor.numpy()               # Tensor → ndarray","from_numpy() creates a view — editing the tensor also edits the original array."],
+ ]},
+
+{id:"resources", num:"24", title:"NumPy Official Resources", type:"html", html:`
+<div class="prose reslist">
+<a href="https://numpy.org/" target="_blank" rel="noopener">NumPy Homepage<span>numpy.org</span></a>
+<a href="https://numpy.org/doc/stable/" target="_blank" rel="noopener">Official Documentation (stable)<span>numpy.org/doc/stable</span></a>
+<a href="https://numpy.org/doc/stable/reference/" target="_blank" rel="noopener">NumPy Reference<span>numpy.org/doc/stable/reference</span></a>
+<a href="https://numpy.org/doc/stable/reference/arrays.html" target="_blank" rel="noopener">Array Objects<span>numpy.org/doc/stable/reference/arrays.html</span></a>
+<a href="https://numpy.org/doc/stable/reference/routines.html" target="_blank" rel="noopener">Routines Index<span>numpy.org/doc/stable/reference/routines.html</span></a>
+<a href="https://numpy.org/doc/stable/reference/random/index.html" target="_blank" rel="noopener">Random Module<span>numpy.org/doc/stable/reference/random</span></a>
+<a href="https://numpy.org/doc/stable/reference/routines.linalg.html" target="_blank" rel="noopener">Linear Algebra<span>numpy.org/doc/stable/reference/routines.linalg.html</span></a>
+<a href="https://numpy.org/doc/stable/release.html" target="_blank" rel="noopener">Release Notes<span>numpy.org/doc/stable/release.html</span></a>
+<a href="https://github.com/numpy/numpy" target="_blank" rel="noopener">GitHub Repository<span>github.com/numpy/numpy</span></a>
+</div>`},
+
+];
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function kindBadge(k){ return `<span class="badge b-${esc(k)}">${esc(k)}</span>`; }
+
+function codeBlock(text){
+  return `<pre data-copy><code>${esc(text)}</code><button class="copybtn" onclick="copyBlock(this)">Copy</button></pre>`;
+}
+
+function renderCard(it){
+  const [n,k,sig,p,ret,ex,out,use,note,link,tags] = it;
+  const params = p.split(" · ").map(seg=>{
+    const idx = seg.indexOf(":");
+    if(idx===-1) return `<div class="p">${esc(seg)}</div>`;
+    return `<div class="p"><b>${esc(seg.slice(0,idx))}</b>${esc(seg.slice(idx))}</div>`;
+  }).join("");
+  return `<div class="card" data-search="${esc((n+" "+sig+" "+p+" "+use+" "+note+" "+tags).toLowerCase())}">
+    <div class="head"><span class="name" data-title>${esc(n)}</span>${kindBadge(k)}</div>
+    ${codeBlock(sig)}
+    <div class="lbl">Parameters</div><div class="params">${params||'<div class="p">none</div>'}</div>
+    <div class="lbl">Returns</div><div class="ret">${esc(ret)}</div>
+    <div class="lbl">Example</div>${codeBlock(ex)}
+    <div class="lbl">Output</div>${codeBlock(out)}
+    <div class="lbl">Common Use</div><div class="use">${esc(use)}</div>
+    <div class="lbl">Note</div><div class="note">${esc(note)}</div>
+    <div class="foot"><a href="${link}" target="_blank" rel="noopener">Official docs ↗</a></div>
+  </div>`;
+}
+
+function renderTable(headers, rows){
+  const thead = headers.map(h=>`<th>${esc(h)}</th>`).join("");
+  const trs = rows.map(r=>{
+    const search = r.join(" ").toLowerCase();
+    const tds = r.map((c,i)=> i===0
+      ? `<td class="mono" data-title>${esc(c)}</td>`
+      : `<td>${esc(c)}</td>`).join("");
+    return `<tr data-search="${esc(search)}">${tds}</tr>`;
+  }).join("");
+  return `<div class="tablewrap"><table class="ref"><thead><tr>${thead}</tr></thead><tbody>${trs}</tbody></table></div>`;
+}
+
+function renderSnippets(items){
+  return `<div class="grid">` + items.map(([title,code,note])=>{
+    const search = (title+" "+code+" "+(note||"")).toLowerCase();
+    return `<div class="snip" data-search="${esc(search)}">
+      <h4 data-title>${esc(title)}</h4>
+      ${codeBlock(code)}
+      ${note?`<div class="note">${esc(note)}</div>`:""}
+    </div>`;
+  }).join("") + `</div>`;
+}
+
+function renderSection(sec){
+  let body = "";
+  if(sec.type==="html"){
+    body = sec.html;
+  } else if(sec.type==="cards"){
+    body = `<div class="grid">` + sec.items.map(renderCard).join("") + `</div>`;
+  } else if(sec.type==="table"){
+    body = renderTable(sec.headers, sec.rows);
+  } else if(sec.type==="snippets"){
+    body = renderSnippets(sec.items);
+  } else if(sec.type==="mixed"){
+    body = renderTable(sec.table.headers, sec.table.rows) +
+           `<div style="height:14px"></div><div class="grid">` + sec.items.map(renderCard).join("") + `</div>`;
+  }
+  const descHtml = sec.desc ? `<p class="desc">${esc(sec.desc)}</p>` : "";
+  return `<section class="sec" id="${sec.id}">
+    <h2><span class="idx">${sec.num}</span>${esc(sec.title)}</h2>
+    ${descHtml}
+    ${body}
+  </section>`;
+}
+
+function buildSidebar(){
+  const nav = document.getElementById("sidebar");
+  nav.innerHTML = SECTIONS.map(s=>`<a href="#${s.id}" data-target="${s.id}"><span class="n">${s.num}</span>${esc(s.title)}</a>`).join("");
+}
+
+function buildContent(){
+  document.getElementById("content").innerHTML = SECTIONS.map(renderSection).join("");
+}
+
+/* ---------- copy buttons ---------- */
+function copyBlock(btn){
+  const code = btn.previousElementSibling.textContent;
+  const done = ()=>{ btn.textContent="Copied!"; btn.classList.add("copied"); setTimeout(()=>{btn.textContent="Copy"; btn.classList.remove("copied");},1200); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(done).catch(done);
+  } else {
+    const ta=document.createElement("textarea"); ta.value=code; document.body.appendChild(ta); ta.select();
+    try{document.execCommand("copy");}catch(e){} document.body.removeChild(ta); done();
+  }
+}
+
+/* ---------- search ---------- */
+const searchInput = document.getElementById("searchInput");
+const resultCount = document.getElementById("resultCount");
+
+function clearHighlights(){
+  document.querySelectorAll("[data-title]").forEach(el=>{
+    if(!el.dataset.raw) el.dataset.raw = el.textContent;
+    el.textContent = el.dataset.raw;
+  });
+}
+function highlight(el, q){
+  if(!el.dataset.raw) el.dataset.raw = el.textContent;
+  const raw = el.dataset.raw;
+  const i = raw.toLowerCase().indexOf(q);
+  if(i===-1){ el.textContent = raw; return; }
+  el.innerHTML = esc(raw.slice(0,i)) + "<mark>" + esc(raw.slice(i,i+q.length)) + "</mark>" + esc(raw.slice(i+q.length));
+}
+
+function runSearch(){
+  const q = searchInput.value.trim().toLowerCase();
+  const filterable = document.querySelectorAll("[data-search]");
+  if(!q){
+    filterable.forEach(el=>el.classList.remove("hidden"));
+    clearHighlights();
+    resultCount.style.display="none";
+    document.querySelectorAll("section.sec").forEach(s=>s.classList.remove("hidden"));
+    return;
+  }
+  const terms = q.split(/\s+/).filter(Boolean);
+  let count = 0;
+  filterable.forEach(el=>{
+    const hay = el.getAttribute("data-search");
+    const match = terms.every(t=>hay.includes(t));
+    el.classList.toggle("hidden", !match);
+    if(match){
+      count++;
+      const titleEl = el.matches("[data-title]") ? el : el.querySelector("[data-title]");
+      if(titleEl) highlight(titleEl, terms[0]);
+    }
+  });
+  // hide whole sections with zero visible matches (only for filterable-type sections)
+  document.querySelectorAll("section.sec").forEach(sec=>{
+    const items = sec.querySelectorAll("[data-search]");
+    if(items.length===0) return; // static/text sections stay visible
+    const anyVisible = Array.from(items).some(el=>!el.classList.contains("hidden"));
+    sec.classList.toggle("hidden", !anyVisible);
+  });
+  resultCount.style.display="block";
+  resultCount.textContent = count + (count===1 ? " result" : " results");
+}
+searchInput.addEventListener("input", runSearch);
+
+document.addEventListener("keydown", (e)=>{
+  const tag = (document.activeElement && document.activeElement.tagName) || "";
+  if(e.key==="/" && tag!=="INPUT" && tag!=="TEXTAREA"){ e.preventDefault(); searchInput.focus(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="k"){ e.preventDefault(); searchInput.focus(); searchInput.select(); }
+});
+
+/* ---------- theme ---------- */
+const themeBtn = document.getElementById("themeBtn");
+function setTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem("numpy-ref-theme", t); }catch(e){}
+}
+(function initTheme(){
+  let t = "light";
+  try{ t = localStorage.getItem("numpy-ref-theme"); }catch(e){}
+  if(!t){ t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+  setTheme(t);
+})();
+themeBtn.addEventListener("click", ()=>{
+  const cur = document.documentElement.getAttribute("data-theme");
+  setTheme(cur==="dark" ? "light" : "dark");
+});
+
+/* ---------- mobile sidebar ---------- */
+const sidebar = document.getElementById("sidebar");
+const menuBtn = document.getElementById("menuBtn");
+menuBtn.addEventListener("click", ()=> sidebar.classList.toggle("open"));
+sidebar.addEventListener("click", (e)=>{ if(e.target.closest("a")) sidebar.classList.remove("open"); });
+
+/* ---------- active section highlighting ---------- */
+function setupActiveHighlight(){
+  const links = Array.from(document.querySelectorAll("nav.sidebar a"));
+  const map = {};
+  links.forEach(l=> map[l.dataset.target]=l);
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        links.forEach(l=>l.classList.remove("active"));
+        const l = map[en.target.id];
+        if(l) l.classList.add("active");
+      }
+    });
+  }, {rootMargin:"-15% 0px -70% 0px", threshold:0});
+  document.querySelectorAll("section.sec").forEach(s=>io.observe(s));
+}
+
+/* ---------- back to top ---------- */
+const backTop = document.getElementById("backTop");
+window.addEventListener("scroll", ()=>{ backTop.classList.toggle("show", window.scrollY>500); });
+backTop.addEventListener("click", ()=> window.scrollTo({top:0,behavior:"smooth"}));
+
+/* ---------- init ---------- */
+buildSidebar();
+buildContent();
+setupActiveHighlight();
+</script>
+</body>
+</html>
