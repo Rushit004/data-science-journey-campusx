@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pandas Quick Reference — Offline API Cheat Sheet</title>
+<meta name="description" content="A fast, searchable, offline-first Pandas API quick reference covering DataFrame, Series, GroupBy, string/datetime accessors, I/O, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --bg: #F6F6FB;
+  --surface: #FFFFFF;
+  --surface-2: #FBFBFE;
+  --border: #E3E2ED;
+  --border-strong: #CBC9DE;
+  --text: #191730;
+  --text-muted: #5B5871;
+  --text-faint: #8B88A3;
+  --accent: #150458;
+  --accent-soft: #EFEBFF;
+  --accent-soft-border: #D9D2FA;
+  --pink: #E70488;
+  --pink-soft: #FFE6F4;
+  --cyan: #08A5B5;
+  --cyan-soft: #E1FAFB;
+  --code-bg: #14113000;
+  --code-panel: #17143A;
+  --code-panel-text: #E8E6FF;
+  --code-index: #3A3568;
+  --code-index-text: #9C97C4;
+  --green: #0F8A5F;
+  --amber: #A8660B;
+  --red: #C22E4B;
+  --shadow: 0 1px 2px rgba(21,4,88,0.04), 0 4px 16px rgba(21,4,88,0.06);
+  --shadow-lg: 0 8px 30px rgba(21,4,88,0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --sidebar-w: 268px;
+  --topbar-h: 60px;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html.dark{
+  --bg: #0C0A1C;
+  --surface: #141230;
+  --surface-2: #191636;
+  --border: #2B2755;
+  --border-strong: #3C376E;
+  --text: #EDECFA;
+  --text-muted: #ABA7CC;
+  --text-faint: #756FA0;
+  --accent: #B6A4FF;
+  --accent-soft: #211D49;
+  --accent-soft-border: #3B3570;
+  --pink: #FF62B3;
+  --pink-soft: #3A1234;
+  --cyan: #4FD9E6;
+  --cyan-soft: #0F2E33;
+  --code-panel: #0A0918;
+  --code-panel-text: #E8E6FF;
+  --code-index: #221F44;
+  --code-index-text: #756FA0;
+  --green: #4ADE95;
+  --amber: #F0B347;
+  --red: #FF7A94;
+  --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 4px 20px rgba(0,0,0,0.35);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+body{
+  margin:0;
+  font-family:var(--font-ui);
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background .2s ease, color .2s ease;
+}
+
+a{color:var(--cyan); text-decoration:none;}
+a:hover{text-decoration:underline;}
+code, .mono{font-family:var(--font-mono);}
+:focus-visible{outline:2px solid var(--pink); outline-offset:2px; border-radius:4px;}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:var(--topbar-h);
+  background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:16px; padding:0 18px;
+  z-index:100;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; white-space:nowrap; color:var(--text);}
+.brand .paw{font-size:20px; line-height:1;}
+.brand .ver{
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+  color:var(--accent); background:var(--accent-soft); border:1px solid var(--accent-soft-border);
+  padding:2px 7px; border-radius:20px; letter-spacing:.02em;
+}
+.menu-toggle{
+  display:none; background:none; border:1px solid var(--border); color:var(--text);
+  width:36px; height:36px; border-radius:var(--radius-sm); cursor:pointer; font-size:16px;
+  align-items:center; justify-content:center;
+}
+.searchwrap{flex:1; max-width:560px; position:relative; margin:0 auto;}
+.searchwrap input{
+  width:100%; height:38px; border-radius:var(--radius); border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text); padding:0 70px 0 36px; font-size:14px;
+  font-family:var(--font-ui);
+}
+.searchwrap input:focus{border-color:var(--accent-soft-border); background:var(--surface);}
+.searchwrap .icon{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text-faint); font-size:14px; pointer-events:none;}
+.searchwrap .kbd{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);
+  border:1px solid var(--border); background:var(--surface); padding:2px 6px; border-radius:5px;
+  pointer-events:none;
+}
+.searchcount{
+  position:absolute; left:0; top:44px; font-size:12px; color:var(--text-faint);
+  font-family:var(--font-mono); display:none; padding-left:2px;
+}
+.topbar-actions{display:flex; align-items:center; gap:8px;}
+.icon-btn{
+  width:38px; height:38px; border-radius:var(--radius-sm); border:1px solid var(--border);
+  background:var(--surface); color:var(--text); cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center; transition:background .15s, transform .1s;
+}
+.icon-btn:hover{background:var(--surface-2);}
+.icon-btn:active{transform:scale(0.94);}
+a.gh-link{
+  display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-muted);
+  border:1px solid var(--border); padding:0 12px; height:38px; border-radius:var(--radius-sm); white-space:nowrap;
+}
+a.gh-link:hover{text-decoration:none; color:var(--text); background:var(--surface-2);}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell{display:flex; padding-top:var(--topbar-h); min-height:100vh;}
+
+.sidebar{
+  position:fixed; top:var(--topbar-h); left:0; width:var(--sidebar-w);
+  height:calc(100vh - var(--topbar-h)); overflow-y:auto; padding:18px 12px 40px;
+  border-right:1px solid var(--border); background:var(--surface);
+  z-index:60;
+}
+.sidebar::-webkit-scrollbar{width:8px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+.side-group-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); font-weight:700; padding:14px 10px 6px;}
+.side-group-label:first-child{padding-top:4px;}
+.side-link{
+  display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:var(--radius-sm);
+  color:var(--text-muted); font-size:13.5px; font-weight:500; cursor:pointer; line-height:1.3;
+  border-left:2px solid transparent;
+}
+.side-link:hover{background:var(--surface-2); color:var(--text); text-decoration:none;}
+.side-link .num{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); min-width:20px;
+  border:1px solid var(--border); border-radius:4px; text-align:center; padding:1px 0;
+}
+.side-link.active{background:var(--accent-soft); color:var(--accent); border-left:2px solid var(--pink); font-weight:600;}
+.side-link.active .num{border-color:var(--accent-soft-border); color:var(--accent);}
+.side-link .cnt{margin-left:auto; font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);}
+
+.sidebar-scrim{display:none; position:fixed; inset:0; background:rgba(10,8,25,.5); z-index:55;}
+
+main{margin-left:var(--sidebar-w); flex:1; min-width:0; padding:28px 32px 100px; max-width:1180px;}
+
+.hero{
+  border:1px solid var(--border); background:linear-gradient(135deg,var(--accent-soft) 0%, var(--surface) 62%);
+  border-radius:14px; padding:26px 28px; margin-bottom:30px; position:relative; overflow:hidden;
+}
+.hero::after{
+  content:""; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle, var(--pink-soft) 0%, transparent 70%); opacity:.7;
+}
+.hero h1{margin:0 0 8px; font-size:26px; letter-spacing:-0.01em; font-weight:800;}
+.hero p{margin:0; color:var(--text-muted); max-width:640px; font-size:14.5px;}
+.hero .tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; position:relative;}
+.hero .tag{
+  font-family:var(--font-mono); font-size:11.5px; background:var(--surface); border:1px solid var(--border);
+  padding:4px 10px; border-radius:20px; color:var(--text-muted);
+}
+
+section.ref-section{margin-bottom:42px; scroll-margin-top:76px;}
+.sec-head{display:flex; align-items:center; gap:12px; margin-bottom:6px; cursor:pointer; user-select:none;}
+.sec-head .sec-num{
+  font-family:var(--font-mono); font-size:12px; color:var(--accent); background:var(--accent-soft);
+  border:1px solid var(--accent-soft-border); padding:3px 9px; border-radius:6px; font-weight:700; flex-shrink:0;
+}
+.sec-head h2{font-size:19px; margin:0; font-weight:700; flex:1;}
+.sec-head .chev{color:var(--text-faint); transition:transform .18s ease; font-size:13px;}
+.ref-section.collapsed .chev{transform:rotate(-90deg);}
+.sec-sub{color:var(--text-muted); font-size:13.5px; margin:2px 0 16px; max-width:760px;}
+.ref-section.collapsed .sec-body{display:none;}
+
+.card-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px;}
+
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 17px 15px; box-shadow:var(--shadow); transition:border-color .15s, transform .12s;
+}
+.card:hover{border-color:var(--accent-soft-border);}
+.card.hidden{display:none;}
+.card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px;}
+.card-title{font-family:var(--font-mono); font-size:14.5px; font-weight:700; color:var(--text);}
+.card-title .owner{color:var(--cyan);}
+.kind-pill{
+  font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.04em;
+  padding:2px 6px; border-radius:4px; font-weight:700; flex-shrink:0; white-space:nowrap; margin-top:2px;
+}
+.kind-method{background:var(--accent-soft); color:var(--accent);}
+.kind-function{background:var(--cyan-soft); color:var(--cyan);}
+.kind-attribute{background:var(--pink-soft); color:var(--pink);}
+.kind-accessor{background:#FFF3D6; color:var(--amber);}
+html.dark .kind-accessor{background:#3A2E10; color:var(--amber);}
+.card-summary{font-size:13px; color:var(--text-muted); margin-bottom:10px; min-height:auto;}
+
+.field-label{
+  font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-faint); font-weight:700;
+  margin:9px 0 3px;
+}
+.field-label:first-of-type{margin-top:0;}
+.syntax-box{
+  font-family:var(--font-mono); font-size:12.3px; background:var(--code-panel); color:var(--code-panel-text);
+  padding:8px 10px; border-radius:6px; overflow-x:auto; white-space:pre; line-height:1.5;
+}
+.params-list{margin:0; padding-left:0; list-style:none; font-size:12.3px; color:var(--text-muted);}
+.params-list li{padding:2px 0; border-bottom:1px dashed var(--border);}
+.params-list li:last-child{border-bottom:none;}
+.params-list b{font-family:var(--font-mono); color:var(--text); font-weight:600;}
+.returns-box{font-size:12.5px; color:var(--text-muted);}
+.returns-box b{color:var(--text); font-family:var(--font-mono);}
+
+.code-block{position:relative; margin-top:3px;}
+.code-block pre{
+  font-family:var(--font-mono); font-size:12.3px; background:var(--code-panel); color:var(--code-panel-text);
+  padding:9px 34px 9px 10px; border-radius:6px; overflow-x:auto; margin:0; line-height:1.55;
+  display:flex; flex-direction:column;
+}
+.code-block .copy-btn{
+  position:absolute; top:6px; right:6px; width:24px; height:24px; border-radius:5px; border:none;
+  background:rgba(255,255,255,0.08); color:var(--code-panel-text); cursor:pointer; font-size:12px;
+  display:flex; align-items:center; justify-content:center; opacity:.65;
+}
+.code-block .copy-btn:hover{opacity:1; background:rgba(255,255,255,0.16);}
+.code-block .copy-btn.copied{background:var(--green); color:#04170F; opacity:1;}
+.output-box{
+  font-family:var(--font-mono); font-size:11.8px; background:var(--surface-2); border:1px solid var(--border);
+  border-left:3px solid var(--code-index); padding:8px 10px; border-radius:0 6px 6px 0; overflow-x:auto;
+  white-space:pre; color:var(--text-muted); line-height:1.5;
+}
+.use-note{font-size:12.5px; color:var(--text-muted); line-height:1.55;}
+.important-note{
+  font-size:12.3px; color:var(--amber); background:#FFF7E8; border:1px solid #F3DFAE; padding:7px 10px;
+  border-radius:6px; line-height:1.5;
+}
+html.dark .important-note{background:#241C08; border-color:#4A3A10;}
+.card-foot{display:flex; justify-content:space-between; align-items:center; margin-top:11px; padding-top:9px; border-top:1px solid var(--border);}
+.docs-link{font-size:11.5px; font-weight:600; display:flex; align-items:center; gap:4px;}
+.section-badge{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+mark{background:var(--pink-soft); color:var(--pink); border-radius:3px; padding:0 1px;}
+html.dark mark{background:#4A1236;}
+
+/* static-content sections */
+.static-block{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; box-shadow:var(--shadow);}
+.static-block h3{margin:0 0 10px; font-size:15.5px;}
+.static-block h3 .n{font-family:var(--font-mono); color:var(--accent); margin-right:6px;}
+.pattern-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px;}
+.pattern-card pre{font-family:var(--font-mono); font-size:12px; background:var(--code-panel); color:var(--code-panel-text); padding:10px; border-radius:6px; overflow-x:auto; margin:6px 0 0; white-space:pre-wrap;}
+.pattern-card h4{margin:0; font-size:13.5px;}
+.pattern-card p{margin:3px 0 0; font-size:12px; color:var(--text-muted);}
+
+table.ref-table{width:100%; border-collapse:collapse; font-size:12.8px; margin:8px 0;}
+table.ref-table th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); border-bottom:1px solid var(--border-strong); padding:6px 10px;}
+table.ref-table td{padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:top;}
+table.ref-table td code, table.ref-table td .mono{font-family:var(--font-mono); font-size:12.2px; color:var(--accent); background:var(--accent-soft); padding:1px 5px; border-radius:4px;}
+.table-scroll{overflow-x:auto;}
+
+.mistake-item{display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--border);}
+.mistake-item:last-child{border-bottom:none;}
+.mistake-item .x{color:var(--red); font-weight:800; flex-shrink:0;}
+.mistake-item .body b{display:block; font-size:13.3px; margin-bottom:2px;}
+.mistake-item .body span{font-size:12.5px; color:var(--text-muted);}
+.mistake-item .body code{font-family:var(--font-mono); background:var(--surface-2); border:1px solid var(--border); padding:1px 5px; border-radius:4px; font-size:12px;}
+
+.workflow-steps{display:flex; flex-wrap:wrap; gap:10px; counter-reset:step;}
+.workflow-steps .step{
+  flex:1 1 130px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px;
+  position:relative;
+}
+.workflow-steps .step .stepnum{font-family:var(--font-mono); font-size:11px; color:var(--pink); font-weight:700; display:block; margin-bottom:4px;}
+.workflow-steps .step b{font-size:12.8px; display:block; margin-bottom:2px;}
+.workflow-steps .step span{font-size:11.5px; color:var(--text-muted);}
+.interop-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+.interop-chip{font-family:var(--font-mono); font-size:12px; background:var(--cyan-soft); color:var(--cyan); border:1px solid var(--border); padding:5px 12px; border-radius:20px;}
+
+.resource-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px;}
+.resource-list a{display:block; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px 14px; font-weight:600; font-size:13px; color:var(--text);}
+.resource-list a:hover{border-color:var(--accent-soft-border); text-decoration:none;}
+.resource-list a span{display:block; font-weight:400; font-size:11.5px; color:var(--text-faint); margin-top:2px; font-family:var(--font-mono);}
+
+.perf-item{padding:10px 0; border-bottom:1px solid var(--border);}
+.perf-item:last-child{border-bottom:none;}
+.perf-item b{font-size:13.2px; display:block; margin-bottom:3px;}
+.perf-item .good{color:var(--green); font-family:var(--font-mono); font-size:12px;}
+.perf-item .bad{color:var(--red); font-family:var(--font-mono); font-size:12px; text-decoration:line-through; opacity:.7;}
+
+.empty-state{text-align:center; padding:60px 20px; color:var(--text-faint);}
+.empty-state .big{font-size:34px; margin-bottom:10px;}
+
+.back-top{
+  position:fixed; bottom:22px; right:22px; width:42px; height:42px; border-radius:50%;
+  background:var(--accent); color:#fff; border:none; cursor:pointer; box-shadow:var(--shadow-lg);
+  display:none; align-items:center; justify-content:center; font-size:16px; z-index:90;
+}
+html.dark .back-top{color:var(--bg);}
+.back-top.show{display:flex;}
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+  background:var(--code-panel); color:var(--code-panel-text); padding:9px 18px; border-radius:8px;
+  font-size:13px; z-index:200; transition:opacity .2s ease, transform .2s ease; pointer-events:none; box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+footer{margin-left:var(--sidebar-w); padding:26px 32px 60px; color:var(--text-faint); font-size:12px; max-width:1180px;}
+
+@media (max-width: 980px){
+  :root{--sidebar-w:250px;}
+  .searchwrap{max-width:320px;}
+}
+@media (max-width: 760px){
+  .menu-toggle{display:flex;}
+  .sidebar{transform:translateX(-104%); transition:transform .22s ease; box-shadow:var(--shadow-lg);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-scrim.show{display:block;}
+  main, footer{margin-left:0; padding-left:18px; padding-right:18px;}
+  .searchwrap{max-width:none;}
+  .hero h1{font-size:21px;}
+  .card-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar">☰</button>
+  <div class="brand"><span class="paw">🐼</span><span>pandas quick ref</span><span class="ver">v3.0</span></div>
+  <div class="searchwrap">
+    <span class="icon">⌕</span>
+    <input id="searchInput" type="text" placeholder="Search functions, methods, params, concepts…" autocomplete="off">
+    <span class="kbd" id="kbdHint">Ctrl K</span>
+    <div class="searchcount" id="searchCount"></div>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+    <a class="gh-link" href="https://github.com/pandas-dev/pandas" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</div>
+
+<div class="sidebar-scrim" id="scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main id="main">
+    <div class="hero">
+      <h1>Pandas Quick Reference</h1>
+      <p>An offline-first syntax helper for <b>pandas 3.0</b> — every card gives you the syntax, parameters, return value, a runnable example, and a link to the official docs. Built to be searched, not read top-to-bottom.</p>
+      <div class="tags">
+        <span class="tag">DataFrame</span><span class="tag">Series</span><span class="tag">GroupBy</span>
+        <span class="tag">.str / .dt / .cat</span><span class="tag">I/O</span><span class="tag">MultiIndex</span>
+      </div>
+    </div>
+    <div id="sectionsRoot"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="big">🐼🔍</div>
+      <div>No matches. Try a shorter or different keyword — e.g. <b>merge</b>, <b>fillna</b>, <b>groupby</b>.</div>
+    </div>
+  </main>
+</div>
+
+<footer id="footer">
+  Built as an offline quick reference against the <a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener">official pandas documentation</a> (latest stable: <b>3.0.5</b>, Jul 2026). Not affiliated with the pandas project. · <span id="cardCountFooter"></span> entries indexed.
+</footer>
+
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   SECTION METADATA  (order = display order = sidebar order)
+   ============================================================ */
+const SECTIONS = [
+  {id:'install',    num:1,  title:'Installation & Import', type:'static', group:'Getting Started'},
+  {id:'creating',    num:2,  title:'Creating Data Structures', type:'cards', group:'Getting Started', sub:'Series, DataFrame, and every common way to build one.'},
+  {id:'info',        num:3,  title:'DataFrame & Series Information', type:'cards', group:'Getting Started', sub:'Inspect shape, dtypes, and summary stats.'},
+  {id:'selecting',   num:4,  title:'Selecting Data', type:'cards', group:'Core Operations', sub:'Indexing, slicing, boolean masks, and query().'},
+  {id:'addremove',   num:5,  title:'Adding, Updating & Removing Data', type:'cards', group:'Core Operations', sub:'Mutate columns, rows, and values.'},
+  {id:'missing',     num:6,  title:'Missing Values', type:'cards', group:'Core Operations', sub:'Detect, fill, drop, and interpolate NA values.'},
+  {id:'cleaning',    num:7,  title:'Data Cleaning', type:'cards', group:'Core Operations', sub:'Duplicates, dtypes, and element-wise transforms.'},
+  {id:'sorting',     num:8,  title:'Sorting & Ranking', type:'cards', group:'Core Operations', sub:'Order rows by value, index, or rank.'},
+  {id:'grouping',    num:9,  title:'Grouping & Aggregation', type:'cards', group:'Analysis', sub:'Split–apply–combine, pivot tables, and value counts.'},
+  {id:'combining',   num:10, title:'Combining Data', type:'cards', group:'Analysis', sub:'concat, merge, join, and ordered/asof merges.'},
+  {id:'reshaping',   num:11, title:'Reshaping', type:'cards', group:'Analysis', sub:'Wide ↔ long transforms.'},
+  {id:'strings',     num:12, title:'Working with Strings', type:'cards', group:'Accessors', sub:'The .str vectorized string accessor.'},
+  {id:'datetime',    num:13, title:'Working with Datetime', type:'cards', group:'Accessors', sub:'Timestamps, Timedeltas, date ranges, and .dt.'},
+  {id:'categories',  num:14, title:'Working with Categories', type:'cards', group:'Accessors', sub:'Memory-efficient categorical dtype and .cat.'},
+  {id:'fileio',      num:15, title:'File Input & Output', type:'cards', group:'I/O', sub:'Read and write CSV, Excel, JSON, SQL, Parquet, Pickle.'},
+  {id:'window',      num:16, title:'Window Functions', type:'cards', group:'Analysis', sub:'Rolling, expanding, and exponentially-weighted windows.'},
+  {id:'viz',         num:17, title:'Visualization', type:'cards', group:'Analysis', sub:'Quick plotting built on matplotlib.'},
+  {id:'utilities',   num:18, title:'Useful Utilities', type:'cards', group:'Core Operations', sub:'pipe, eval, clip, where, mask, and friends.'},
+  {id:'multiindex',  num:19, title:'MultiIndex', type:'cards', group:'Analysis', sub:'Hierarchical indexing.'},
+  {id:'patterns',    num:20, title:'Common Data Analysis Patterns', type:'static', group:'Guides'},
+  {id:'glance',      num:21, title:'Pandas Syntax at a Glance', type:'static', group:'Guides'},
+  {id:'mistakes',    num:22, title:'Common Mistakes', type:'static', group:'Guides'},
+  {id:'performance', num:23, title:'Performance Tips', type:'static', group:'Guides'},
+  {id:'workflow',    num:24, title:'Pandas for Data Science', type:'static', group:'Guides'},
+  {id:'resources',   num:25, title:'Official Resources', type:'static', group:'Guides'},
+];
+
+/* ============================================================
+   REFERENCE DATA — filled below, one entry per function/method/
+   attribute/accessor. See card renderer for schema.
+   ============================================================ */
+const DATA = [
+  {id:'ctor-series', section:'creating', secGroup:2, qualname:'pandas.Series()', kind:'function', summary:'One-dimensional labeled array capable of holding any data type.', syntax:'pd.Series(data=None, index=None, dtype=None, name=None, copy=None)', params:['data — array-like, dict, scalar, or Iterable','index — labels for the values; defaults to RangeIndex(0..n-1)','dtype — desired dtype; inferred from data if omitted','name — a name to assign to the Series','copy — whether to copy input data (default depends on dtype, CoW-aware in 3.0)'], returns:'Series', example:'s = pd.Series([10, 20, 30], index=["a","b","c"], name="score")\nprint(s)', output:'a    10\nb    20\nc    30\nName: score, dtype: int64', use:'Building a single labeled 1-D array, or representing one column pulled from a DataFrame.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.html', keywords:['series','1d','array','constructor']},
+  {id:'ctor-dataframe', section:'creating', secGroup:2, qualname:'pandas.DataFrame()', kind:'function', summary:'Two-dimensional, size-mutable, labeled tabular data structure.', syntax:'pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=None)', params:['data — ndarray, dict of array-like, list of dicts, another DataFrame, etc.','index — row labels; defaults to RangeIndex','columns — column labels; defaults to dict keys / positions','dtype — dtype to force for the whole frame','copy — copy the input data'], returns:'DataFrame', example:'df = pd.DataFrame({\n    "name": ["Sam","Ana","Kai"],\n    "age":  [25, 31, 28]\n})\nprint(df)', output:'   name  age\n0   Sam   25\n1   Ana   31\n2   Kai   28', use:'The single most common entry point for building or wrapping tabular data.', note:'Since pandas 3.0, plain string columns get the new dedicated "str" dtype by default instead of "object" — check dtypes if code assumes object dtype.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html', keywords:['dataframe','constructor','table']},
+  {id:'from-dict', section:'creating', secGroup:2, qualname:'DataFrame.from_dict()', kind:'function', summary:'Construct a DataFrame from a dict of array-like or dicts, with control over orientation.', syntax:'pd.DataFrame.from_dict(data, orient="columns", dtype=None, columns=None)', params:['data — dict of {column/index -> array-like or dict}','orient — "columns" (keys=columns) or "index" (keys=row labels)','dtype — dtype to force','columns — column labels to use when orient="index"'], returns:'DataFrame', example:'pd.DataFrame.from_dict(\n  {"a":[1,2],"b":[3,4]}, orient="index",\n  columns=["r1","r2"]\n)', output:'   r1  r2\na   1   2\nb   3   4', use:'Building a DataFrame when the natural key layout of your dict is rows, not columns.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html', keywords:['from_dict','orient']},
+  {id:'from-records', section:'creating', secGroup:2, qualname:'DataFrame.from_records()', kind:'function', summary:'Construct a DataFrame from a structured ndarray, list of tuples, or list of dicts.', syntax:'pd.DataFrame.from_records(data, index=None, exclude=None, columns=None, coerce_float=False, nrows=None)', params:['data — structured array, list of tuples, or list of dicts','index — column(s) to use as the row index','exclude — columns to drop from the result','columns — column names to use','coerce_float — attempt to convert non-string, non-numeric values to float'], returns:'DataFrame', example:'rows = [("Sam",25), ("Ana",31)]\npd.DataFrame.from_records(rows, columns=["name","age"])', output:'   name  age\n0   Sam   25\n1   Ana   31', use:'Converting query results (e.g. DB cursor rows, list of tuples) into a DataFrame.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html', keywords:['from_records','sql rows','tuples']},
+  {id:'head', section:'info', qualname:'DataFrame.head()', kind:'method', summary:'Return the first n rows.', syntax:'df.head(n=5)', params:['n — number of rows to return (negative excludes the last |n| rows)'], returns:'DataFrame / Series (same type as caller)', example:'df.head(2)', output:'   name  age\n0   Sam   25\n1   Ana   31', use:'Quickly previewing the start of a dataset.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.head.html', keywords:['preview','top rows']},
+  {id:'tail', section:'info', qualname:'DataFrame.tail()', kind:'method', summary:'Return the last n rows.', syntax:'df.tail(n=5)', params:['n — number of rows to return (negative excludes the first |n| rows)'], returns:'DataFrame / Series', example:'df.tail(2)', output:'   name  age\n1   Ana   31\n2   Kai   28', use:'Checking the end of a dataset, e.g. after a sort or an append-heavy pipeline.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.tail.html', keywords:['preview','bottom rows']},
+  {id:'sample', section:'info', qualname:'DataFrame.sample()', kind:'method', summary:'Return a random sample of items from an axis.', syntax:'df.sample(n=None, frac=None, replace=False, weights=None, random_state=None, axis=None, ignore_index=False)', params:['n — number of rows to draw','frac — fraction of rows to draw (alternative to n)','replace — sample with replacement','weights — column name or array of sampling weights','random_state — seed / Generator for reproducibility','axis — 0 for rows, 1 for columns','ignore_index — reset index in the result (0..n-1)'], returns:'DataFrame / Series', example:'df.sample(n=2, random_state=42)', output:'   name  age\n2   Kai   28\n0   Sam   25', use:'Quick random spot-checks, or building a train/holdout split for a rough baseline.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sample.html', keywords:['random','shuffle']},
+  {id:'info', section:'info', qualname:'DataFrame.info()', kind:'method', summary:'Print a concise summary: dtypes, non-null counts, and memory usage.', syntax:'df.info(verbose=None, buf=None, max_cols=None, memory_usage=None, show_counts=None)', params:['verbose — print full column list even for wide frames','buf — where to send output (default sys.stdout)','memory_usage — show memory footprint ("deep" for exact string sizing)','show_counts — display non-null counts per column'], returns:'None (prints to stdout)', example:'df.info()', output:'<class \'pandas.DataFrame\'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 2 columns):\n # Column  Non-Null Count  Dtype\n 0 name    3 non-null      str\n 1 age     3 non-null      int64', use:'First command run on any new dataset to check dtypes and nulls at a glance.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.info.html', keywords:['summary','dtypes','nulls']},
+  {id:'describe', section:'info', qualname:'DataFrame.describe()', kind:'method', summary:'Generate descriptive statistics (count, mean, std, quartiles for numeric data).', syntax:'df.describe(percentiles=None, include=None, exclude=None)', params:['percentiles — list of percentiles to include, default [.25,.5,.75]','include — dtypes to include, e.g. "all" or [object]','exclude — dtypes to exclude'], returns:'DataFrame (summary statistics)', example:'df["age"].describe()', output:'count     3.0\nmean     28.0\nstd       3.0\nmin      25.0\n50%      28.0\nmax      31.0\ndtype: float64', use:'Fast statistical profile of numeric columns during EDA.', note:'Non-numeric columns are skipped unless include="all" or a specific dtype is passed.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html', keywords:['stats','summary statistics','eda']},
+  {id:'shape', section:'info', qualname:'DataFrame.shape', kind:'attribute', summary:'Tuple of (n_rows, n_columns).', syntax:'df.shape', params:[], returns:'tuple[int, int]', example:'df.shape', output:'(3, 2)', use:'Quickly checking dataset size, or asserting shape after a filter/merge.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.shape.html', keywords:['dimensions','rows columns']},
+  {id:'size', section:'info', qualname:'DataFrame.size', kind:'attribute', summary:'Number of elements (rows × columns).', syntax:'df.size', params:[], returns:'int', example:'df.size', output:'6', use:'Total cell count, e.g. to estimate memory or completeness ratio with isna().sum().', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.size.html', keywords:['count','elements']},
+  {id:'columns', section:'info', qualname:'DataFrame.columns', kind:'attribute', summary:'The column labels of the DataFrame.', syntax:'df.columns', params:[], returns:'Index', example:'df.columns = df.columns.str.lower()\nlist(df.columns)', output:"['name', 'age']", use:'Reading or reassigning column labels in bulk.', note:'Assigning a new list must match the current number of columns exactly.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.columns.html', keywords:['column names','labels']},
+  {id:'index', section:'info', qualname:'DataFrame.index', kind:'attribute', summary:'The row labels (Index object) of the DataFrame.', syntax:'df.index', params:[], returns:'Index', example:'df.index', output:'RangeIndex(start=0, stop=3, step=1)', use:'Inspecting or replacing row labels, e.g. after set_index() or a filter.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.index.html', keywords:['row labels','rangeindex']},
+  {id:'dtypes', section:'info', qualname:'DataFrame.dtypes', kind:'attribute', summary:'The dtype of each column.', syntax:'df.dtypes', params:[], returns:'Series (index=column names, values=dtypes)', example:'df.dtypes', output:'name    str\nage    int64\ndtype: object', use:'Confirming types before merges, math ops, or exporting to a strict schema.', note:'In pandas 3.0, text columns show as the dedicated "str" dtype rather than "object".', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dtypes.html', keywords:['types','schema']},
+  {id:'axes', section:'info', qualname:'DataFrame.axes', kind:'attribute', summary:'Return a list of the row axis (index) and column axis labels.', syntax:'df.axes', params:[], returns:'list[Index, Index] — [row_index, column_index]', example:'df.axes', output:'[RangeIndex(start=0, stop=3, step=1),\n Index([\'name\', \'age\'])]', use:'Programmatically iterating over both axes at once.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.axes.html', keywords:['index columns list']},
+  {id:'memory-usage', section:'info', qualname:'DataFrame.memory_usage()', kind:'method', summary:'Return the memory usage of each column in bytes.', syntax:'df.memory_usage(index=True, deep=False)', params:['index — include the index\'s memory usage in the result','deep — introspect object/str columns for true memory usage'], returns:'Series (bytes per column)', example:'df.memory_usage(deep=True)', output:'Index    132\nname     174\nage       24\ndtype: int64', use:'Diagnosing memory-heavy columns before optimizing dtypes (e.g. to category).', note:'Without deep=True, object/string columns report a shallow pointer-only estimate.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.memory_usage.html', keywords:['memory optimization']},
+  {id:'select-dtypes', section:'info', qualname:'DataFrame.select_dtypes()', kind:'method', summary:'Return a subset of columns matching the specified dtype(s).', syntax:'df.select_dtypes(include=None, exclude=None)', params:['include — scalar or list-like of dtypes to include, e.g. "number", "object"','exclude — scalar or list-like of dtypes to exclude'], returns:'DataFrame (filtered columns)', example:'df.select_dtypes(include="number")', output:'   age\n0   25\n1   31\n2   28', use:'Splitting numeric vs. categorical/text columns for separate preprocessing.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html', keywords:['numeric columns','object columns']},
+  {id:'bracket', section:'selecting', qualname:'DataFrame[]', kind:'accessor', summary:'Basic indexing: select a column, list of columns, or a boolean/slice mask.', syntax:'df["col"]           # single column -> Series\ndf[["c1","c2"]]      # multiple columns -> DataFrame\ndf[mask]             # boolean Series -> filtered rows\ndf[1:3]              # slice -> rows by position', params:['key — a column label, list of labels, boolean array, or slice'], returns:'Series or DataFrame depending on key', example:'df["age"]', output:'0    25\n1    31\n2    28\nName: age, dtype: int64', use:'The everyday shorthand for column selection and quick row filtering.', note:'Row-slicing with [] is positional; label-based row slices should use .loc[] to avoid ambiguity.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#indexing-iteration', keywords:['indexing','bracket notation','getitem']},
+  {id:'loc', section:'selecting', qualname:'DataFrame.loc[]', kind:'accessor', summary:'Label-based indexer for rows and columns (inclusive slicing).', syntax:'df.loc[row_labels, col_labels]', params:['row_labels — a label, list of labels, boolean array, or label slice','col_labels — same, applied to columns (optional)'], returns:'scalar, Series, or DataFrame', example:'df.loc[df["age"] > 26, ["name","age"]]', output:'   name  age\n1   Ana   31\n2   Kai   28', use:'The recommended way to select and assign by label — including boolean masks.', note:'.loc slices are inclusive of the end label, unlike Python/NumPy slicing.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html', keywords:['label indexing','boolean mask']},
+  {id:'iloc', section:'selecting', qualname:'DataFrame.iloc[]', kind:'accessor', summary:'Purely integer-position based indexer for rows and columns.', syntax:'df.iloc[row_pos, col_pos]', params:['row_pos — integer, list of integers, or slice by position','col_pos — same, applied to columns (optional)'], returns:'scalar, Series, or DataFrame', example:'df.iloc[0:2, 0]', output:'0    Sam\n1    Ana\nName: name, dtype: str', use:'Selecting by numeric position when labels are unknown or irrelevant.', note:'Slices are exclusive of the end position, matching standard Python slicing.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.iloc.html', keywords:['positional indexing']},
+  {id:'at', section:'selecting', qualname:'DataFrame.at[]', kind:'accessor', summary:'Fast scalar access/assignment by row and column label.', syntax:'df.at[row_label, col_label]', params:['row_label — a single row label','col_label — a single column label'], returns:'scalar (value at that label pair)', example:'df.at[0, "age"] = 26', output:'df.at[0, "age"]  ->  26', use:'The fastest way to get or set a single value by label — faster than .loc for scalars.', note:'Both label arguments are required; unlike .loc it cannot take slices or lists.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.at.html', keywords:['scalar access','fast label lookup']},
+  {id:'iat', section:'selecting', qualname:'DataFrame.iat[]', kind:'accessor', summary:'Fast scalar access/assignment by integer row and column position.', syntax:'df.iat[row_pos, col_pos]', params:['row_pos — integer row position','col_pos — integer column position'], returns:'scalar', example:'df.iat[0, 1]', output:'26', use:'Fastest scalar read/write when you already have integer positions.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.iat.html', keywords:['scalar access','fast positional lookup']},
+  {id:'bool-index', section:'selecting', qualname:'Boolean Indexing', kind:'accessor', summary:'Filter rows using one or more boolean conditions combined with &, |, and ~.', syntax:'df[(cond1) & (cond2)]\ndf[(cond1) | (cond2)]\ndf[~cond1]', params:['cond — a boolean Series of the same length as df, typically built from comparisons'], returns:'DataFrame filtered to True rows', example:'df[(df["age"] > 25) & (df["name"] != "Kai")]', output:'   name  age\n1   Ana   31', use:'Multi-condition filtering — the pandas equivalent of a SQL WHERE clause.', note:'Use & / | / ~ (not and/or/not) and wrap each condition in parentheses due to operator precedence.', docs:'https://pandas.pydata.org/docs/user_guide/indexing.html#boolean-indexing', keywords:['multiple conditions','filtering','where clause']},
+  {id:'query', section:'selecting', qualname:'DataFrame.query()', kind:'method', summary:'Filter rows using a string expression instead of boolean masks.', syntax:'df.query(expr, inplace=False)', params:['expr — a string expression, e.g. \'age > 25 and name != "Kai"\'','inplace — modify the calling DataFrame instead of returning a copy'], returns:'DataFrame', example:'df.query("age > 25 and name != \'Kai\'")', output:'   name  age\n1   Ana   31', use:'Readable, SQL-like filtering — especially handy for long condition chains.', note:'Reference an external variable with @, e.g. df.query("age > @min_age").', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html', keywords:['sql-like filter','expression']},
+  {id:'isin', section:'selecting', qualname:'Series.isin()', kind:'method', summary:'Check whether each element is contained in a given collection of values.', syntax:'s.isin(values)', params:['values — a set, list, or dict-like of values to test membership against'], returns:'Series of bool', example:'df[df["name"].isin(["Sam","Kai"])]', output:'   name  age\n0   Sam   25\n2   Kai   28', use:'Filtering rows against a known allow-list/deny-list of category values.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.isin.html', keywords:['membership','allowlist','in operator']},
+  {id:'between', section:'selecting', qualname:'Series.between()', kind:'method', summary:'Boolean mask for values that fall within a left/right bound.', syntax:'s.between(left, right, inclusive="both")', params:['left — lower bound','right — upper bound','inclusive — "both", "neither", "left", or "right"'], returns:'Series of bool', example:'df[df["age"].between(25, 28)]', output:'   name  age\n0   Sam   25\n2   Kai   28', use:'A concise alternative to (s >= left) & (s <= right) for range filters.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.between.html', keywords:['range filter']},
+  {id:'assign-col', section:'addremove', qualname:'Assigning Columns', kind:'accessor', summary:'Create or overwrite a column with []-assignment.', syntax:'df["new_col"] = value_or_series\ndf["ratio"] = df["a"] / df["b"]', params:['key — the column label to create or overwrite','value — a scalar (broadcast), array-like of matching length, or expression'], returns:'None (mutates df in place)', example:'df["is_adult"] = df["age"] >= 18', output:'   name  age  is_adult\n0   Sam   25      True\n1   Ana   31      True', use:'The everyday way to add a computed or constant column.', note:'', docs:'https://pandas.pydata.org/docs/user_guide/indexing.html#setting-with-enlargement', keywords:['add column','new column']},
+  {id:'insert', section:'addremove', qualname:'DataFrame.insert()', kind:'method', summary:'Insert a column into the DataFrame at a specific integer position.', syntax:'df.insert(loc, column, value, allow_duplicates=False)', params:['loc — integer position to insert at (0 = first column)','column — the new column\'s label','value — scalar or array-like of values','allow_duplicates — allow a column with a duplicate label'], returns:'None (mutates df in place)', example:'df.insert(0, "id", range(1, len(df)+1))', output:'   id  name  age\n0   1   Sam   25\n1   2   Ana   31', use:'Adding a column at a specific position instead of always at the end.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.insert.html', keywords:['add column at position']},
+  {id:'drop', section:'addremove', qualname:'DataFrame.drop()', kind:'method', summary:'Remove rows or columns by label.', syntax:'df.drop(labels=None, axis=0, index=None, columns=None, inplace=False, errors="raise")', params:['labels — label(s) to drop','axis — 0 for rows (default), 1 for columns','index — alternative to labels + axis=0','columns — alternative to labels + axis=1','inplace — modify df in place instead of returning a copy','errors — "raise" (default) or "ignore" for missing labels'], returns:'DataFrame or None (if inplace=True)', example:'df.drop(columns=["age"])', output:'   name\n0   Sam\n1   Ana', use:'Removing unnecessary columns or rows before analysis or export.', note:'Returns a new DataFrame unless inplace=True; raises KeyError on a missing label unless errors="ignore".', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop.html', keywords:['remove column','remove row','delete']},
+  {id:'pop', section:'addremove', qualname:'DataFrame.pop()', kind:'method', summary:'Remove a column and return it as a Series, in one step.', syntax:'df.pop(item)', params:['item — the column label to remove and return'], returns:'Series (the removed column)', example:'ages = df.pop("age")', output:'ages -> 0    25\n        1    31\n        Name: age, dtype: int64\ndf now has no "age" column', use:'Pulling a column out of a DataFrame while mutating it in a single call.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pop.html', keywords:['extract column']},
+  {id:'rename', section:'addremove', qualname:'DataFrame.rename()', kind:'method', summary:'Relabel row index and/or column labels.', syntax:'df.rename(mapper=None, index=None, columns=None, axis=None, inplace=False, errors="ignore")', params:['columns — dict {old_label: new_label} or a function','index — same, applied to the row index','axis — which axis mapper applies to when using the mapper form','inplace — modify df in place','errors — "raise" if a label in the mapper is missing'], returns:'DataFrame or None (if inplace=True)', example:'df.rename(columns={"age": "years"})', output:'   name  years\n0   Sam     25\n1   Ana     31', use:'Cleaning up column names (casing, typos, standardization) without rebuilding the frame.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.rename.html', keywords:['rename columns','relabel']},
+  {id:'replace', section:'addremove', qualname:'DataFrame.replace()', kind:'method', summary:'Replace values matching a value, list, dict, or regex with other values.', syntax:'df.replace(to_replace=None, value=None, inplace=False, regex=False)', params:['to_replace — value, list, dict, or regex pattern to find','value — replacement value(s); omit when to_replace is a dict','inplace — modify df in place','regex — treat to_replace / value as regex patterns'], returns:'DataFrame or None (if inplace=True)', example:'df.replace({"Kai": "Kailash"})', output:'   name  age\n0    Sam   25\n1    Ana   31\n2 Kailash  28', use:'Value-level cleanup — recoding typos, placeholder values, or category labels.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.replace.html', keywords:['find and replace','recode']},
+  {id:'update', section:'addremove', qualname:'DataFrame.update()', kind:'method', summary:'Modify a DataFrame in place using non-NA values from another DataFrame/Series aligned by index.', syntax:'df.update(other, join="left", overwrite=True, filter_func=None)', params:['other — DataFrame or dict-like to align and pull values from','overwrite — if False, only fill existing NaNs','filter_func — a function selecting which elements to update'], returns:'None (always modifies df in place)', example:'df.update(pd.DataFrame({"age":[26]}, index=[0]))', output:'   name  age\n0    Sam   26\n1    Ana   31', use:'Patching a DataFrame with newer values without replacing rows wholesale.', note:'Unlike most pandas methods, update() always mutates in place and returns None.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html', keywords:['patch values','align update']},
+  {id:'assign', section:'addremove', qualname:'DataFrame.assign()', kind:'method', summary:'Return a new DataFrame with new or replaced columns, chainable without mutating the original.', syntax:'df.assign(**kwargs)', params:['kwargs — column_name=value_or_callable pairs; callables receive the DataFrame'], returns:'DataFrame (new copy)', example:'df.assign(age_plus_1=lambda d: d["age"] + 1)', output:'   name  age  age_plus_1\n0   Sam   25          26\n1   Ana   31          32', use:'Adding computed columns inside a method chain without breaking the chain.', note:'pandas 3.0 adds pd.col() as shorthand for the lambda-in-assign pattern.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html', keywords:['method chaining','functional column add']},
+  {id:'isna', section:'missing', qualname:'DataFrame.isna()', kind:'method', summary:'Detect missing values; returns a same-shape boolean mask.', syntax:'df.isna()', params:[], returns:'DataFrame / Series of bool', example:'df.isna().sum()', output:'name    0\nage     1\ndtype: int64', use:'Counting or locating NaN/None/NaT values per column, usually chained with .sum().', note:'isnull() is an exact alias of isna().', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.isna.html', keywords:['null check','nan detection','isnull']},
+  {id:'notna', section:'missing', qualname:'DataFrame.notna()', kind:'method', summary:'Detect non-missing values — the inverse of isna().', syntax:'df.notna()', params:[], returns:'DataFrame / Series of bool', example:'df[df["age"].notna()]', output:'   name  age\n0   Sam  25.0\n1   Ana  31.0', use:'Filtering to rows where a specific column is populated.', note:'notnull() is an exact alias of notna().', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.notna.html', keywords:['not null','notnull']},
+  {id:'dropna', section:'missing', qualname:'DataFrame.dropna()', kind:'method', summary:'Remove rows or columns containing missing values.', syntax:'df.dropna(axis=0, how="any", thresh=None, subset=None, inplace=False)', params:['axis — 0 to drop rows (default), 1 to drop columns','how — "any" (drop if any NA) or "all" (drop only if all NA)','thresh — require at least this many non-NA values to keep','subset — only consider these columns/rows for NA','inplace — modify df in place'], returns:'DataFrame or None (if inplace=True)', example:'df.dropna(subset=["age"])', output:'   name  age\n0   Sam  25.0\n1   Ana  31.0', use:'A quick first pass to remove incomplete records before modeling.', note:'Dropping rows is often too aggressive for wide datasets — consider fillna() or thresh= first.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dropna.html', keywords:['remove nulls','drop missing']},
+  {id:'fillna', section:'missing', qualname:'DataFrame.fillna()', kind:'method', summary:'Fill NA/NaN values using a specified value or method.', syntax:'df.fillna(value=None, method=None, axis=None, inplace=False, limit=None)', params:['value — scalar, dict, Series, or DataFrame to fill with','method — "ffill" or "bfill" (deprecated here in favor of .ffill()/.bfill())','limit — max number of consecutive NaNs to fill','inplace — modify df in place'], returns:'DataFrame or None (if inplace=True)', example:'df.fillna({"age": df["age"].mean()})', output:'   name   age\n0   Sam  25.00\n1   Ana  31.00\n2   Kai  28.00', use:'Imputing missing values with a constant, statistic, or per-column mapping.', note:'The method= keyword is deprecated in favor of the dedicated .ffill() / .bfill() methods.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html', keywords:['impute','fill nan']},
+  {id:'interpolate', section:'missing', qualname:'DataFrame.interpolate()', kind:'method', summary:'Fill NA values using an interpolation method (linear by default).', syntax:'df.interpolate(method="linear", axis=0, limit=None, inplace=False, limit_direction=None)', params:['method — "linear", "time", "polynomial", "spline", etc.','limit — maximum number of consecutive NaNs to fill','limit_direction — "forward", "backward", or "both"'], returns:'DataFrame or None (if inplace=True)', example:'df["value"].interpolate(method="linear")', output:'0    10.0\n1    15.0\n2    20.0\ndtype: float64', use:'Filling gaps in ordered/time-series data more realistically than a flat fill value.', note:'method="time" requires a DatetimeIndex.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html', keywords:['time series fill','gap fill']},
+  {id:'ffill', section:'missing', qualname:'DataFrame.ffill()', kind:'method', summary:'Forward-fill: propagate the last valid value forward.', syntax:'df.ffill(axis=None, inplace=False, limit=None)', params:['axis — 0 (down columns) or 1 (across rows)','limit — max consecutive NaNs to fill'], returns:'DataFrame or None (if inplace=True)', example:'df["status"].ffill()', output:'0    ok\n1    ok\n2    fail\ndtype: str', use:'Carrying the last known reading forward — common in sensor/time-series data.', note:'This replaces the deprecated fillna(method="ffill").', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.ffill.html', keywords:['forward fill','pad']},
+  {id:'bfill', section:'missing', qualname:'DataFrame.bfill()', kind:'method', summary:'Backward-fill: propagate the next valid value backward.', syntax:'df.bfill(axis=None, inplace=False, limit=None)', params:['axis — 0 (up columns) or 1 (across rows)','limit — max consecutive NaNs to fill'], returns:'DataFrame or None (if inplace=True)', example:'df["status"].bfill()', output:'0     ok\n1   fail\n2   fail\ndtype: str', use:'Filling leading NaNs with the next observed value.', note:'This replaces the deprecated fillna(method="bfill").', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.bfill.html', keywords:['backward fill']},
+  {id:'replace-na', section:'missing', qualname:'Series.replace() → NA', kind:'method', summary:'Use replace() to turn sentinel placeholders ("", "N/A", -1, ...) into proper NaN.', syntax:'df.replace(["", "N/A", "unknown"], np.nan)', params:['to_replace — the placeholder value(s) found in messy data','value — typically np.nan or pd.NA'], returns:'DataFrame / Series', example:'df["city"].replace(["", "N/A"], np.nan)', output:'0      NY\n1     NaN\n2      LA\nName: city, dtype: str', use:'Standardizing inconsistent missing-value placeholders before running isna()/dropna()/fillna().', note:'Prefer passing na_values= to read_csv() when the placeholders are known up front.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.replace.html', keywords:['sentinel values','placeholder to nan']},
+  {id:'drop-duplicates', section:'cleaning', qualname:'DataFrame.drop_duplicates()', kind:'method', summary:'Remove duplicate rows.', syntax:'df.drop_duplicates(subset=None, keep="first", inplace=False, ignore_index=False)', params:['subset — column(s) to consider for identifying duplicates (default: all columns)','keep — "first", "last", or False (drop all duplicates)','ignore_index — reset index to 0..n-1 in the result'], returns:'DataFrame or None (if inplace=True)', example:'df.drop_duplicates(subset=["name"], keep="first")', output:'   name  age\n0   Sam   25\n1   Ana   31\n2   Kai   28', use:'Removing repeated records after a merge or a messy import.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html', keywords:['deduplicate','distinct rows']},
+  {id:'duplicated', section:'cleaning', qualname:'DataFrame.duplicated()', kind:'method', summary:'Return a boolean Series flagging duplicate rows.', syntax:'df.duplicated(subset=None, keep="first")', params:['subset — column(s) to consider','keep — "first", "last", or False (flag all occurrences)'], returns:'Series of bool', example:'df.duplicated(subset=["name"]).sum()', output:'0', use:'Auditing how many duplicates exist before deciding how to drop them.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.duplicated.html', keywords:['find duplicates']},
+  {id:'astype', section:'cleaning', qualname:'DataFrame.astype()', kind:'method', summary:'Cast a pandas object to a specified dtype.', syntax:'df.astype(dtype, copy=None, errors="raise")', params:['dtype — a dtype, or a dict {column: dtype} for per-column casting','errors — "raise" or "ignore" if a cast fails'], returns:'DataFrame / Series (new object, cast)', example:'df.astype({"age": "int32"})', output:'age dtype -> int32', use:'Locking in dtypes for memory efficiency or downstream compatibility.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html', keywords:['type casting','convert type']},
+  {id:'convert-dtypes', section:'cleaning', qualname:'DataFrame.convert_dtypes()', kind:'method', summary:'Convert columns to the best possible dtypes using nullable dtypes (e.g. Int64, string).', syntax:'df.convert_dtypes(infer_objects=True, convert_string=True, convert_integer=True, convert_boolean=True, convert_floating=True)', params:['convert_string / convert_integer / convert_boolean / convert_floating — enable/disable per-type conversion'], returns:'DataFrame / Series with best-fit nullable dtypes', example:'df.convert_dtypes().dtypes', output:'name    string\nage      Int64\ndtype: object', use:'Upgrading legacy object/NumPy dtypes to pandas\' nullable dtypes that handle NA cleanly.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.convert_dtypes.html', keywords:['nullable dtypes','Int64','best dtype']},
+  {id:'map', section:'cleaning', qualname:'Series.map()', kind:'method', summary:'Map values of a Series element-wise using a function, dict, or another Series.', syntax:'s.map(arg, na_action=None)', params:['arg — a function, dict, or Series used for the lookup/transform','na_action — pass None (default) to apply to NaN, or "ignore" to skip NaN'], returns:'Series', example:'df["name"].map(str.upper)', output:'0    SAM\n1    ANA\n2    KAI\nName: name, dtype: str', use:'Element-wise transforms and value lookups (recoding) on a single column.', note:'For a whole DataFrame element-wise, use DataFrame.map() (DataFrame.applymap() was removed in pandas 3.0).', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.map.html', keywords:['lookup','recode','element-wise']},
+  {id:'apply', section:'cleaning', qualname:'DataFrame.apply()', kind:'method', summary:'Apply a function along an axis (per column or per row) of the DataFrame.', syntax:'df.apply(func, axis=0, raw=False, result_type=None, args=(), **kwargs)', params:['func — a function that accepts a Series (or ndarray if raw=True)','axis — 0 to apply down each column (default), 1 to apply across each row','raw — pass the underlying ndarray instead of a Series for speed'], returns:'Series or DataFrame', example:'df.apply(lambda row: row["age"] * 2, axis=1)', output:'0    50\n1    62\n2    56\ndtype: int64', use:'Row-wise or column-wise custom logic that isn\'t a built-in vectorized operation.', note:'apply() is convenient but slower than vectorized ops — prefer vectorization when possible (see §23 Performance).', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.apply.html', keywords:['row-wise','custom function']},
+  {id:'applymap-removed', section:'cleaning', qualname:'DataFrame.applymap()', kind:'method', summary:'Removed in pandas 3.0 — use DataFrame.map() for the same element-wise behavior.', syntax:'# pandas < 2.1\ndf.applymap(func)\n\n# pandas >= 2.1 (use this)\ndf.map(func)', params:['func — element-wise function to apply to every value in the frame'], returns:'DataFrame', example:'df.map(lambda x: x)  # element-wise, whole frame', output:'(same shape DataFrame with func applied to every cell)', use:'Migrating older codebases off applymap() ahead of/after a pandas 3.0 upgrade.', note:'DataFrame.applymap() was deprecated in 2.1 and fully removed in 3.0 — calling it now raises AttributeError.', docs:'https://pandas.pydata.org/docs/whatsnew/v3.0.0.html', keywords:['deprecated','removed api','migration']},
+  {id:'sort-values', section:'sorting', qualname:'DataFrame.sort_values()', kind:'method', summary:'Sort by the values of one or more columns.', syntax:'df.sort_values(by, axis=0, ascending=True, inplace=False, na_position="last", ignore_index=False)', params:['by — column label or list of labels to sort by','ascending — bool or list of bool (one per "by" column)','na_position — "first" or "last"','ignore_index — reset index to 0..n-1'], returns:'DataFrame or None (if inplace=True)', example:'df.sort_values("age", ascending=False)', output:'   name  age\n1   Ana   31\n2   Kai   28\n0   Sam   25', use:'Ordering rows for display, ranking, or before groupby-based cumulative logic.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html', keywords:['order by','sort']},
+  {id:'sort-index', section:'sorting', qualname:'DataFrame.sort_index()', kind:'method', summary:'Sort by the row (or column) index labels.', syntax:'df.sort_index(axis=0, level=None, ascending=True, inplace=False, na_position="last")', params:['axis — 0 to sort rows, 1 to sort columns','level — for a MultiIndex, which level(s) to sort by','ascending — sort direction'], returns:'DataFrame or None (if inplace=True)', example:'df.sort_index(ascending=False)', output:'   name  age\n2   Kai   28\n1   Ana   31\n0   Sam   25', use:'Restoring index order after a shuffle, groupby, or concat.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_index.html', keywords:['sort by index']},
+  {id:'nlargest', section:'sorting', qualname:'DataFrame.nlargest()', kind:'method', summary:'Return the first n rows ordered by the largest values of a column.', syntax:'df.nlargest(n, columns, keep="first")', params:['n — number of rows to return','columns — column label or list to order by','keep — how to handle ties: "first", "last", "all"'], returns:'DataFrame', example:'df.nlargest(2, "age")', output:'   name  age\n1   Ana   31\n2   Kai   28', use:'A fast top-N without a full sort_values() + head().', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.nlargest.html', keywords:['top n','top rows']},
+  {id:'nsmallest', section:'sorting', qualname:'DataFrame.nsmallest()', kind:'method', summary:'Return the first n rows ordered by the smallest values of a column.', syntax:'df.nsmallest(n, columns, keep="first")', params:['n — number of rows to return','columns — column label or list to order by','keep — how to handle ties'], returns:'DataFrame', example:'df.nsmallest(1, "age")', output:'   name  age\n0   Sam   25', use:'Bottom-N lookups, e.g. lowest scores or oldest timestamps.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.nsmallest.html', keywords:['bottom n']},
+  {id:'rank', section:'sorting', qualname:'DataFrame.rank()', kind:'method', summary:'Compute numerical rank (1 through n) along an axis.', syntax:'df.rank(axis=0, method="average", ascending=True, pct=False)', params:['method — how to rank ties: "average", "min", "max", "first", "dense"','ascending — rank in ascending (default) or descending order','pct — return ranks as a percentage (0–1) instead of a position'], returns:'DataFrame / Series of ranks', example:'df["age"].rank(method="min")', output:'0    1.0\n1    3.0\n2    2.0\nName: age, dtype: float64', use:'Leaderboards, percentile scoring, or feature engineering for ML.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.rank.html', keywords:['ranking','leaderboard']},
+  {id:'groupby', section:'grouping', qualname:'DataFrame.groupby()', kind:'method', summary:'Split the data into groups based on one or more keys, for split–apply–combine workflows.', syntax:'df.groupby(by=None, axis=0, as_index=True, sort=True, dropna=True)', params:['by — column label(s), a function, a dict, or an array to group by','as_index — return group keys as the index (False keeps them as columns)','sort — sort group keys','dropna — drop groups where the key is NA'], returns:'DataFrameGroupBy object (lazy — call an aggregator to materialize)', example:'df.groupby("dept")["salary"].mean()', output:'dept\nEng      95000.0\nSales    72000.0\nName: salary, dtype: float64', use:'The core of almost every aggregate report: totals/averages per category.', note:'groupby() itself returns a lazy GroupBy object — nothing is computed until you call agg/mean/sum/etc.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html', keywords:['split apply combine','group by category']},
+  {id:'agg', section:'grouping', qualname:'GroupBy.agg()', kind:'method', summary:'Aggregate using one or more operations, per column, over the grouped axis.', syntax:'grouped.agg(func=None, **kwargs)', params:['func — a function name (string), list of functions, or dict {column: func(s)}'], returns:'DataFrame / Series of aggregated results', example:'df.groupby("dept").agg(\n  avg_salary=("salary","mean"),\n  headcount=("salary","size")\n)', output:'       avg_salary  headcount\ndept\nEng       95000.0          3\nSales     72000.0          2', use:'Computing several named summary statistics per group in a single call.', note:'aggregate() is an alias for agg().', docs:'https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.agg.html', keywords:['named aggregation','multiple stats']},
+  {id:'transform', section:'grouping', qualname:'GroupBy.transform()', kind:'method', summary:'Apply a function per group and return a result broadcast back to the original shape.', syntax:'grouped.transform(func, *args, **kwargs)', params:['func — a function that returns a like-indexed result for each group'], returns:'Series / DataFrame with the same index/shape as the input', example:'df["salary_z"] = df.groupby("dept")["salary"]\\\n  .transform(lambda s: (s - s.mean()) / s.std())', output:'0    0.87\n1   -0.87\n2    1.00\n...', use:'Adding a per-group statistic (mean, z-score, rank) back onto every original row.', note:'Unlike agg(), transform() never changes the number of rows.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.transform.html', keywords:['broadcast group stat','z-score']},
+  {id:'gb-filter', section:'grouping', qualname:'GroupBy.filter()', kind:'method', summary:'Keep only the groups for which a function returns True.', syntax:'grouped.filter(func, dropna=True, *args, **kwargs)', params:['func — a function taking a group DataFrame and returning a bool'], returns:'DataFrame (subset of original rows, groups intact)', example:'df.groupby("dept").filter(lambda g: len(g) >= 3)', output:'   name  dept   salary\n0  Sam   Eng    90000\n1  Ana   Eng   100000\n2  Kai   Eng    95000', use:'Dropping entire groups that don\'t meet a size or aggregate threshold (e.g. "at least 3 orders").', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.filter.html', keywords:['drop small groups']},
+  {id:'pivot-table', section:'grouping', qualname:'pandas.pivot_table()', kind:'function', summary:'Create a spreadsheet-style pivot table as a DataFrame, with built-in aggregation.', syntax:'pd.pivot_table(data, values=None, index=None, columns=None, aggfunc="mean", fill_value=None, margins=False)', params:['values — column(s) to aggregate','index — column(s) to group into rows','columns — column(s) to group into columns','aggfunc — aggregation function or dict of them','margins — add row/column subtotals'], returns:'DataFrame', example:'pd.pivot_table(df, values="salary", index="dept",\n  columns="level", aggfunc="mean")', output:'level     Junior   Senior\ndept\nEng      82000.0  100000.0\nSales    65000.0   78000.0', use:'Cross-tabulated summaries — the pandas equivalent of an Excel pivot table.', note:'Unlike pivot(), pivot_table() aggregates duplicate index/column combinations instead of raising.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.pivot_table.html', keywords:['excel pivot','cross tab summary']},
+  {id:'crosstab', section:'grouping', qualname:'pandas.crosstab()', kind:'function', summary:'Compute a simple cross-tabulation (frequency table) of two or more factors.', syntax:'pd.crosstab(index, columns, values=None, aggfunc=None, normalize=False, margins=False)', params:['index — array(s) to group by on the rows','columns — array(s) to group by on the columns','normalize — "index", "columns", "all", or True to show proportions instead of counts'], returns:'DataFrame', example:'pd.crosstab(df["dept"], df["level"])', output:'level  Junior  Senior\ndept\nEng         1       2\nSales       1       1', use:'Quick frequency counts between two categorical columns, e.g. for a contingency table.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.crosstab.html', keywords:['contingency table','frequency table']},
+  {id:'value-counts', section:'grouping', qualname:'Series.value_counts()', kind:'method', summary:'Count unique values, sorted from most to least frequent.', syntax:'s.value_counts(normalize=False, sort=True, ascending=False, dropna=True)', params:['normalize — return relative frequencies instead of counts','sort — sort by frequency','dropna — exclude NaN from the count'], returns:'Series (index=unique values, values=counts)', example:'df["dept"].value_counts()', output:'dept\nEng      3\nSales    2\nName: count, dtype: int64', use:'The fastest way to see a categorical column\'s distribution.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.value_counts.html', keywords:['frequency count','distribution']},
+  {id:'concat', section:'combining', qualname:'pandas.concat()', kind:'function', summary:'Concatenate pandas objects along a particular axis (stack rows or columns).', syntax:'pd.concat(objs, axis=0, join="outer", ignore_index=False, keys=None)', params:['objs — a list/dict of Series or DataFrame objects','axis — 0 to stack rows (default), 1 to stack columns','join — "outer" (union of columns/index) or "inner" (intersection)','ignore_index — reset the resulting index to 0..n-1','keys — build a MultiIndex labeling each source object'], returns:'DataFrame / Series', example:'pd.concat([df1, df2], ignore_index=True)', output:'   name  age\n0   Sam   25\n1   Ana   31\n2   Kai   28\n3   Ray   40', use:'Stacking same-shaped chunks — e.g. combining monthly files into one DataFrame.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.concat.html', keywords:['stack','union rows','combine files']},
+  {id:'merge', section:'combining', qualname:'pandas.merge()', kind:'function', summary:'Merge DataFrame or Series objects with a database-style join.', syntax:'pd.merge(left, right, how="inner", on=None, left_on=None, right_on=None, suffixes=("_x","_y"))', params:['how — "left", "right", "outer", "inner", or "cross"','on — column(s) present in both frames to join on','left_on / right_on — join keys when column names differ','suffixes — suffixes to apply to overlapping non-key columns'], returns:'DataFrame', example:'pd.merge(orders, customers, on="customer_id", how="left")', output:'   order_id  customer_id     name\n0         1            1      Sam\n1         2            2      Ana', use:'Combining two tables on a shared key — the pandas equivalent of a SQL JOIN.', note:'A many-to-many merge on a duplicated key will explode row count — verify key uniqueness first.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.merge.html', keywords:['sql join','inner join','left join']},
+  {id:'df-join', section:'combining', qualname:'DataFrame.join()', kind:'method', summary:'Join columns of another DataFrame, primarily on the index.', syntax:'df.join(other, on=None, how="left", lsuffix="", rsuffix="")', params:['other — DataFrame or list of DataFrames to join','on — column in df to join on (default: join on index)','how — "left" (default), "right", "outer", "inner"'], returns:'DataFrame', example:'df.join(other_df, how="left")', output:'   name  age  score\n0   Sam   25     88\n1   Ana   31     92', use:'A shorthand for merge() when joining on the index rather than a column.', note:'For column-to-column joins, merge() is usually the more explicit choice.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.join.html', keywords:['index join']},
+  {id:'append-removed', section:'combining', qualname:'DataFrame.append()', kind:'method', summary:'Removed from pandas — use pd.concat() to add rows instead.', syntax:'# Removed (was deprecated in 1.4, removed in 2.0)\ndf.append(other)\n\n# Use instead\npd.concat([df, other], ignore_index=True)', params:['other — the rows previously passed to append()'], returns:'—', example:'pd.concat([df, pd.DataFrame([{"name":"Ray","age":40}])], ignore_index=True)', output:'   name  age\n0   Sam   25\n1   Ana   31\n2   Ray   40', use:'Migrating older code — any .append() call needs to become pd.concat().', note:'DataFrame.append() no longer exists as of pandas 2.0; calling it raises AttributeError.', docs:'https://pandas.pydata.org/docs/whatsnew/v2.0.0.html', keywords:['deprecated','removed api','add rows']},
+  {id:'merge-asof', section:'combining', qualname:'pandas.merge_asof()', kind:'function', summary:'A "nearest key" merge for ordered data — matches on the closest key rather than an exact one.', syntax:'pd.merge_asof(left, right, on=None, by=None, direction="backward", tolerance=None)', params:['on — the ordered column to match on (typically a time column)','by — column(s) to match exactly before the nearest-key match','direction — "backward" (default), "forward", or "nearest"','tolerance — max allowed distance between matched keys'], returns:'DataFrame', example:'pd.merge_asof(trades, quotes, on="time", by="ticker")', output:'(each trade matched to the most recent quote at/before its time)', use:'Aligning irregular time-stamped datasets, e.g. trades to the last known quote.', note:'Both inputs must be sorted by the "on" column.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.merge_asof.html', keywords:['time series join','nearest match','as-of join']},
+  {id:'merge-ordered', section:'combining', qualname:'pandas.merge_ordered()', kind:'function', summary:'Merge two ordered datasets, with optional forward-fill of missing values.', syntax:'pd.merge_ordered(left, right, on=None, fill_method=None, how="outer")', params:['on — column(s) to merge on','fill_method — None or "ffill" to fill gaps after merging','how — join type, default "outer"'], returns:'DataFrame', example:'pd.merge_ordered(df1, df2, on="date", fill_method="ffill")', output:'(rows merged by date, with gaps forward-filled)', use:'Combining ordered/time-series data where you want gaps filled in the same step as the merge.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.merge_ordered.html', keywords:['ordered merge','fill after merge']},
+  {id:'pivot', section:'reshaping', qualname:'DataFrame.pivot()', kind:'method', summary:'Reshape data (long to wide) using unique values from index/columns to form axes, without aggregation.', syntax:'df.pivot(index=None, columns=None, values=None)', params:['index — column to use as the new row labels','columns — column whose unique values become new columns','values — column(s) to fill the new grid'], returns:'DataFrame', example:'df.pivot(index="date", columns="ticker", values="price")', output:'ticker        AAPL   MSFT\ndate\n2026-01-01   210.1  410.2\n2026-01-02   211.4  408.9', use:'Reshaping long "tidy" data into a wide grid for display or plotting.', note:'Raises a ValueError on duplicate index/columns combinations — use pivot_table() (§09) if you need aggregation.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pivot.html', keywords:['long to wide','reshape']},
+  {id:'melt', section:'reshaping', qualname:'pandas.melt()', kind:'function', summary:'Unpivot a DataFrame from wide to long format.', syntax:'pd.melt(frame, id_vars=None, value_vars=None, var_name=None, value_name="value")', params:['id_vars — column(s) to keep fixed (identifier columns)','value_vars — column(s) to unpivot (default: all others)','var_name — name for the new "variable" column','value_name — name for the new "value" column'], returns:'DataFrame (long format)', example:'pd.melt(df, id_vars=["date"], value_vars=["AAPL","MSFT"], var_name="ticker", value_name="price")', output:'         date ticker  price\n0  2026-01-01   AAPL  210.1\n1  2026-01-01   MSFT  410.2', use:'Converting a wide grid into tidy long format for groupby/plotting.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.melt.html', keywords:['wide to long','unpivot','tidy data']},
+  {id:'stack', section:'reshaping', qualname:'DataFrame.stack()', kind:'method', summary:'Pivot the innermost column level to become the innermost row level (wide → long, MultiIndex-aware).', syntax:'df.stack(level=-1, dropna=True, future_stack=True)', params:['level — which column level to stack (for MultiIndex columns)','dropna — drop rows that are entirely NA after stacking'], returns:'Series or DataFrame with a new (Multi)Index level', example:'df.stack()', output:'0  name     Sam\n   age       25\n1  name     Ana\n   age       31\ndtype: object', use:'Compressing columns into row levels — often paired with groupby on a MultiIndex.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.stack.html', keywords:['multiindex reshape']},
+  {id:'unstack', section:'reshaping', qualname:'DataFrame.unstack()', kind:'method', summary:'Pivot a level of the (row) index to become new columns — the inverse of stack().', syntax:'df.unstack(level=-1, fill_value=None)', params:['level — index level to unstack (int, label, or list)','fill_value — value to use for missing cells produced by unstacking'], returns:'DataFrame or Series', example:'df.groupby(["dept","level"])["salary"].mean().unstack()', output:'level     Junior   Senior\ndept\nEng      82000.0  100000.0\nSales    65000.0   78000.0', use:'Turning a grouped, multi-level result into a wide, spreadsheet-like table.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.unstack.html', keywords:['multiindex to wide']},
+  {id:'explode', section:'reshaping', qualname:'DataFrame.explode()', kind:'method', summary:'Transform each element of a list-like column into its own row.', syntax:'df.explode(column, ignore_index=False)', params:['column — column label(s) containing list-like values','ignore_index — reset the index to 0..n-1'], returns:'DataFrame (more rows, same columns)', example:'df.explode("tags")', output:'   name        tags\n0   Sam        python\n0   Sam        sql\n1   Ana         java', use:'Flattening columns that hold lists (e.g. tags, line items) into one row per element.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.explode.html', keywords:['flatten list column']},
+  {id:'wide-to-long', section:'reshaping', qualname:'pandas.wide_to_long()', kind:'function', summary:'Unpivot a wide DataFrame that has similarly-prefixed value columns (e.g. "score1", "score2") into long format.', syntax:'pd.wide_to_long(df, stubnames, i, j, sep="", suffix="\\d+")', params:['stubnames — the common column-name prefix(es), e.g. "score"','i — column(s) that uniquely identify each subject/row','j — name for the new column holding the suffix (e.g. the "1"/"2")','sep — separator between stub and suffix, if any'], returns:'DataFrame (long format), indexed by i and j', example:'pd.wide_to_long(df, stubnames="score", i="id", j="attempt")', output:'             score\nid attempt\n1  1           88\n1  2           92', use:'A more structured alternative to melt() when columns follow a "stub + suffix" naming pattern.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.wide_to_long.html', keywords:['repeated measures','stub columns']},
+  {id:'str-accessor', section:'strings', qualname:'Series.str', kind:'accessor', summary:'Vectorized string functions for Series/Index of string dtype, mirroring Python str methods.', syntax:'s.str.<method>(...)', params:['Access via .str, then call the underlying method — e.g. s.str.upper()'], returns:'The accessor object (chain a method to get a Series/DataFrame)', example:'df["name"].str.len()', output:'0    3\n1    3\n2    3\nName: name, dtype: int64', use:'The entry point for every text operation below — always start with .str.', note:'NaN values are propagated (kept as NaN) through most .str methods automatically.', docs:'https://pandas.pydata.org/docs/user_guide/text.html', keywords:['string accessor','vectorized string ops']},
+  {id:'str-contains', section:'strings', qualname:'Series.str.contains()', kind:'method', summary:'Test if a pattern or regex is contained within each string.', syntax:'s.str.contains(pat, case=True, na=None, regex=True)', params:['pat — character sequence or regex pattern','case — case-sensitive matching (default True)','na — value to use for missing values','regex — treat pat as a regex (default True)'], returns:'Series of bool', example:'df["name"].str.contains("an", case=False)', output:'0    False\n1     True\n2    False\nName: name, dtype: bool', use:'Filtering rows by substring/pattern match.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.str.contains.html', keywords:['substring search','regex match']},
+  {id:'str-starts-ends', section:'strings', qualname:'.str.startswith() / .str.endswith()', kind:'method', summary:'Test whether each string starts or ends with a given pattern.', syntax:'s.str.startswith(pat, na=None)\ns.str.endswith(pat, na=None)', params:['pat — string or tuple of strings to test against','na — value to use for missing values'], returns:'Series of bool', example:'df["name"].str.startswith("A")', output:'0    False\n1     True\n2    False\nName: name, dtype: bool', use:'Prefix/suffix filters, e.g. matching file extensions or ID prefixes.', note:'Unlike .contains(), these are literal matches — not regex.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.str.startswith.html', keywords:['prefix','suffix']},
+  {id:'str-replace', section:'strings', qualname:'Series.str.replace()', kind:'method', summary:'Replace occurrences of a pattern/regex within each string.', syntax:'s.str.replace(pat, repl, n=-1, case=None, regex=False)', params:['pat — string or regex pattern to search for','repl — replacement string (or a callable when regex=True)','n — max number of replacements (-1 = all)','regex — whether pat is a regex (default False since pandas 2.0)'], returns:'Series', example:'df["name"].str.replace("a", "@", case=False)', output:'0     S@m\n1     An@\n2     K@i\nName: name, dtype: str', use:'Cleaning text — removing characters, normalizing formats, masking values.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.str.replace.html', keywords:['text cleaning','regex replace']},
+  {id:'str-split', section:'strings', qualname:'Series.str.split()', kind:'method', summary:'Split each string on a delimiter, optionally expanding into separate columns.', syntax:'s.str.split(pat=None, n=-1, expand=False, regex=None)', params:['pat — delimiter string or regex (default: whitespace)','n — max number of splits (-1 = all)','expand — return a DataFrame with one column per split part'], returns:'Series of lists, or a DataFrame if expand=True', example:'df["name"].str.split(" ", expand=True)', output:'      0\n0   Sam\n1   Ana\n2   Kai', use:'Breaking a "first last" style column into separate first/last name columns.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.str.split.html', keywords:['tokenize','split column']},
+  {id:'str-extract', section:'strings', qualname:'Series.str.extract()', kind:'method', summary:'Extract capture groups from a regex pattern into new columns.', syntax:'s.str.extract(pat, flags=0, expand=True)', params:['pat — a regex with at least one capture group','expand — return a DataFrame even for a single group'], returns:'DataFrame (one column per capture group)', example:'df["email"].str.extract(r"^(\\w+)@(\\w+)")', output:'      0        1\n0    sam   gmail\n1    ana   gmail', use:'Pulling structured pieces (area code, domain, id) out of a free-text column.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.str.extract.html', keywords:['regex capture groups','parse text']},
+  {id:'to-datetime', section:'datetime', qualname:'pandas.to_datetime()', kind:'function', summary:'Convert argument(s) — strings, ints, lists, a whole column — to datetime.', syntax:'pd.to_datetime(arg, format=None, errors="raise", utc=False)', params:['arg — the value(s) to convert (str, list, Series, dict, etc.)','format — an explicit strptime format string for speed/certainty','errors — "raise" (default), "coerce" (invalid -> NaT), or "ignore"','utc — localize/convert to UTC'], returns:'Timestamp (scalar) or DatetimeIndex/Series (array-like)', example:'df["date"] = pd.to_datetime(df["date"], errors="coerce")', output:'0   2026-01-01\n1   2026-01-02\nName: date, dtype: datetime64[us]', use:'The mandatory first step before doing any date math on a text date column.', note:'Passing format= explicitly is much faster than letting pandas infer it on large columns.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html', keywords:['parse dates','string to date']},
+  {id:'date-range', section:'datetime', qualname:'pandas.date_range()', kind:'function', summary:'Generate a fixed-frequency DatetimeIndex.', syntax:'pd.date_range(start=None, end=None, periods=None, freq="D")', params:['start / end — bounds of the range (specify any 2 of start/end/periods)','periods — number of periods to generate','freq — offset alias, e.g. "D" day, "M" month-end, "H" hour, "min" minute'], returns:'DatetimeIndex', example:'pd.date_range("2026-01-01", periods=3, freq="D")', output:"DatetimeIndex(['2026-01-01','2026-01-02','2026-01-03'], dtype='datetime64[ns]', freq='D')", use:'Building a complete calendar to reindex against, e.g. to expose missing days.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.date_range.html', keywords:['calendar','date sequence']},
+  {id:'timestamp', section:'datetime', qualname:'pandas.Timestamp', kind:'function', summary:'A single pandas datetime value — the scalar type behind a datetime64 column.', syntax:'pd.Timestamp(ts_input, tz=None)', params:['ts_input — a string, datetime.datetime, or Unix epoch value','tz — timezone to localize to'], returns:'Timestamp', example:'pd.Timestamp("2026-08-04")', output:"Timestamp('2026-08-04 00:00:00')", use:'Comparing against or constructing individual datetime values.', note:'Since pandas 3.0, the default resolution is microseconds (not nanoseconds), avoiding out-of-bounds errors for very old/future dates.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.html', keywords:['scalar datetime']},
+  {id:'timedelta', section:'datetime', qualname:'pandas.Timedelta', kind:'function', summary:'A duration — the difference between two dates or times.', syntax:'pd.Timedelta(value, unit=None)', params:['value — a string ("2 days"), number, or datetime.timedelta','unit — unit for a numeric value, e.g. "D", "h", "min"'], returns:'Timedelta', example:'pd.Timestamp("2026-01-03") - pd.Timestamp("2026-01-01")', output:"Timedelta('2 days 00:00:00')", use:'Computing durations, adding/subtracting offsets from a date column.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Timedelta.html', keywords:['duration','date difference']},
+  {id:'dt-accessor', section:'datetime', qualname:'Series.dt', kind:'accessor', summary:'Accessor for datetime-like properties of a Series (year, month, day, weekday, ...).', syntax:'s.dt.<property_or_method>', params:['Common properties: year, month, day, hour, dayofweek, is_month_end, quarter'], returns:'Series', example:'df["date"].dt.day_name()', output:'0     Thursday\n1       Friday\nName: date, dtype: str', use:'Extracting calendar parts for grouping, filtering, or feature engineering.', note:'Requires the Series to already be a datetime64 dtype (run to_datetime() first).', docs:'https://pandas.pydata.org/docs/user_guide/timeseries.html#time-date-components', keywords:['date parts','year month day']},
+  {id:'strftime', section:'datetime', qualname:'Series.dt.strftime()', kind:'method', summary:'Format each datetime as a string using a strftime-style format.', syntax:'s.dt.strftime(date_format)', params:['date_format — a strftime format string, e.g. "%Y-%m-%d"'], returns:'Series of str', example:'df["date"].dt.strftime("%d %b %Y")', output:'0    01 Jan 2026\n1    02 Jan 2026\nName: date, dtype: str', use:'Producing human-readable date strings for display or export.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.dt.strftime.html', keywords:['format date','date to string']},
+  {id:'normalize', section:'datetime', qualname:'Series.dt.normalize()', kind:'method', summary:'Set the time component of every timestamp to midnight, keeping the date.', syntax:'s.dt.normalize()', params:[], returns:'Series (datetime64, time reset to 00:00:00)', example:'df["ts"].dt.normalize()', output:'0   2026-01-01\n1   2026-01-02\ndtype: datetime64[us]', use:'Stripping time-of-day so dates can be compared or grouped by calendar day.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.dt.normalize.html', keywords:['strip time','date only']},
+  {id:'dt-floor-ceil', section:'datetime', qualname:'.dt.floor() / .dt.ceil() / .dt.round()', kind:'method', summary:'Snap each timestamp down, up, or to the nearest unit of a given frequency.', syntax:'s.dt.floor(freq)\ns.dt.ceil(freq)\ns.dt.round(freq)', params:['freq — a frequency string, e.g. "H" hour, "15min", "D" day'], returns:'Series (datetime64)', example:'df["ts"].dt.floor("H")', output:'0   2026-01-01 09:00:00\n1   2026-01-01 10:00:00\ndtype: datetime64[us]', use:'Bucketing high-frequency timestamps into coarser time windows for aggregation.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.dt.floor.html', keywords:['time bucketing','round timestamp']},
+  {id:'astype-category', section:'categories', qualname:'Series.astype("category")', kind:'method', summary:'Convert a column to the categorical dtype for memory savings and faster groupby.', syntax:'s.astype("category")', params:['dtype — the literal string "category", or a pandas.CategoricalDtype for explicit ordering'], returns:'Series (dtype: category)', example:'df["dept"] = df["dept"].astype("category")', output:'0      Eng\n1    Sales\nName: dept, dtype: category\nCategories (2, object): [\'Eng\', \'Sales\']', use:'Compressing low-cardinality text columns (status, department, grade) for memory and speed.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Categorical.html', keywords:['memory optimization','low cardinality']},
+  {id:'cat-categories', section:'categories', qualname:'Series.cat.categories', kind:'attribute', summary:'The distinct category values defined for a categorical Series.', syntax:'s.cat.categories', params:[], returns:'Index', example:'df["dept"].cat.categories', output:"Index(['Eng', 'Sales'], dtype='object')", use:'Inspecting or reordering the allowed category set.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.cat.categories.html', keywords:['category labels']},
+  {id:'cat-codes', section:'categories', qualname:'Series.cat.codes', kind:'attribute', summary:'The integer codes backing each categorical value (-1 for NaN).', syntax:'s.cat.codes', params:[], returns:'Series of int8/int16/... (the underlying integer codes)', example:'df["dept"].cat.codes', output:'0    0\n1    1\nName: dept, dtype: int8', use:'Feeding a categorical column into an algorithm that expects integer-encoded labels.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.cat.codes.html', keywords:['label encoding','integer codes']},
+  {id:'cat-rename', section:'categories', qualname:'Series.cat.rename_categories()', kind:'method', summary:'Rename the categories of a categorical Series.', syntax:'s.cat.rename_categories(new_categories)', params:['new_categories — a list (same length/order) or a dict {old: new}'], returns:'Series (dtype: category, with new labels)', example:'df["dept"].cat.rename_categories({"Eng":"Engineering"})', output:'0    Engineering\n1          Sales\nName: dept, dtype: category', use:'Relabeling category values without touching the underlying integer codes.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.Series.cat.rename_categories.html', keywords:['relabel categories']},
+  {id:'read-csv', section:'fileio', qualname:'pandas.read_csv()', kind:'function', summary:'Read a comma-separated values (CSV) file into a DataFrame.', syntax:'pd.read_csv(filepath_or_buffer, sep=",", header="infer", names=None, index_col=None, dtype=None, na_values=None, parse_dates=False, usecols=None)', params:['filepath_or_buffer — path, URL, or file-like object','sep — field delimiter (default ",")','header — row number to use as column names ("infer" by default)','usecols — read only a subset of columns (faster, less memory)','dtype — force dtypes per column','parse_dates — column(s) to parse as dates','na_values — extra strings to recognize as NaN'], returns:'DataFrame', example:'pd.read_csv("data.csv", usecols=["name","age"], parse_dates=["signup_date"])', output:'(DataFrame with the requested columns, dates parsed)', use:'The single most common way data enters a pandas workflow.', note:'For large files, pair usecols= and dtype= with chunksize= to control memory (see §23 Performance).', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html', keywords:['import csv','load csv']},
+  {id:'read-excel', section:'fileio', qualname:'pandas.read_excel()', kind:'function', summary:'Read an Excel file (.xlsx, .xls) into a DataFrame.', syntax:'pd.read_excel(io, sheet_name=0, header=0, usecols=None, dtype=None)', params:['io — path, URL, or ExcelFile object','sheet_name — sheet name, index, or list (0 = first sheet)','usecols — column subset, e.g. "A:C" or a list of names'], returns:'DataFrame, or dict of DataFrames if sheet_name is a list/None', example:'pd.read_excel("report.xlsx", sheet_name="Q1")', output:'(DataFrame with the contents of the "Q1" sheet)', use:'Importing spreadsheet data shared by non-technical stakeholders.', note:'Requires an engine such as openpyxl installed for .xlsx files.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html', keywords:['import excel','xlsx']},
+  {id:'read-json', section:'fileio', qualname:'pandas.read_json()', kind:'function', summary:'Convert a JSON string, file, or URL into a DataFrame.', syntax:'pd.read_json(path_or_buf, orient=None, lines=False)', params:['orient — expected JSON layout: "records", "columns", "index", "split", "table"','lines — read newline-delimited JSON (one record per line)'], returns:'DataFrame', example:'pd.read_json("data.json", orient="records")', output:'(DataFrame built from the JSON records)', use:'Loading API responses or JSON exports directly into a DataFrame.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_json.html', keywords:['import json','api response']},
+  {id:'read-sql', section:'fileio', qualname:'pandas.read_sql()', kind:'function', summary:'Read a SQL query or database table into a DataFrame.', syntax:'pd.read_sql(sql, con, index_col=None, params=None, parse_dates=None)', params:['sql — a SQL query string or table name','con — a SQLAlchemy connectable / DB connection','params — parameters to bind into the query'], returns:'DataFrame', example:'pd.read_sql("SELECT * FROM orders WHERE amount > %s", conn, params=[100])', output:'(DataFrame with the query results)', use:'Pulling data straight from a relational database.', note:'read_sql_query() and read_sql_table() are the more explicit, specialized variants.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_sql.html', keywords:['database','sql query']},
+  {id:'read-parquet', section:'fileio', qualname:'pandas.read_parquet()', kind:'function', summary:'Read a Parquet columnar file into a DataFrame.', syntax:'pd.read_parquet(path, engine="auto", columns=None)', params:['engine — "auto", "pyarrow", or "fastparquet"','columns — read only a subset of columns'], returns:'DataFrame', example:'pd.read_parquet("events.parquet", columns=["user_id","ts"])', output:'(DataFrame with just the requested columns)', use:'Fast, compressed, dtype-preserving I/O for large analytical datasets.', note:'Requires pyarrow or fastparquet installed.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html', keywords:['columnar storage','big data format']},
+  {id:'read-pickle', section:'fileio', qualname:'pandas.read_pickle()', kind:'function', summary:'Load a pickled pandas object (DataFrame/Series) from a file.', syntax:'pd.read_pickle(filepath_or_buffer, compression="infer")', params:['filepath_or_buffer — path or file-like object','compression — compression scheme, or "infer" from the extension'], returns:'DataFrame / Series (whatever was pickled)', example:'pd.read_pickle("cache.pkl")', output:'(the exact object that was pickled, dtypes included)', use:'Fast round-tripping of intermediate results within a Python-only pipeline.', note:'Only unpickle files you trust — pickle can execute arbitrary code.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.read_pickle.html', keywords:['pickle cache']},
+  {id:'to-csv', section:'fileio', qualname:'DataFrame.to_csv()', kind:'method', summary:'Write a DataFrame to a CSV file.', syntax:'df.to_csv(path_or_buf=None, sep=",", index=True, columns=None, header=True)', params:['path_or_buf — file path (omit to return a string)','index — whether to write row labels','columns — subset of columns to write'], returns:'str or None (None if written to a file)', example:'df.to_csv("out.csv", index=False)', output:'(writes out.csv to disk)', use:'Exporting cleaned data for sharing or downstream tools.', note:'index=False is almost always what you want unless the index itself is meaningful.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html', keywords:['export csv','save csv']},
+  {id:'to-excel', section:'fileio', qualname:'DataFrame.to_excel()', kind:'method', summary:'Write a DataFrame to an Excel sheet.', syntax:'df.to_excel(excel_writer, sheet_name="Sheet1", index=True)', params:['excel_writer — path or an ExcelWriter (for multiple sheets)','sheet_name — name of the sheet to write to','index — whether to write row labels'], returns:'None', example:'df.to_excel("report.xlsx", sheet_name="Summary", index=False)', output:'(writes report.xlsx to disk)', use:'Producing a stakeholder-friendly spreadsheet deliverable.', note:'Use pd.ExcelWriter(...) as a context manager to write multiple sheets to one file.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html', keywords:['export excel','save xlsx']},
+  {id:'to-json', section:'fileio', qualname:'DataFrame.to_json()', kind:'method', summary:'Convert a DataFrame to a JSON string or file.', syntax:'df.to_json(path_or_buf=None, orient=None, lines=False, date_format=None)', params:['orient — output layout: "records", "columns", "index", "split", "table"','lines — write newline-delimited JSON'], returns:'str or None', example:'df.to_json("out.json", orient="records")', output:'(writes out.json — a JSON array of row objects)', use:'Serving data to a web frontend or another JSON-based system.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html', keywords:['export json']},
+  {id:'to-sql', section:'fileio', qualname:'DataFrame.to_sql()', kind:'method', summary:'Write records stored in a DataFrame to a SQL database table.', syntax:'df.to_sql(name, con, if_exists="fail", index=True, chunksize=None)', params:['name — target table name','con — a SQLAlchemy connectable','if_exists — "fail", "replace", or "append"','chunksize — rows per batch insert'], returns:'int or None (rows affected)', example:'df.to_sql("customers", conn, if_exists="replace", index=False)', output:'(writes/updates the "customers" table)', use:'Loading a cleaned DataFrame back into a database.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html', keywords:['export to database']},
+  {id:'to-parquet', section:'fileio', qualname:'DataFrame.to_parquet()', kind:'method', summary:'Write a DataFrame to a Parquet file.', syntax:'df.to_parquet(path=None, engine="auto", compression="snappy", index=None)', params:['engine — "auto", "pyarrow", or "fastparquet"','compression — "snappy" (default), "gzip", "brotli", or None'], returns:'bytes or None', example:'df.to_parquet("events.parquet", compression="snappy")', output:'(writes events.parquet to disk)', use:'Efficient storage for large intermediate/analytical datasets that preserves dtypes.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html', keywords:['export parquet']},
+  {id:'to-pickle', section:'fileio', qualname:'DataFrame.to_pickle()', kind:'method', summary:'Pickle (serialize) a DataFrame to a file.', syntax:'df.to_pickle(path, compression="infer")', params:['path — destination file path','compression — compression scheme, or "infer" from the extension'], returns:'None', example:'df.to_pickle("cache.pkl")', output:'(writes cache.pkl to disk)', use:'Fastest way to checkpoint an in-progress DataFrame between script runs.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_pickle.html', keywords:['pickle cache checkpoint']},
+  {id:'rolling', section:'window', qualname:'DataFrame.rolling()', kind:'method', summary:'Provide a fixed-size sliding window for aggregation.', syntax:'df.rolling(window, min_periods=None, center=False, win_type=None)', params:['window — size of the moving window (int) or an offset string ("7D")','min_periods — minimum observations in window required to produce a value','center — set the label at the center of the window instead of the right edge'], returns:'Rolling object (call an aggregator to materialize)', example:'df["price"].rolling(window=3).mean()', output:'0      NaN\n1      NaN\n2    208.3\ndtype: float64', use:'Moving averages, rolling sums/std — smoothing noisy time series.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.rolling.html', keywords:['moving average','sliding window']},
+  {id:'expanding', section:'window', qualname:'DataFrame.expanding()', kind:'method', summary:'Provide an expanding (cumulative, growing) window for aggregation.', syntax:'df.expanding(min_periods=1)', params:['min_periods — minimum observations required before producing a value'], returns:'Expanding object', example:'df["sales"].expanding().sum()', output:'0    100\n1    250\n2    420\ndtype: int64', use:'Running totals / running averages that include every prior row.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.expanding.html', keywords:['running total','cumulative window']},
+  {id:'ewm', section:'window', qualname:'DataFrame.ewm()', kind:'method', summary:'Provide an exponentially weighted (EW) window, giving more weight to recent observations.', syntax:'df.ewm(com=None, span=None, halflife=None, alpha=None)', params:['span — decay in terms of span, e.g. span=5 ≈ a 5-period EMA','halflife — decay in terms of a half-life period','alpha — smoothing factor directly, 0 < alpha ≤ 1'], returns:'ExponentialMovingWindow object', example:'df["price"].ewm(span=5).mean()', output:'(exponentially weighted moving average of price)', use:'Smoother, more recency-weighted trend lines than a plain rolling mean — common in finance.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.ewm.html', keywords:['exponential moving average','ema']},
+  {id:'plot', section:'viz', qualname:'DataFrame.plot()', kind:'method', summary:'Quick plotting built on matplotlib — the .plot accessor covers most chart types.', syntax:'df.plot(x=None, y=None, kind="line", figsize=None, title=None)', params:['x / y — columns to use for the axes','kind — "line" (default), "bar", "barh", "hist", "box", "scatter", "pie", "area"','figsize — (width, height) in inches'], returns:'matplotlib Axes (or ndarray of Axes)', example:'import matplotlib.pyplot as plt\ndf.plot(x="date", y="price", kind="line")\nplt.show()', output:'(renders a line chart)', use:'Fast exploratory charts directly from a DataFrame, no separate plotting boilerplate.', note:'Requires matplotlib installed; plt.show() (or an inline backend) is needed to actually display the figure.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html', keywords:['quick chart','matplotlib']},
+  {id:'pipe', section:'utilities', qualname:'DataFrame.pipe()', kind:'method', summary:'Apply a chainable function that takes and returns a DataFrame — for readable method chains.', syntax:'df.pipe(func, *args, **kwargs)', params:['func — a function taking the DataFrame as its first argument','args, kwargs — additional arguments passed through to func'], returns:'Whatever func returns (typically a DataFrame)', example:'def add_ratio(d, num, den):\n    return d.assign(ratio=d[num]/d[den])\n\ndf.pipe(add_ratio, "a", "b")', output:'(original columns plus a new "ratio" column)', use:'Composing custom, reusable transformation steps into one readable chain.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pipe.html', keywords:['method chaining','custom pipeline step']},
+  {id:'eval', section:'utilities', qualname:'DataFrame.eval()', kind:'method', summary:'Evaluate a string describing column operations, often faster than the Python equivalent.', syntax:'df.eval(expr, inplace=False)', params:['expr — a string expression referencing column names directly','inplace — add the result as a new column in place'], returns:'Result of the expression, or None if inplace=True', example:'df.eval("ratio = a / b", inplace=True)', output:'(adds a "ratio" column computed from a and b)', use:'Concise, sometimes faster arithmetic across columns without repeating df[...] everywhere.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.eval.html', keywords:['expression evaluation','fast arithmetic']},
+  {id:'clip', section:'utilities', qualname:'DataFrame.clip()', kind:'method', summary:'Trim values outside a given lower/upper bound (winsorizing).', syntax:'df.clip(lower=None, upper=None, axis=None)', params:['lower — minimum threshold; smaller values are set to this','upper — maximum threshold; larger values are set to this'], returns:'DataFrame / Series', example:'df["age"].clip(lower=0, upper=100)', output:'0    25\n1    31\n2    28\nName: age, dtype: int64', use:'Capping outliers without dropping the rows that contain them.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.clip.html', keywords:['outlier capping','winsorize']},
+  {id:'where', section:'utilities', qualname:'DataFrame.where()', kind:'method', summary:'Keep values where a condition is True; replace the rest with other (default NaN).', syntax:'df.where(cond, other=nan)', params:['cond — boolean condition (same shape, or a callable)','other — replacement for values where cond is False'], returns:'DataFrame / Series', example:'df["age"].where(df["age"] > 26, other=0)', output:'0     0\n1    31\n2    28\nName: age, dtype: int64', use:'Conditional masking — the inverse logic of mask().', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.where.html', keywords:['conditional replace']},
+  {id:'mask', section:'utilities', qualname:'DataFrame.mask()', kind:'method', summary:'Replace values where a condition is True (the inverse of where()).', syntax:'df.mask(cond, other=nan)', params:['cond — boolean condition (same shape, or a callable)','other — replacement for values where cond is True'], returns:'DataFrame / Series', example:'df["age"].mask(df["age"] > 26, other=0)', output:'0    25\n1     0\n2     0\nName: age, dtype: int64', use:'Blanking out or flagging values that meet a condition (e.g. redacting outliers).', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.mask.html', keywords:['conditional replace inverse']},
+  {id:'multiindex-create', section:'multiindex', qualname:'Creating a MultiIndex', kind:'function', summary:'Build a hierarchical (multi-level) index from tuples, arrays, or a product of iterables.', syntax:'pd.MultiIndex.from_tuples(tuples, names=None)\npd.MultiIndex.from_product([list1, list2], names=None)\ndf.set_index(["col1","col2"])', params:['tuples — list of tuples, one per row of the MultiIndex','names — names for each level'], returns:'MultiIndex', example:'df.set_index(["dept","name"])', output:'                age\ndept  name\nEng   Sam       25\nSales Ana       31', use:'Representing naturally hierarchical data (region > store, year > month) without duplicating labels.', note:'', docs:'https://pandas.pydata.org/docs/user_guide/advanced.html', keywords:['hierarchical index','multi-level']},
+  {id:'multiindex-select', section:'multiindex', qualname:'Indexing with a MultiIndex', kind:'accessor', summary:'Select rows at one or more levels of a MultiIndex using .loc[] or cross-section lookups.', syntax:'df.loc[("Eng","Sam")]\ndf.loc["Eng"]\ndf.xs("Sam", level="name")', params:['A tuple selects an exact combination across levels','A single label selects everything under that outer level'], returns:'scalar, Series, or DataFrame', example:'df.loc["Eng"]', output:'      age\nname\nSam    25\nKai    28', use:'Drilling into a specific level, or slicing across all rows that share an outer key.', note:'.xs() is handy for selecting on an inner level without specifying the outer one.', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.xs.html', keywords:['cross section','level selection']},
+  {id:'swaplevel', section:'multiindex', qualname:'DataFrame.swaplevel()', kind:'method', summary:'Swap the order of two levels in a MultiIndex.', syntax:'df.swaplevel(i=-2, j=-1, axis=0)', params:['i, j — level positions or names to swap','axis — 0 for row index, 1 for column index'], returns:'DataFrame / Series (same data, levels reordered)', example:'df.swaplevel("dept", "name")', output:'                age\nname  dept\nSam   Eng       25', use:'Reordering hierarchy levels so the more useful one is outermost for slicing.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.swaplevel.html', keywords:['reorder index levels']},
+  {id:'droplevel', section:'multiindex', qualname:'DataFrame.droplevel()', kind:'method', summary:'Drop one or more levels from a MultiIndex.', syntax:'df.droplevel(level, axis=0)', params:['level — level name, position, or list of them to remove','axis — 0 for row index, 1 for column index'], returns:'DataFrame / Series (with a simpler index)', example:'df.droplevel("dept")', output:'      age\nname\nSam    25\nAna    31', use:'Simplifying a MultiIndex back to a single level once it\'s no longer needed.', note:'', docs:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.droplevel.html', keywords:['flatten multiindex']},
+  // __END_OF_DATA__
+];
+
+/* ============================================================
+   STATIC SECTION HTML — filled below
+   ============================================================ */
+const STATIC = {};
+STATIC['creating'] = `
+<h3>Creating from other sources — one-liners</h3>
+<div class="table-scroll"><table class="ref-table">
+<thead><tr><th>Source</th><th>Snippet</th></tr></thead>
+<tbody>
+<tr><td>Dictionary</td><td><span class="mono">pd.DataFrame({"a":[1,2],"b":[3,4]})</span></td></tr>
+<tr><td>List of lists</td><td><span class="mono">pd.DataFrame([[1,2],[3,4]], columns=["a","b"])</span></td></tr>
+<tr><td>List of dicts</td><td><span class="mono">pd.DataFrame([{"a":1,"b":2},{"a":3,"b":4}])</span></td></tr>
+<tr><td>NumPy array</td><td><span class="mono">pd.DataFrame(np.arange(6).reshape(3,2), columns=["a","b"])</span></td></tr>
+<tr><td>CSV file</td><td><span class="mono">pd.read_csv("file.csv")</span> — see §15 File I/O</td></tr>
+<tr><td>Excel file</td><td><span class="mono">pd.read_excel("file.xlsx", sheet_name="Sheet1")</span> — see §15</td></tr>
+<tr><td>JSON</td><td><span class="mono">pd.read_json("file.json")</span> — see §15</td></tr>
+<tr><td>SQL query</td><td><span class="mono">pd.read_sql("SELECT * FROM t", conn)</span> — see §15</td></tr>
+<tr><td>Records (list of tuples)</td><td><span class="mono">pd.DataFrame.from_records(rows, columns=[...])</span></td></tr>
+</tbody></table></div>`;
+STATIC['grouping'] = `
+<h3>Common Aggregation Functions</h3>
+<p style="font-size:12.5px;color:var(--text-muted);margin:0 0 8px;">Call these directly on a grouped object, or pass their string name into <span class="mono">.agg()</span> / <span class="mono">pivot_table(aggfunc=...)</span>.</p>
+<div class="table-scroll"><table class="ref-table">
+<thead><tr><th>Function</th><th>String name</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="mono">count()</span></td><td><span class="mono">"count"</span></td><td>Non-null count per group</td></tr>
+<tr><td><span class="mono">sum()</span></td><td><span class="mono">"sum"</span></td><td>Sum of values</td></tr>
+<tr><td><span class="mono">mean()</span></td><td><span class="mono">"mean"</span></td><td>Arithmetic mean</td></tr>
+<tr><td><span class="mono">median()</span></td><td><span class="mono">"median"</span></td><td>Median value</td></tr>
+<tr><td><span class="mono">std()</span></td><td><span class="mono">"std"</span></td><td>Sample standard deviation</td></tr>
+<tr><td><span class="mono">var()</span></td><td><span class="mono">"var"</span></td><td>Sample variance</td></tr>
+</tbody></table></div>`;
+STATIC['reshaping'] = `<p style="font-size:12.5px;color:var(--text-muted);margin:0;">Need to reshape <i>and</i> aggregate duplicate combinations at the same time? See <span class="mono">pivot_table()</span> in §09 Grouping & Aggregation.</p>`;
+STATIC['strings'] = `
+<h3>More one-line .str methods</h3>
+<div class="table-scroll"><table class="ref-table">
+<thead><tr><th>Method</th><th>Does</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><span class="mono">.str.len()</span></td><td>Length of each string</td><td><span class="mono">s.str.len()</span></td></tr>
+<tr><td><span class="mono">.str.strip()</span></td><td>Trim leading/trailing whitespace</td><td><span class="mono">s.str.strip()</span></td></tr>
+<tr><td><span class="mono">.str.lower()</span></td><td>Lowercase every string</td><td><span class="mono">s.str.lower()</span></td></tr>
+<tr><td><span class="mono">.str.upper()</span></td><td>Uppercase every string</td><td><span class="mono">s.str.upper()</span></td></tr>
+<tr><td><span class="mono">.str.title()</span></td><td>Title-case every string</td><td><span class="mono">s.str.title()</span></td></tr>
+</tbody></table></div>`;
+STATIC['viz'] = `
+<h3>Plot kinds — <span class="mono">df.plot(kind=...)</span></h3>
+<div class="table-scroll"><table class="ref-table">
+<thead><tr><th>kind=</th><th>Chart</th><th>Shortcut method</th></tr></thead>
+<tbody>
+<tr><td><span class="mono">"line"</span></td><td>Line chart (default)</td><td><span class="mono">df.plot.line()</span></td></tr>
+<tr><td><span class="mono">"bar"</span> / <span class="mono">"barh"</span></td><td>Vertical / horizontal bar chart</td><td><span class="mono">df.plot.bar()</span></td></tr>
+<tr><td><span class="mono">"hist"</span></td><td>Histogram</td><td><span class="mono">df.plot.hist(bins=20)</span></td></tr>
+<tr><td><span class="mono">"box"</span></td><td>Box-and-whisker plot</td><td><span class="mono">df.plot.box()</span></td></tr>
+<tr><td><span class="mono">"scatter"</span></td><td>Scatter plot (needs x=, y=)</td><td><span class="mono">df.plot.scatter(x="a", y="b")</span></td></tr>
+<tr><td><span class="mono">"pie"</span></td><td>Pie chart (single column)</td><td><span class="mono">df["col"].plot.pie()</span></td></tr>
+<tr><td><span class="mono">"area"</span></td><td>Stacked area chart</td><td><span class="mono">df.plot.area()</span></td></tr>
+</tbody></table></div>
+<p style="font-size:12.5px;color:var(--text-muted);margin:8px 0 0;">All of these require <span class="mono">matplotlib</span> to be installed — pandas delegates the actual rendering to it.</p>`;
+STATIC['install'] = `
+<div class="static-block">
+  <h3><span class="n">§01</span>Install</h3>
+  <div class="table-scroll"><table class="ref-table">
+    <thead><tr><th>Tool</th><th>Command</th></tr></thead>
+    <tbody>
+      <tr><td>pip</td><td><span class="mono">pip install pandas</span></td></tr>
+      <tr><td>pip (with common extras)</td><td><span class="mono">pip install "pandas[excel,parquet,plot]"</span></td></tr>
+      <tr><td>conda</td><td><span class="mono">conda install pandas</span></td></tr>
+      <tr><td>upgrade existing install</td><td><span class="mono">pip install --upgrade pandas</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+<div class="static-block">
+  <h3>Import & Version Check</h3>
+  <div class="code-block"><pre><span>import pandas as pd
+import numpy as np          # near-universal companion import
+
+print(pd.__version__)       # confirm which version you're running</span><button class="copy-btn" title="Copy">⧉</button></pre></div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin-top:10px;">This reference targets <b>pandas 3.0</b> (latest stable: <b>3.0.5</b>, released Jul 22, 2026). If you're on pandas 2.x, watch for the differences called out throughout — most notably <span class="mono">DataFrame.applymap()</span> removal (§07) and <span class="mono">DataFrame.append()</span> removal (§10).</p>
+</div>`;
+STATIC['patterns'] = `
+<div class="static-block">
+  <h3>The full pipeline, end to end</h3>
+  <div class="code-block"><pre><span>df = pd.read_csv("data.csv")                        # 1. read
+df.head(); df.info()                                 # 2. preview
+
+df = df.dropna(subset=["id"])                        # 3. clean missing
+df["amount"] = df["amount"].fillna(0)
+
+df = df.rename(columns={"cust_nm": "customer_name"}) # 4. rename columns
+df = df[df["amount"] > 0]                             # 5. filter rows
+df = df.sort_values("amount", ascending=False)        # 6. sort
+
+grp = df.groupby("region")["amount"]                  # 7. group
+summary = grp.agg(total="sum", avg="mean")             # 8. aggregate
+
+df = df.merge(regions, on="region", how="left")        # 9. merge
+df["amount_per_unit"] = df["amount"] / df["units"]      # 10. calculated column
+
+dupes = df.duplicated(subset=["order_id"]).sum()        # 11. find duplicates
+df = df.drop_duplicates(subset=["order_id"])             # 12. remove duplicates
+
+df["region"] = df["region"].astype("category")            # 13. convert dtypes
+df.to_csv("clean_output.csv", index=False)                 # 14. export</span><button class="copy-btn" title="Copy">⧉</button></pre></div>
+</div>
+<div class="pattern-grid">
+  <div class="static-block pattern-card"><h4>Read + preview</h4><p>Always eyeball shape and dtypes before doing anything else.</p><pre>df = pd.read_csv("data.csv")
+print(df.shape)
+df.head()
+df.info()</pre></div>
+  <div class="static-block pattern-card"><h4>Clean missing values</h4><p>Decide per column: drop, fill with a stat, or forward-fill.</p><pre>df = df.dropna(subset=["required_col"])
+df["amount"] = df["amount"].fillna(df["amount"].median())</pre></div>
+  <div class="static-block pattern-card"><h4>Rename + filter + sort</h4><p>The three most common row/column shaping steps, chained.</p><pre>(df.rename(columns={"cust_nm":"customer"})
+   .query("amount > 0")
+   .sort_values("amount", ascending=False))</pre></div>
+  <div class="static-block pattern-card"><h4>Group + aggregate</h4><p>Named aggregation keeps the result readable.</p><pre>df.groupby("region")["amount"].agg(
+    total="sum", avg="mean", n="count")</pre></div>
+  <div class="static-block pattern-card"><h4>Merge two datasets</h4><p>Always check row count before/after a merge.</p><pre>merged = df.merge(regions, on="region_id", how="left")
+assert len(merged) == len(df)  # sanity check</pre></div>
+  <div class="static-block pattern-card"><h4>Calculated columns</h4><p>Vectorized math beats a Python loop every time.</p><pre>df["margin"] = (df["revenue"] - df["cost"]) / df["revenue"]</pre></div>
+  <div class="static-block pattern-card"><h4>Find & remove duplicates</h4><p>Audit before you delete.</p><pre>print(df.duplicated(subset=["order_id"]).sum())
+df = df.drop_duplicates(subset=["order_id"], keep="first")</pre></div>
+  <div class="static-block pattern-card"><h4>Convert data types</h4><p>Lock in dtypes once cleaning is done, not before.</p><pre>df = df.astype({"region": "category", "order_id": "int32"})</pre></div>
+  <div class="static-block pattern-card"><h4>Export results</h4><p>index=False unless the index carries real meaning.</p><pre>df.to_csv("clean_output.csv", index=False)
+df.to_parquet("clean_output.parquet")</pre></div>
+</div>`;
+STATIC['glance'] = `
+<div class="pattern-grid">
+  <div class="static-block pattern-card"><h4>Reading data</h4><pre>pd.read_csv("f.csv")
+pd.read_excel("f.xlsx", sheet_name=0)
+pd.read_json("f.json")
+pd.read_sql("SELECT * FROM t", conn)
+pd.read_parquet("f.parquet")</pre></div>
+  <div class="static-block pattern-card"><h4>Selecting rows</h4><pre>df.loc[0]                 # by label
+df.iloc[0]                # by position
+df.loc[df["a"] > 5]       # boolean
+df.iloc[0:3]               # slice</pre></div>
+  <div class="static-block pattern-card"><h4>Selecting columns</h4><pre>df["col"]                 # -> Series
+df[["a","b"]]              # -> DataFrame
+df.loc[:, "a":"c"]          # label slice of columns</pre></div>
+  <div class="static-block pattern-card"><h4>Filtering</h4><pre>df[df["age"] > 18]
+df[(df["a"] > 1) & (df["b"] < 5)]
+df.query("age > 18 and city == 'NY'")</pre></div>
+  <div class="static-block pattern-card"><h4>Grouping</h4><pre>df.groupby("col")
+df.groupby(["c1","c2"])["val"].mean()
+df.groupby("col", as_index=False).sum()</pre></div>
+  <div class="static-block pattern-card"><h4>Aggregation</h4><pre>df.groupby("col").agg(
+    total=("val","sum"),
+    avg=("val","mean"))</pre></div>
+  <div class="static-block pattern-card"><h4>Sorting</h4><pre>df.sort_values("col")
+df.sort_values(["a","b"], ascending=[True, False])
+df.sort_index()</pre></div>
+  <div class="static-block pattern-card"><h4>Merging</h4><pre>pd.merge(a, b, on="key", how="left")
+a.join(b, how="inner")
+pd.concat([a, b], ignore_index=True)</pre></div>
+  <div class="static-block pattern-card"><h4>Pivoting</h4><pre>df.pivot_table(values="v", index="r", columns="c", aggfunc="mean")
+df.melt(id_vars=["id"], value_vars=["a","b"])</pre></div>
+  <div class="static-block pattern-card"><h4>Datetime</h4><pre>df["d"] = pd.to_datetime(df["d"])
+df["d"].dt.year
+df.set_index("d").resample("M").sum()</pre></div>
+  <div class="static-block pattern-card"><h4>Missing values</h4><pre>df.isna().sum()
+df.dropna(subset=["col"])
+df.fillna({"col": 0})</pre></div>
+  <div class="static-block pattern-card"><h4>Saving files</h4><pre>df.to_csv("out.csv", index=False)
+df.to_excel("out.xlsx", index=False)
+df.to_parquet("out.parquet")</pre></div>
+</div>`;
+STATIC['mistakes'] = `
+<div class="static-block">
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>SettingWithCopyWarning</b>
+      <span>Assigning into a slice of a DataFrame that pandas can't guarantee is a view vs. a copy. Fix: use <code>.loc[]</code> for the assignment, or explicitly <code>.copy()</code> the slice first.</span>
+      <pre style="margin-top:6px;">sub = df[df["a"]>1]
+sub["b"] = 0            # ✕ ambiguous — may warn
+
+sub = df.loc[df["a"]>1].copy()
+sub.loc[:, "b"] = 0      # ✓ explicit copy, then assign</pre>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>.loc vs .iloc confusion</b>
+      <span><code>.loc</code> is label-based and end-inclusive; <code>.iloc</code> is position-based and end-exclusive. Mixing them up silently returns the wrong rows, especially on a non-default index.</span>
+      <pre style="margin-top:6px;">df.loc[0:2]   # inclusive of label 2 -> 3 rows
+df.iloc[0:2]  # exclusive of position 2 -> 2 rows</pre>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>View vs. copy</b>
+      <span>Some operations return a view (shares memory with the original), others a copy — historically inconsistent. As of pandas 3.0, Copy-on-Write is the standing default, making this far more predictable: modifying a derived object never silently mutates the original.</span>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>axis confusion</b>
+      <span><code>axis=0</code> means "down the rows" (operate per column); <code>axis=1</code> means "across the columns" (operate per row). It trips up almost everyone at least once.</span>
+      <pre style="margin-top:6px;">df.sum(axis=0)   # sum each column (default)
+df.sum(axis=1)   # sum each row</pre>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>Merge duplicates ("merge explosion")</b>
+      <span>Merging on a key that isn't unique in one or both frames silently multiplies rows (a Cartesian product within matching keys). Always check <code>df["key"].is_unique</code> before a merge you expect to be 1:1.</span>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>Missing values sneaking through comparisons</b>
+      <span><code>NaN == NaN</code> is <code>False</code>, so a plain equality filter silently drops NA rows instead of matching them. Use <code>.isna()</code> / <code>.notna()</code> explicitly.</span>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>Relying on inplace=True</b>
+      <span><code>inplace=True</code> still returns <code>None</code>, so chaining breaks and debugging gets harder (no intermediate value to inspect). Most pandas maintainers now recommend avoiding it in favor of reassignment.</span>
+      <pre style="margin-top:6px;">df.dropna(inplace=True)     # ✕ returns None, harder to chain
+df = df.dropna()             # ✓ explicit, chainable</pre>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <span class="x">✕</span>
+    <div class="body">
+      <b>Chained indexing</b>
+      <span><code>df["a"][df["a"]>1] = 0</code> performs two separate <code>__getitem__</code> calls, which is the classic trigger for SettingWithCopyWarning and can silently fail to write back.</span>
+      <pre style="margin-top:6px;">df["a"][df["a"]>1] = 0        # ✕ chained indexing
+df.loc[df["a"]>1, "a"] = 0     # ✓ single .loc call</pre>
+    </div>
+  </div>
+</div>`;
+STATIC['performance'] = `
+<div class="static-block">
+  <div class="perf-item">
+    <b>Use vectorization</b>
+    <div><span class="bad">df["c"] = df.apply(lambda r: r["a"]+r["b"], axis=1)</span></div>
+    <div><span class="good">df["c"] = df["a"] + df["b"]</span></div>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Vectorized column math runs in optimized C loops; row-wise apply() re-enters Python for every row.</p>
+  </div>
+  <div class="perf-item">
+    <b>Avoid Python loops over rows</b>
+    <div><span class="bad">for i, row in df.iterrows(): ...</span></div>
+    <div><span class="good">df["x"].where(cond, other)  /  np.select([...], [...])</span></div>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;"><code>iterrows()</code> is often 10-100x slower than an equivalent vectorized or NumPy-based expression.</p>
+  </div>
+  <div class="perf-item">
+    <b>Use the categorical dtype for low-cardinality text</b>
+    <div><span class="good">df["status"] = df["status"].astype("category")</span></div>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Cuts memory dramatically and speeds up groupby()/merge() on repeated string values.</p>
+  </div>
+  <div class="perf-item">
+    <b>Prefer efficient indexing</b>
+    <div><span class="good">df.at[row, col]  /  df.loc[mask, col]</span> over <span class="bad">df[col][row] = x</span></div>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Single-call indexing avoids chained-indexing overhead and warning traps (§22).</p>
+  </div>
+  <div class="perf-item">
+    <b>Efficient joins</b>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Sort and set the join key as the index before a big merge/join, and verify key uniqueness first — it avoids a hidden Cartesian blow-up (§22) and speeds up the join itself.</p>
+  </div>
+  <div class="perf-item">
+    <b>Memory optimization</b>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Downcast numeric dtypes (<code>pd.to_numeric(s, downcast="integer")</code>), drop unused columns early with <code>usecols=</code>, and check <code>df.memory_usage(deep=True)</code> after loading.</p>
+  </div>
+  <div class="perf-item">
+    <b>Chunked reading for large files</b>
+    <div><span class="good">for chunk in pd.read_csv("big.csv", chunksize=100_000): process(chunk)</span></div>
+    <p style="font-size:12.3px;color:var(--text-muted);margin:4px 0 0;">Processes a file larger than memory in fixed-size pieces instead of loading it all at once.</p>
+  </div>
+</div>`;
+STATIC['workflow'] = `
+<div class="static-block">
+  <h3>Typical workflow</h3>
+  <div class="workflow-steps">
+    <div class="step"><span class="stepnum">01</span><b>Read</b><span>read_csv / read_sql / read_parquet</span></div>
+    <div class="step"><span class="stepnum">02</span><b>Explore</b><span>head, info, describe, value_counts</span></div>
+    <div class="step"><span class="stepnum">03</span><b>Clean</b><span>dropna, fillna, drop_duplicates, astype</span></div>
+    <div class="step"><span class="stepnum">04</span><b>Transform</b><span>map, apply, str/dt accessors</span></div>
+    <div class="step"><span class="stepnum">05</span><b>Feature engineering</b><span>assign, cut/qcut, get_dummies</span></div>
+    <div class="step"><span class="stepnum">06</span><b>Aggregate</b><span>groupby, pivot_table, crosstab</span></div>
+    <div class="step"><span class="stepnum">07</span><b>Visualize</b><span>.plot(), or hand off to seaborn</span></div>
+    <div class="step"><span class="stepnum">08</span><b>Export</b><span>to_csv, to_parquet, to_sql</span></div>
+  </div>
+  <h3 style="margin-top:20px;">Interoperability</h3>
+  <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 4px;">pandas is the connective tissue of the PyData stack — it hands off to and receives from:</p>
+  <div class="interop-row">
+    <span class="interop-chip">NumPy — df.to_numpy(), pd.DataFrame(ndarray)</span>
+    <span class="interop-chip">Matplotlib — df.plot() (built on it directly)</span>
+    <span class="interop-chip">Seaborn — sns.lineplot(data=df, x=.., y=..)</span>
+    <span class="interop-chip">scikit-learn — X = df[features], model.fit(X, y)</span>
+  </div>
+</div>`;
+STATIC['resources'] = `
+<div class="static-block">
+  <ul class="resource-list">
+    <li><a href="https://pandas.pydata.org/" target="_blank" rel="noopener">Official Website<span>pandas.pydata.org</span></a></li>
+    <li><a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener">Official Documentation<span>pandas.pydata.org/docs</span></a></li>
+    <li><a href="https://pandas.pydata.org/docs/reference/index.html" target="_blank" rel="noopener">API Reference<span>full function/method index</span></a></li>
+    <li><a href="https://pandas.pydata.org/docs/user_guide/index.html" target="_blank" rel="noopener">User Guide<span>concept-level explanations</span></a></li>
+    <li><a href="https://pandas.pydata.org/docs/whatsnew/index.html" target="_blank" rel="noopener">Release Notes<span>what changed each version</span></a></li>
+    <li><a href="https://github.com/pandas-dev/pandas" target="_blank" rel="noopener">GitHub Repository<span>github.com/pandas-dev/pandas</span></a></li>
+  </ul>
+</div>`;
+// __STATIC_ASSIGN__
+</script>
+<script id="app-script">
+/* ============================================================
+   RENDERING
+   ============================================================ */
+function esc(s){
+  return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function kindPill(kind){
+  return `<span class="kind-pill kind-${kind}">${kind}</span>`;
+}
+function renderCard(d){
+  const paramsHtml = (d.params && d.params.length)
+    ? `<div class="field-label">Parameters</div><ul class="params-list">${d.params.map(p=>{
+        const idx = p.indexOf(' — ');
+        if(idx===-1) return `<li>${esc(p)}</li>`;
+        return `<li><b>${esc(p.slice(0,idx))}</b> — ${esc(p.slice(idx+3))}</li>`;
+      }).join('')}</ul>`
+    : '';
+  const returnsHtml = d.returns ? `<div class="field-label">Returns</div><div class="returns-box">${esc(d.returns)}</div>` : '';
+  const outputHtml = d.output ? `<div class="field-label">Output</div><div class="output-box">${esc(d.output)}</div>` : '';
+  const noteHtml = d.note ? `<div class="field-label">Important Note</div><div class="important-note">${esc(d.note)}</div>` : '';
+  return `
+  <article class="card" data-search="${esc((d.qualname+' '+d.summary+' '+d.syntax+' '+(d.keywords||[]).join(' ')).toLowerCase())}" data-id="${d.id}">
+    <div class="card-top">
+      <div class="card-title">${esc(d.qualname)}</div>
+      ${kindPill(d.kind)}
+    </div>
+    <div class="card-summary">${esc(d.summary)}</div>
+    <div class="field-label">Syntax</div>
+    <div class="syntax-box">${esc(d.syntax)}</div>
+    ${paramsHtml}
+    ${returnsHtml}
+    <div class="field-label">Example</div>
+    <div class="code-block">
+      <pre><span>${esc(d.example)}</span><button class="copy-btn" title="Copy example">⧉</button></pre>
+    </div>
+    ${outputHtml}
+    <div class="field-label">Common Use</div>
+    <div class="use-note">${esc(d.use)}</div>
+    ${noteHtml}
+    <div class="card-foot">
+      <a class="docs-link" href="${d.docs}" target="_blank" rel="noopener">Official docs ↗</a>
+      <span class="section-badge">§${String(d.secnum).padStart(2,'0')}</span>
+    </div>
+  </article>`;
+}
+
+function buildSidebar(){
+  const el = document.getElementById('sidebar');
+  let html = '';
+  let lastGroup = null;
+  SECTIONS.forEach(s=>{
+    if(s.group !== lastGroup){
+      html += `<div class="side-group-label">${s.group}</div>`;
+      lastGroup = s.group;
+    }
+    const count = s.type==='cards' ? DATA.filter(d=>d.section===s.id).length : '';
+    html += `<a class="side-link" data-target="${s.id}" href="#sec-${s.id}">
+      <span class="num">${String(s.num).padStart(2,'0')}</span>
+      <span>${s.title}</span>
+      ${count!=='' ? `<span class="cnt">${count}</span>` : ''}
+    </a>`;
+  });
+  el.innerHTML = html;
+}
+
+function buildSections(){
+  const root = document.getElementById('sectionsRoot');
+  let html = '';
+  SECTIONS.forEach(s=>{
+    let body;
+    if(s.type === 'cards'){
+      const items = DATA.filter(d=>d.section===s.id).map(d=>({...d, secnum:s.num}));
+      const intro = STATIC[s.id] ? `<div class="static-block">${STATIC[s.id]}</div>` : '';
+      body = intro + `<div class="card-grid">${items.map(renderCard).join('')}</div>`;
+    } else {
+      body = STATIC[s.id] || '';
+    }
+    html += `
+    <section class="ref-section" id="sec-${s.id}" data-secid="${s.id}">
+      <div class="sec-head" data-toggle="${s.id}">
+        <span class="sec-num">§${String(s.num).padStart(2,'0')}</span>
+        <h2>${s.title}</h2>
+        <span class="chev">▾</span>
+      </div>
+      ${s.sub ? `<div class="sec-sub">${s.sub}</div>` : ''}
+      <div class="sec-body">${body}</div>
+    </section>`;
+  });
+  root.innerHTML = html;
+  document.getElementById('cardCountFooter').textContent = DATA.length;
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function runSearch(q){
+  q = q.trim().toLowerCase();
+  const cards = document.querySelectorAll('.card');
+  const empty = document.getElementById('emptyState');
+  const countEl = document.getElementById('searchCount');
+  if(!q){
+    cards.forEach(c=>{ c.classList.remove('hidden'); unmark(c); });
+    document.querySelectorAll('.ref-section').forEach(s=>s.style.display='');
+    empty.style.display='none';
+    countEl.style.display='none';
+    return;
+  }
+  let matches = 0;
+  cards.forEach(c=>{
+    const hit = c.getAttribute('data-search').includes(q);
+    c.classList.toggle('hidden', !hit);
+    if(hit){ matches++; mark(c,q); } else { unmark(c); }
+  });
+  document.querySelectorAll('.ref-section').forEach(s=>{
+    if(s.querySelector('.card')){
+      const anyVisible = [...s.querySelectorAll('.card')].some(c=>!c.classList.contains('hidden'));
+      s.style.display = anyVisible ? '' : 'none';
+    } else {
+      // static sections: simple text match
+      s.style.display = s.textContent.toLowerCase().includes(q) ? '' : 'none';
+    }
+  });
+  countEl.style.display='block';
+  countEl.textContent = matches + (matches===1?' result':' results');
+  empty.style.display = matches===0 ? 'block' : 'none';
+}
+function mark(card,q){
+  const title = card.querySelector('.card-title');
+  if(!title) return;
+  const raw = title.getAttribute('data-raw') || title.textContent;
+  title.setAttribute('data-raw', raw);
+  const i = raw.toLowerCase().indexOf(q);
+  if(i===-1){ title.innerHTML = esc(raw); return; }
+  title.innerHTML = esc(raw.slice(0,i)) + '<mark>' + esc(raw.slice(i,i+q.length)) + '</mark>' + esc(raw.slice(i+q.length));
+}
+function unmark(card){
+  const title = card.querySelector('.card-title');
+  if(!title) return;
+  const raw = title.getAttribute('data-raw');
+  if(raw) title.textContent = raw;
+}
+
+/* ============================================================
+   INTERACTIONS
+   ============================================================ */
+function initTheme(){
+  const stored = localStorage.getItem('pdq-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const dark = stored ? stored==='dark' : prefersDark;
+  document.documentElement.classList.toggle('dark', dark);
+  document.getElementById('themeToggle').textContent = dark ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  const dark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('pdq-theme', dark ? 'dark' : 'light');
+  document.getElementById('themeToggle').textContent = dark ? '☀️' : '🌙';
+}
+
+function initSidebarActive(){
+  const links = [...document.querySelectorAll('.side-link')];
+  const sections = [...document.querySelectorAll('.ref-section')];
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.getAttribute('data-secid');
+        links.forEach(l=>l.classList.toggle('active', l.getAttribute('data-target')===id));
+      }
+    });
+  }, {rootMargin:'-15% 0px -75% 0px', threshold:0});
+  sections.forEach(s=>obs.observe(s));
+}
+
+function initCollapsible(){
+  document.getElementById('sectionsRoot').addEventListener('click', (e)=>{
+    const head = e.target.closest('.sec-head');
+    if(!head) return;
+    head.closest('.ref-section').classList.toggle('collapsed');
+  });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+function initCopyButtons(){
+  document.getElementById('sectionsRoot').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.copy-btn');
+    if(!btn) return;
+    const codeEl = btn.previousElementSibling;
+    const text = codeEl ? codeEl.textContent : '';
+    navigator.clipboard.writeText(text).then(()=>{
+      btn.classList.add('copied'); btn.textContent='✓';
+      showToast('Copied to clipboard');
+      setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent='⧉'; }, 1200);
+    }).catch(()=>{ showToast('Copy failed — select manually'); });
+  });
+}
+
+function initBackTop(){
+  const btn = document.getElementById('backTop');
+  window.addEventListener('scroll', ()=>{
+    btn.classList.toggle('show', window.scrollY > 500);
+  });
+  btn.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+}
+
+function initMobileSidebar(){
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  const toggle = document.getElementById('menuToggle');
+  function open(){ sidebar.classList.add('open'); scrim.classList.add('show'); }
+  function close(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+  toggle.addEventListener('click', ()=> sidebar.classList.contains('open') ? close() : open());
+  scrim.addEventListener('click', close);
+  sidebar.addEventListener('click', (e)=>{ if(e.target.closest('.side-link')) close(); });
+}
+
+function initSearchBox(){
+  const input = document.getElementById('searchInput');
+  input.addEventListener('input', ()=>runSearch(input.value));
+  document.addEventListener('keydown', (e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); input.focus(); input.select(); }
+    else if(e.key==='/' && document.activeElement!==input){ e.preventDefault(); input.focus(); }
+    else if(e.key==='Escape' && document.activeElement===input){ input.value=''; runSearch(''); input.blur(); }
+  });
+  if(navigator.platform.toUpperCase().indexOf('MAC')>=0) document.getElementById('kbdHint').textContent = '⌘ K';
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  initTheme();
+  buildSidebar();
+  buildSections();
+  initSidebarActive();
+  initCollapsible();
+  initCopyButtons();
+  initBackTop();
+  initMobileSidebar();
+  initSearchBox();
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+});
+</script>
+</body>
+</html>
