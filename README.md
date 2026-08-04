@@ -53,7 +53,8 @@ There's a pattern in all three libraries — I know they exist, I use them const
 |---|---|---|---|---|
 | 1 | 🐍 **Python** | All 69 built-ins, core methods, runnable examples | 🔗 [Open](https://python-quick-reference.netlify.app/) | [`.html`](01-python-basics/python-quick-reference.html) |
 | 2 | 🔢 **NumPy** | Array creation, indexing, broadcasting, most-used functions | 🔗 [Open](https://numpy-quick-reference.netlify.app/) | [`.html`](https://github.com/Rushit004/data-science-journey-campusx/blob/main/02-Numpy/numpy-quick-reference.html) |
-| 3 | 📊 **Matplotlib & Seaborn** | Most-used plot types, one-liners for quick recall | 🔗 [Open](https://matplotlib-and-seaborn-graphs.netlify.app/) | [`.html`](04-Matplotlib/matplotlib_seaborn_graphs.html) |
+| 3 | 🐼 **Pandas** | DataFrame/Series methods, groupby, merging, string & datetime accessors, file I/O | 🔗 [Open](https://pandas-quick-reference.netlify.app/) | [`.html`](03-pandas/pandas-quick-reference.html) |
+| 4 | 📊 **Matplotlib & Seaborn** | Most-used plot types, one-liners for quick recall | 🔗 [Open](https://matplotlib-and-seaborn-graphs.netlify.app/) | [`.html`](04-Matplotlib/matplotlib_seaborn_graphs.html) |
 ---
 ## Environment
 ```
