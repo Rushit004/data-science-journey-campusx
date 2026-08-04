@@ -44,14 +44,7 @@
 ```
 ---
 ## A few things I found genuinely interesting so far
-<<<<<<< HEAD
 
-- Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
-- NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
-- Python's built-in functions and methods are things I know exist but rarely remember the exact syntax for under pressure — so I built a searchable **Python quick-reference site** covering all 69 built-ins, core methods, and runnable examples in one place. View it 🔗 [Live Preview](https://python-quick-reference.netlify.app/) or browse the [source file](01-python-basics/python-quick-reference.html) in the repo.
-- NumPy has so many array creation, indexing, and manipulation functions that I kept mixing up the syntax mid-project — so I built a searchable **NumPy quick-reference site** covering the most-used functions and methods in one place. View it 🔗 [Live Preview](https://numpy-quick-reference.netlify.app/)
-- Matplotlib and Seaborn have so many graph types that I kept forgetting syntax mid-project — so I built a **quick-reference cheatsheet** covering the most-used plots in one place. View it 🔗 [Live Preview](https://matplotlib-and-seaborn-graphs.netlify.app/) or browse the [source file](04-Matplotlib/matplotlib_seaborn_graphs.html) in the repo.
-=======
 - Python's `*args` and `**kwargs` — I wrote 6 small functions to test every edge case. Most useful when you genuinely don't know how many arguments a function will receive at call time.
 - NumPy broadcasting confused me for 3 days. I finally understood it by drawing out the shape transformations by hand — see [`02-numpy/notes/S14_Advanced_Numpy.ipynb`](02-Numpy/notes/S14_Advanced_Numpy.ipynb)
 
@@ -63,7 +56,7 @@ There's a pattern in all three libraries — I know they exist, I use them const
 | 2 | 🔢 **NumPy** | Array creation, indexing, broadcasting, most-used functions | 🔗 [Open](https://numpy-quick-reference.netlify.app/) | [`.html`](https://github.com/Rushit004/data-science-journey-campusx/blob/main/02-Numpy/numpy-quick-reference.html) |
 | 3 | 🐼 **Pandas** | DataFrame/Series methods, groupby, merging, string & datetime accessors, file I/O | 🔗 [Open](https://pandas-quick-reference.netlify.app/) | [`.html`](03-pandas/pandas-quick-reference.html) |
 | 4 | 📊 **Matplotlib & Seaborn** | Most-used plot types, one-liners for quick recall | 🔗 [Open](https://matplotlib-and-seaborn-graphs.netlify.app/) | [`.html`](04-Matplotlib/matplotlib_seaborn_graphs.html) |
->>>>>>> 89a65909db9baeba1733712d9f8c01b202aa4545
+
 ---
 ## Environment
 ```
