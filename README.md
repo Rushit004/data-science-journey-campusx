@@ -19,7 +19,7 @@
 | NumPy | 3 / 3 | 3 / 3 | ✅ Complete |
 | Pandas | 3 / 7 | 3 / 7 | ✅ Complete |
 | matplotlib | 2 / 2 | 2 / 2 | ✅ Complete |
-| seaborn | 2 / 2 | - | ⏳ Upcoming  |
+| seaborn | 2 / 2 | - | ✅ Complete  |
 | Data Analysis Process | 0 / 3 | 0 / 3 | ⏳ Upcoming  |
 | SQL | 9 / 9 | 9 / 9  | ✅ Complete |
 | Statistics | 1 / 14 | 1 / 14 | ⏳ In progress |
