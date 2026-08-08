@@ -58,6 +58,13 @@ There's a pattern in all three libraries — I know they exist, I use them const
 | 4 | 📊 **Matplotlib & Seaborn** | Most-used plot types, one-liners for quick recall | 🔗 [Open](https://matplotlib-and-seaborn-graphs.netlify.app/) | [`.html`](04-Matplotlib/matplotlib_seaborn_graphs.html) |
 
 ---
+## 🎛️ Interactive ML Demos
+
+Alongside notes and notebooks, I'm building small interactive apps to actually *feel* how ML concepts behave under different settings, instead of just reading about them:
+
+- **Linear Regression — Hyperparameter Tuning** — a Streamlit app to tune hyperparameters (learning rate, iterations, etc.) and watch their effect on the model live → 🔗 [Open the demo](https://hyperparameters-tuning.streamlit.app/)
+
+---
 ## Environment
 ```
 Python 3.11  ·  Jupyter Notebook / JupyterLab / Google Colab
