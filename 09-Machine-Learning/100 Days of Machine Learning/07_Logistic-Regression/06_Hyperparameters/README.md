@@ -48,7 +48,7 @@ To actually *feel* what these hyperparameters do to a decision boundary, there's
 - Exposes `penalty`, `C`, `solver`, `max_iter`, multiclass strategy (auto / One-vs-Rest), and `l1_ratio` as sidebar controls
 - Trains the model, draws the decision region with `contourf`, and reports test accuracy — all in one click
 
-- 🔗 **Live demo:** *(link coming soon)*
+- 🔗 [**Live demo**](https://hyperparameters-tuning.streamlit.app/)
 - 📄 **Source code:** [`main.py`](./main.py)
 
 **Run it locally:**
@@ -61,7 +61,7 @@ streamlit run app.py
 
 ## 📊 All Hyperparameters at a Glance
 
-`LogisticRegression` has 15+ constructor arguments. Here's the full set as commonly taught (see the [note on newer versions](#️-a-note-on-newer-scikit-learn-versions) for what's changed most recently):
+`LogisticRegression` has 15+ constructor arguments. Here's the full set as commonly taught  
 
 | Hyperparameter | Type | Default | Description |
 |---|---|---|---|
