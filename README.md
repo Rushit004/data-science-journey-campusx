@@ -64,6 +64,8 @@ Alongside notes and notebooks, I'm building small interactive apps to actually *
 
 - **Linear Regression — Hyperparameter Tuning** — a Streamlit app to tune hyperparameters (learning rate, iterations, etc.) and watch their effect on the model live → 🔗 [Open the demo](https://hyperparameters-tuning.streamlit.app/)
 
+- **Decision Tree Classifier — Hyperparameter Tuning** — a Streamlit app to tune hyperparameters (criterion, max depth, min samples split, etc.) and visualize the decision boundary live → 🔗 [Open the demo](https://decision-tree-hyperparameters.streamlit.app/)
+  
 ---
 ## Environment
 ```
