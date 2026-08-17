@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0e301dfa-03cf-4c75-9a4d-277cd484b449" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Rushit004"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Rushit004/data-science-journey-campusx.git",
+    "accountId": "2df07c78-826e-4cc7-8c37-d5b2e0d77ce6"
+  }
+}]]></component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.08128957186945" />
+      <entry key="MS500" value="2.25433920749356" />
+      <entry key="S2" value="6.412679955550767" />
+      <entry key="S5" value="10.706070278087495" />
+      <entry key="S10" value="13.313241989804323" />
+      <entry key="S30" value="15.622678813540922" />
+      <entry key="S60" value="16.290639730292728" />
+      <entry key="M2" value="16.639967296040883" />
+      <entry key="M5" value="16.854678812480458" />
+      <entry key="M10" value="16.92711939897934" />
+      <entry key="M15" value="16.951363893609162" />
+      <entry key="M30" value="16.975657390034755" />
+      <entry key="H1" value="16.987822548830337" />
+      <entry key="H2" value="16.99390973699316" />
+      <entry key="H4" value="16.99695448403161" />
+      <entry key="D1" value="16.99949236059807" />
+      <entry key="W1" value="16.999927478777394" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.0377833029190762" />
+      <entry key="MS500" value="2.235732853379649" />
+      <entry key="S2" value="6.387395868551666" />
+      <entry key="S5" value="10.683472516529791" />
+      <entry key="S10" value="13.297684017923142" />
+      <entry key="S30" value="15.616168602032506" />
+      <entry key="S60" value="16.287188269257985" />
+      <entry key="M2" value="16.63818982775048" />
+      <entry key="M5" value="16.85395505323876" />
+      <entry key="M10" value="16.92675536044927" />
+      <entry key="M15" value="16.951120719232236" />
+      <entry key="M30" value="16.975535561265637" />
+      <entry key="H1" value="16.98776157394372" />
+      <entry key="H2" value="16.99387923441095" />
+      <entry key="H4" value="16.996939228954105" />
+      <entry key="D1" value="16.999489817559116" />
+      <entry key="W1" value="16.99992711547322" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3I2gllQWlg7W428BaX2e4KMJoRm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-c59985aa861c-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.24374.152" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0e301dfa-03cf-4c75-9a4d-277cd484b449" name="Changes" comment="" />
+      <created>1786968231250</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1786968231250</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>46</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
