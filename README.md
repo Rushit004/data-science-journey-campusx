@@ -69,6 +69,7 @@ Alongside notes and notebooks, I'm building small interactive apps to actually *
 - **Decision Tree Regressor — Hyperparameter Tuning** — a Streamlit app to tune hyperparameters (criterion, max depth, min samples split, etc.) and watch the regression fit change live → 🔗 [Open the demo](https://decision-tree-regression-demo.streamlit.app/)
 
 - **Bagging Classifier — Base Estimator Comparison** — a Streamlit app to tune bagging hyperparameters (n_estimators, max samples, bootstrap, etc.) and compare the decision boundary against a single base estimator → 🔗 [Open the demo](https://bagging-classifier.streamlit.app/)
+- **Bagging Regressor — Base Estimator Comparison** — a Streamlit app to tune bagging hyperparameters (n_estimators, max samples, bootstrap, etc.) and compare the regression fit against a single base estimator → 🔗 [Open the demo](https://bagging-regression.streamlit.app/)
 ---
 ## Environment
 ```
