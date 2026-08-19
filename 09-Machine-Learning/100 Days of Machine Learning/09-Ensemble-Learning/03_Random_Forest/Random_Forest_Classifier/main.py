@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 from sklearn.metrics import accuracy_score
 import pandas as pd
-
+from pathlib import Path
 
 def draw_meshgrid():
     a = np.arange(start=X[:, 0].min() - 1, stop=X[:, 0].max() + 1, step=0.01)
@@ -15,7 +15,9 @@ def draw_meshgrid():
     return XX, YY, input_array
 
 
-df = pd.read_csv('concertriccir2.csv')
+
+BASE_DIR = Path(__file__).resolve().parent
+df = pd.read_csv(BASE_DIR / "concertriccir2.csv")
 X = df.iloc[:, 0:2].values
 y = df.iloc[:, -1].values
 
