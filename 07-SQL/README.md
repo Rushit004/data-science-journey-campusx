@@ -20,6 +20,7 @@ This folder covers the SQL portion of the **[Data Science Mentorship Program (DS
 | `Task/Datasets/` | Raw datasets (CSV) used across the tasks |
 | `Dataset/S32`–`S37` | Datasets organized by session number, matching each task notebook |
 | `SQL_Interview Questions/` | Common interview questions + a solved case study (Zomato-style schema) |
+| `frames.md` | Concept deep-dive on window function frames — `ROWS` vs `RANGE` vs `GROUPS`, ties, and default frame behavior |
 | `SQL Learining Resources.md` | Curated list of sites, books, free courses, and interview-prep links |
 
 ## 🧠 Topics covered (session-wise)
@@ -34,6 +35,9 @@ This folder covers the SQL portion of the **[Data Science Mentorship Program (DS
 | Task 37 | Window functions (rank, cumulative sum, % of total) | Northwind, Drug Performance |
 
 *(Topic labels above are inferred from the problem statements in each notebook — feel free to tweak the wording if you'd label a session differently.)*
+
+> 🪟 **Working through the window function tasks (36 & 37)?**
+> [`frames.md`](./frames.md) breaks down the frame clause itself — `ROWS BETWEEN` vs `RANGE BETWEEN`, how ties behave differently under each, and what MySQL's default frame is when you don't specify one.
 
 ## 📚 Learning resources
 
